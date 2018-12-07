@@ -9,9 +9,11 @@ export class AddRowOperation {
 
   /** Constructs an operation to add a row.
    * @param index - The index of the row.
+   * @param row - A single row table representing the row that was added.
    */
-  constructor(index: number) {
+  constructor(index: number, row: TableModel) {
     this._index = index;
+    this._row = row;
   }
 
   /** Returns the index of the new row. */
@@ -19,7 +21,13 @@ export class AddRowOperation {
     return this._index;
   }
 
+  /** Returns a single row table representing the row that was added. */
+  public get row(): TableModel {
+    return this._row;
+  }
+
   private _index: number;
+  private _row: TableModel;
 }
 
 /** Moves a row. */
@@ -81,11 +89,13 @@ export class UpdateValueOperation {
    * @param row - The index of the row to update.
    * @param column - The index of the column to update.
    * @param previous - The value previously at the row and column.
+   * @param current - The value currently at the row and column.
    */
-  constructor(row: number, column: number, previous: any) {
+  constructor(row: number, column: number, previous: any, current: any) {
     this._row = row;
     this._column = column;
     this._previous = previous;
+    this._current = current;
   }
 
   /** Returns the index of the updated row. */
@@ -103,7 +113,13 @@ export class UpdateValueOperation {
     return this._previous;
   }
 
+  /** Returns the value currently at the row and column. */
+  public get current(): any {
+    return this._current;
+  }
+
   private _row: number;
   private _column: number;
   private _previous: any;
+  private _current: any;
 }
