@@ -44,7 +44,7 @@ export class ArrayTableModel extends TableModel {
     this.beginTransaction();
     this.values.splice(index, 0, row.slice());
     const table = new ArrayTableModel();
-    table.addRow(row);
+    table.values = row.slice();
     this.operations.push(new AddRowOperation(index, table));
     this.endTransaction();
   }
