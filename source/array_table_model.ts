@@ -32,7 +32,7 @@ export class ArrayTableModel extends TableModel {
    * @throws RangeError - The index specified is not within range.
    */
   public addRow(row: any[], index?: number): void {
-    if(row.length != this.columnCount) {
+    if(this.rowCount != 0 && row.length != this.columnCount) {
       throw RangeError();
     }
     if(index === undefined) {
