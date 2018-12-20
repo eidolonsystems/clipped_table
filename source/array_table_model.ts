@@ -35,12 +35,15 @@ export class ArrayTableModel extends TableModel {
    */
   public addRow(row: any[], index?: number): void {
     if(this.rowCount != 0 && row.length != this.columnCount) {
+      this.dispatcher.dispatch(null);
+      console.log('Too many dang elements.');
       throw RangeError();
     }
     if(index === undefined) {
       index = this.values.length;
     }
     if(index > this.rowCount || index < 0) {
+      this.dispatcher.dispatch(null);
       throw RangeError();
     }
     this.beginTransaction();
@@ -91,6 +94,7 @@ export class ArrayTableModel extends TableModel {
   }
 
   public get(row: number, column: number): any {
+    console.log('Value is: ' + this.values[row][column]);
     return this.values[row][column];
   }
 

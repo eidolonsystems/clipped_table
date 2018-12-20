@@ -10,14 +10,20 @@ export class ArrayTableModelTester {
     const model = new ArrayTableModel();
     let receivedIndex = undefined;
     const slot = (operations: Operation[]) => {
-      if(operations.length > 0){
-        const operation = operations[0];
+      console.log('A SIGNAL WAS SENT!');
+      if(operations) {
+        const operation = operations[operations.length-1];
         if(operation instanceof AddRowOperation) {
+          console.log('Operation index: ' + operation.index);
           receivedIndex = operation.index;
         } else {
+          console.log('NOT A ADD ROW OP');
+          receivedIndex = undefined;
           Expect(false).toEqual(true);
         }
       } else {
+        console.log('NOT A ADD ROW OP');
+        receivedIndex = undefined;
         Expect(false).toEqual(true);
       }
     };
@@ -29,17 +35,16 @@ export class ArrayTableModelTester {
     Expect(model.get(0, 0)).toEqual(1);
     Expect(model.get(0, 1)).toEqual(2);
     Expect(receivedIndex).toEqual(0);
-    console.log('current goal');
     Expect(() => model.addRow([1, 2, 3], 0)).toThrow();
     Expect(receivedIndex).toEqual(undefined);
-    
+    console.log('Want to reach here!');
     Expect(() => model.addRow([5, 7], 1)).not.toThrow();
     Expect(model.rowCount).toEqual(2);
-    Expect(model.get(0, 0)).toEqual(1);
+    Expect(model.get(0, 0)).toEqual(1); 
     Expect(model.get(0, 1)).toEqual(2);
     Expect(model.get(1, 0)).toEqual(5);
     Expect(model.get(1, 1)).toEqual(7);
-    Expect(receivedIndex).toEqual(1);
+    Expect(receivedIndex).toEqual(1); //???
     listener.unlisten();
   }
 }
