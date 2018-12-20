@@ -8,8 +8,9 @@ export class ArrayTableModel extends TableModel {
   /** Constructs an empty model. */
   constructor() {
     super();
-    this.values = [[]];
+    this.values = [];
     this.transactionCount = 0;
+     this.operations = [];
     this.dispatcher = new Kola.Dispatcher<Operation[]>();
   }
 
@@ -22,6 +23,7 @@ export class ArrayTableModel extends TableModel {
 
   /** Ends a transaction. */
   public endTransaction(): void {
+    this.dispatcher.dispatch(this.operations);
   }
 
   /** Adds a row to the table.
@@ -46,6 +48,7 @@ export class ArrayTableModel extends TableModel {
     const table = new ArrayTableModel();
     table.values = row.slice();
     this.operations.push(new AddRowOperation(index, table));
+    console.log('ADDED!');
     this.endTransaction();
   }
 
@@ -72,15 +75,23 @@ export class ArrayTableModel extends TableModel {
   public set(row: number, column: number, value: any): void {}
 
   public get rowCount(): number {
-    return 0;
+    if(this.values.length === 1 && this.values[0].length === 0){
+      return 0;
+    } else {
+      return this.values.length;
+    }
   }
 
   public get columnCount(): number {
-    return 0;
+    if(this.rowCount === 0){
+      return 0;
+    } else {
+      return this.values[0].length;
+    }
   }
 
   public get(row: number, column: number): any {
-    return null;
+    return this.values[row][column];
   }
 
   public connect(slot: (operations: Operation[]) => void):
