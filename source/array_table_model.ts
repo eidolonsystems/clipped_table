@@ -1,5 +1,5 @@
 import * as Kola from 'kola-signals';
-import { AddRowOperation, Operation } from './operations';
+import { AddRowOperation, RemoveRowOperation, Operation, UpdateValueOperation } from './operations';
 import { TableModel } from './table_model';
 
 /** Implements a TableModel using an 2-dimensional array. */
@@ -10,7 +10,7 @@ export class ArrayTableModel extends TableModel {
     super();
     this.values = [];
     this.transactionCount = 0;
-     this.operations = [];
+    this.operations = [];
     this.dispatcher = new Kola.Dispatcher<Operation[]>();
   }
 
@@ -34,15 +34,16 @@ export class ArrayTableModel extends TableModel {
    * @throws RangeError - The index specified is not within range.
    */
   public addRow(row: any[], index?: number): void {
+    console.log('current table is ' + this.values.toString());
+    console.log('current ops! ' + this.operations);
     if(this.rowCount != 0 && row.length != this.columnCount) {
       this.dispatcher.dispatch(null);
-      console.log('Too many dang elements.');
       throw RangeError();
     }
     if(index === undefined) {
       index = this.values.length;
     }
-    if(index > this.rowCount || index < 0) {
+    if(index > this.rowCount || index < 0) { //????????????
       this.dispatcher.dispatch(null);
       throw RangeError();
     }
@@ -51,7 +52,6 @@ export class ArrayTableModel extends TableModel {
     const table = new ArrayTableModel();
     table.values = row.slice();
     this.operations.push(new AddRowOperation(index, table));
-    console.log('ADDED!');
     this.endTransaction();
   }
 
@@ -61,13 +61,35 @@ export class ArrayTableModel extends TableModel {
    * @throws RangeError - The source or destination are not within this table's
    *                      range.
    */
-  public moveRow(source: number, destination: number): void {}
+  public moveRow(source: number, destination: number): void {
+    if(source > this.rowCount || source < 0) {
+      throw RangeError();
+    }
+    if(destination > this.rowCount || destination < 0) {
+      throw RangeError();
+    }
+    this.beginTransaction();
+    this.endTransaction();
+  }
 
   /** Removes a row from the table.
    * @param index - The index of the row to remove.
    * @throws RangeError - The index is not within this table's range.
    */
-  public removeRow(index: number): void {}
+  public removeRow(index: number): void {
+    console.log('current table is ' + this.values[0]);
+    console.log('current ops! ' + this.operations);
+    if(index > this.rowCount - 1 || index < 0) {
+      this.dispatcher.dispatch(null);
+      throw RangeError();
+    }
+    this.beginTransaction();
+    const table = new ArrayTableModel();
+    table.values = this.values.slice(index, index+1);
+    this.values.splice(index, 1);
+    this.operations.push(new RemoveRowOperation(index, table));
+    this.endTransaction();
+  }
 
   /** Sets a value at a specified row and column.
    * @param row - The row to set.
@@ -75,7 +97,21 @@ export class ArrayTableModel extends TableModel {
    * @param value - The value to set at the specified row and column.
    * @throws RangeError - The row or column is not within this table's range.
    */
-  public set(row: number, column: number, value: any): void {}
+  public set(row: number, column: number, value: any): void {
+    if(row > this.rowCount - 1 || row  < 0) {
+      throw RangeError();
+    }
+    if(column > this.columnCount - 1  || this.columnCount - 1 < 0) {
+      throw RangeError();
+    }
+    this.beginTransaction();
+    const table = new ArrayTableModel();
+    table.values = this.values.slice();
+    const previous = table.values[row].slice(column, column+1);
+    table.values[row][column] = value;
+    this.operations.push(new UpdateValueOperation(row, column, previous, value));
+    this.endTransaction();
+  }
 
   public get rowCount(): number {
     if(this.values.length === 1 && this.values[0].length === 0){
