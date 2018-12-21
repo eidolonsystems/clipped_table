@@ -49,7 +49,6 @@ export class ArrayTableModel extends TableModel {
     const table = new ArrayTableModel();
     table.values = row.slice();
     this.operations.push(new AddRowOperation(index, table));
-    console.log(this.values);
     this.endTransaction();
   }
 
@@ -126,7 +125,7 @@ export class ArrayTableModel extends TableModel {
   }
 
   public get columnCount(): number {
-    if(this.rowCount === 0){
+    if(this.rowCount === 0) {
       return 0;
     } else {
       return this.values[0].length;
