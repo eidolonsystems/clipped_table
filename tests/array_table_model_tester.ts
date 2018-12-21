@@ -1,6 +1,6 @@
-import { Expect, Test } from "alsatian";
+import { Expect, Test, IgnoreTest } from "alsatian";
 import { AddRowOperation, ArrayTableModel, MoveRowOperation, Operation,
-  RemoveRowOperation, UpdateValueOperation } from '../source';
+  RemoveRowOperation, UpdateValueOperation, TableModel } from '../source';
 
 /** Tests the ArrayTableModel. */
 export class ArrayTableModelTester {
@@ -10,11 +10,16 @@ export class ArrayTableModelTester {
   public testAddRow(): void {
     const model = new ArrayTableModel();
     let receivedIndex = undefined;
+    let addedRow = new ArrayTableModel();
     const slot = (operations: Operation[]) => {
       if(operations) {
         const operation = operations[operations.length - 1];
         if(operation instanceof AddRowOperation) {
           receivedIndex = operation.index;
+          if(operation.row instanceof ArrayTableModel) {
+            addedRow = operation.row;
+            console.log('BEEP BEEP');
+          }
         } else {
           Expect(false).toEqual(true);
         }
@@ -28,8 +33,14 @@ export class ArrayTableModelTester {
     Expect(() => model.addRow([1, 2], 0)).not.toThrow();
     Expect(model.rowCount).toEqual(1);
     Expect(model.get(0, 0)).toEqual(1);
+    console.log('BEEP');
     Expect(model.get(0, 1)).toEqual(2);
     Expect(receivedIndex).toEqual(0);
+    if(addedRow instanceof ArrayTableModel) {
+      Expect(addedRow.get(0, 0)).toEqual(1);
+      console.log('BEEP');
+      Expect(addedRow.get(0, 1)).toEqual(2);
+    }
     receivedIndex = undefined;
     Expect(() => model.addRow([1, 2, 3], 0)).toThrow();
     Expect(receivedIndex).toEqual(undefined);

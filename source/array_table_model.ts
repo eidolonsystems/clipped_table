@@ -48,6 +48,7 @@ export class ArrayTableModel extends TableModel {
     this.values.splice(index, 0, row.slice());
     const table = new ArrayTableModel();
     table.values = row.slice();
+    console.log(table.values);
     this.operations.push(new AddRowOperation(index, table));
     this.endTransaction();
   }
