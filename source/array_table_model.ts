@@ -50,6 +50,7 @@ export class ArrayTableModel extends TableModel {
     const table = new ArrayTableModel();
     table.values = row.slice();
     this.operations.push(new AddRowOperation(index, table));
+    console.log(this.values);
     this.endTransaction();
   }
 
@@ -106,7 +107,7 @@ export class ArrayTableModel extends TableModel {
     if(row > this.rowCount - 1 || row  < 0) {
       throw RangeError();
     }
-    if(column > this.columnCount - 1  || this.columnCount - 1 < 0) {
+    if(column > this.columnCount - 1  || column < 0) {
       throw RangeError();
     }
     this.beginTransaction();
