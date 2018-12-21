@@ -34,17 +34,15 @@ export class ArrayTableModel extends TableModel {
    * @throws RangeError - The index specified is not within range.
    */
   public addRow(row: any[], index?: number): void {
-    console.log('current table is ' + this.values.toString());
-    console.log('current ops! ' + this.operations);
+    //console.log('current table is ' + this.values.toString());
+    //console.log('current ops! ' + this.operations);
     if(this.rowCount != 0 && row.length != this.columnCount) {
-      this.dispatcher.dispatch(null);
       throw RangeError();
     }
     if(index === undefined) {
       index = this.values.length;
     }
     if(index > this.rowCount || index < 0) { //????????????
-      this.dispatcher.dispatch(null);
       throw RangeError();
     }
     this.beginTransaction();
@@ -68,6 +66,9 @@ export class ArrayTableModel extends TableModel {
     if(destination > this.rowCount || destination < 0) {
       throw RangeError();
     }
+    if(source === destination){
+      return;
+    }
     this.beginTransaction();
     const row = this.values[source];
     this.values.splice(source, 1);
@@ -81,8 +82,8 @@ export class ArrayTableModel extends TableModel {
    * @throws RangeError - The index is not within this table's range.
    */
   public removeRow(index: number): void {
-    console.log('current table is ' + this.values[0]);
-    console.log('current ops! ' + this.operations);
+    //console.log('current table is ' + this.values[0]);
+    //console.log('current ops! ' + this.operations);
     if(index > this.rowCount - 1 || index < 0) {
       this.dispatcher.dispatch(null);
       throw RangeError();
