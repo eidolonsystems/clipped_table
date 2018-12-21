@@ -1,5 +1,6 @@
 import { Expect, Test } from "alsatian";
-import { AddRowOperation, ArrayTableModel, Operation, RemoveRowOperation, MoveRowOperation, UpdateValueOperation } from '../source';
+import { AddRowOperation, ArrayTableModel, MoveRowOperation, Operation,
+  RemoveRowOperation, UpdateValueOperation } from '../source';
 
 /** Tests the ArrayTableModel. */
 export class ArrayTableModelTester {
@@ -11,13 +12,13 @@ export class ArrayTableModelTester {
     let receivedIndex = undefined;
     const slot = (operations: Operation[]) => {
       if(operations) {
-        const operation = operations[operations.length-1];
+        const operation = operations[operations.length - 1];
         if(operation instanceof AddRowOperation) {
           receivedIndex = operation.index;
         } else {
           receivedIndex = undefined;
           Expect(false).toEqual(true);
-        } 
+        }
       } else {
         receivedIndex = undefined;
         Expect(false).toEqual(true);
@@ -37,11 +38,11 @@ export class ArrayTableModelTester {
     receivedIndex = undefined;
     Expect(() => model.addRow([5, 7], 1)).not.toThrow();
     Expect(model.rowCount).toEqual(2);
-    Expect(model.get(0, 0)).toEqual(1); 
+    Expect(model.get(0, 0)).toEqual(1);
     Expect(model.get(0, 1)).toEqual(2);
     Expect(model.get(1, 0)).toEqual(5);
     Expect(model.get(1, 1)).toEqual(7);
-    Expect(receivedIndex).toEqual(1); 
+    Expect(receivedIndex).toEqual(1);
     listener.unlisten();
   }
   /** Tests removing rows. */
@@ -54,10 +55,9 @@ export class ArrayTableModelTester {
         const operation = operations[operations.length - 1];
         if(operation instanceof RemoveRowOperation ) {
           receivedIndex = operation.index;
-        } else if (operation instanceof AddRowOperation){
+        } else if (operation instanceof AddRowOperation) {
           //???????????????
-        } 
-        else {
+        } else {
           receivedIndex = undefined;
           Expect(false).toEqual(true);
         }
@@ -73,22 +73,18 @@ export class ArrayTableModelTester {
     Expect(() => model.removeRow(1)).toThrow();
     Expect(() => model.addRow([1, 2])).not.toThrow();
     Expect(model.rowCount).toEqual(1);
-    console.log('added first row');
 
     Expect(() => model.addRow([3, 4])).not.toThrow();
     Expect(model.rowCount).toEqual(2);
-    console.log('added second row');
 
     Expect(() => model.addRow([5, 6])).not.toThrow();
     Expect(model.rowCount).toEqual(3);
-    console.log('added third row');
 
     Expect(() => model.removeRow(0)).not.toThrow();
     Expect(model.rowCount).toEqual(2)
     Expect(receivedIndex).toEqual(0); 
     Expect(() => model.removeRow(2)).toThrow();
     Expect(receivedIndex).toEqual(undefined); 
-    console.log('Want to reach here!');
     listener.unlisten();
   }
   /** Tests setting rows. */

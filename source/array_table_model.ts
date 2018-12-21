@@ -1,5 +1,6 @@
 import * as Kola from 'kola-signals';
-import { AddRowOperation, RemoveRowOperation, Operation, UpdateValueOperation, MoveRowOperation } from './operations';
+import { AddRowOperation, MoveRowOperation, Operation,
+  RemoveRowOperation, UpdateValueOperation } from './operations';
 import { TableModel } from './table_model';
 
 /** Implements a TableModel using an 2-dimensional array. */
@@ -34,15 +35,13 @@ export class ArrayTableModel extends TableModel {
    * @throws RangeError - The index specified is not within range.
    */
   public addRow(row: any[], index?: number): void {
-    //console.log('current table is ' + this.values.toString());
-    //console.log('current ops! ' + this.operations);
-    if(this.rowCount != 0 && row.length != this.columnCount) {
+    if(this.rowCount !== 0 && row.length !== this.columnCount) {
       throw RangeError();
     }
     if(index === undefined) {
       index = this.values.length;
     }
-    if(index > this.rowCount || index < 0) { //????????????
+    if(index > this.rowCount || index < 0) {
       throw RangeError();
     }
     this.beginTransaction();
@@ -67,7 +66,7 @@ export class ArrayTableModel extends TableModel {
     if(destination > this.rowCount || destination < 0) {
       throw RangeError();
     }
-    if(source === destination){
+    if(source === destination) {
       return;
     }
     this.beginTransaction();
@@ -83,15 +82,13 @@ export class ArrayTableModel extends TableModel {
    * @throws RangeError - The index is not within this table's range.
    */
   public removeRow(index: number): void {
-    //console.log('current table is ' + this.values[0]);
-    //console.log('current ops! ' + this.operations);
     if(index > this.rowCount - 1 || index < 0) {
       this.dispatcher.dispatch(null);
       throw RangeError();
     }
     this.beginTransaction();
     const row = new ArrayTableModel();
-    row.values = this.values.slice(index, index+1);
+    row.values = this.values.slice(index, index + 1);
     this.values.splice(index, 1);
     this.operations.push(new RemoveRowOperation(index, row));
     this.endTransaction();
@@ -113,14 +110,15 @@ export class ArrayTableModel extends TableModel {
     this.beginTransaction();
     const table = new ArrayTableModel();
     table.values = this.values.slice();
-    const previous = table.values[row].slice(column, column+1);
+    const previous = table.values[row].slice(column, column + 1);
     table.values[row][column] = value;
-    this.operations.push(new UpdateValueOperation(row, column, previous, value));
+    this.operations.push(new UpdateValueOperation(
+      row, column, previous, value));
     this.endTransaction();
   }
 
   public get rowCount(): number {
-    if(this.values.length === 1 && this.values[0].length === 0){
+    if(this.values.length === 1 && this.values[0].length === 0) {
       return 0;
     } else {
       return this.values.length;
