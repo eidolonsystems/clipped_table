@@ -18,7 +18,6 @@ export class ArrayTableModelTester {
           receivedIndex = operation.index;
           if(operation.row instanceof ArrayTableModel) {
             addedRow = operation.row;
-            console.log('BEEP BEEP');
           }
         } else {
           Expect(false).toEqual(true);
@@ -33,12 +32,10 @@ export class ArrayTableModelTester {
     Expect(() => model.addRow([1, 2], 0)).not.toThrow();
     Expect(model.rowCount).toEqual(1);
     Expect(model.get(0, 0)).toEqual(1);
-    console.log('BEEP');
     Expect(model.get(0, 1)).toEqual(2);
     Expect(receivedIndex).toEqual(0);
     if(addedRow instanceof ArrayTableModel) {
       Expect(addedRow.get(0, 0)).toEqual(1);
-      console.log('BEEP');
       Expect(addedRow.get(0, 1)).toEqual(2);
     }
     receivedIndex = undefined;
@@ -59,11 +56,15 @@ export class ArrayTableModelTester {
   public testRemoveRow(): void {
     const model = new ArrayTableModel();
     let receivedIndex = undefined;
+    let removedRow = new ArrayTableModel();
     const slot = (operations: Operation[]) => {
       if(operations) {
         const operation = operations[operations.length - 1];
         if(operation instanceof RemoveRowOperation ) {
           receivedIndex = operation.index;
+          if(operation.row instanceof ArrayTableModel) {
+            removedRow = operation.row;
+          }
         } else if (operation instanceof AddRowOperation) {
           return;
         } else {
@@ -86,6 +87,10 @@ export class ArrayTableModelTester {
     Expect(() => model.removeRow(0)).not.toThrow();
     Expect(model.rowCount).toEqual(2);
     Expect(receivedIndex).toEqual(0);
+    if(removedRow instanceof ArrayTableModel) {
+      Expect(removedRow.get(0, 0)).toEqual(1);
+      Expect(removedRow.get(0, 1)).toEqual(2);
+    }
     receivedIndex = undefined;
     Expect(() => model.get(0,0).toEqual(3));
     Expect(() => model.get(0,1).toEqual(4));

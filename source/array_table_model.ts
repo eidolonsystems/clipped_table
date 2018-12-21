@@ -47,8 +47,7 @@ export class ArrayTableModel extends TableModel {
     this.beginTransaction();
     this.values.splice(index, 0, row.slice());
     const table = new ArrayTableModel();
-    table.values = row.slice();
-    console.log(table.values);
+    table.values.push(row.slice());
     this.operations.push(new AddRowOperation(index, table));
     this.endTransaction();
   }
@@ -88,7 +87,7 @@ export class ArrayTableModel extends TableModel {
     }
     this.beginTransaction();
     const row = new ArrayTableModel();
-    row.values = this.values.slice(index, index + 1);
+    row.values.push(this.values.slice(index, index + 1));
     this.values.splice(index, 1);
     this.operations.push(new RemoveRowOperation(index, row));
     this.endTransaction();
