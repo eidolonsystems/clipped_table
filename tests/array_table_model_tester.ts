@@ -75,9 +75,7 @@ export class ArrayTableModelTester {
       }
     };
     const listener = model.connect(slot);
-    Expect(model.rowCount).toEqual(0);
-    Expect(model.columnCount).toEqual(0);
-    Expect(() => model.removeRow(1)).toThrow();
+    Expect(() => model.removeRow(0)).toThrow();
     Expect(receivedIndex).toEqual(undefined);
     receivedIndex = undefined;
     Expect(() => model.addRow([1, 2])).not.toThrow();
@@ -87,15 +85,15 @@ export class ArrayTableModelTester {
     Expect(() => model.removeRow(0)).not.toThrow();
     Expect(model.rowCount).toEqual(2);
     Expect(receivedIndex).toEqual(0);
+    receivedIndex = undefined;
     if(removedRow instanceof ArrayTableModel) {
       Expect(removedRow.get(0, 0)).toEqual(1);
       Expect(removedRow.get(0, 1)).toEqual(2);
     }
-    receivedIndex = undefined;
-    Expect(() => model.get(0,0).toEqual(3));
-    Expect(() => model.get(0,1).toEqual(4));
-    Expect(() => model.get(1,0).toEqual(5));
-    Expect(() => model.get(1,1).toEqual(6));
+    Expect(() => model.get(0, 0).toEqual(3));
+    Expect(() => model.get(0, 1).toEqual(4));
+    Expect(() => model.get(1, 0).toEqual(5));
+    Expect(() => model.get(1, 1).toEqual(6));
     Expect(() => model.removeRow(2)).toThrow();
     Expect(receivedIndex).toEqual(undefined);
     listener.unlisten();
@@ -126,36 +124,22 @@ export class ArrayTableModelTester {
       }
     };
     const listener = model.connect(slot);
-    Expect(model.rowCount).toEqual(0);
-    Expect(model.columnCount).toEqual(0);
-    Expect(() => model.set(0,0,10)).toThrow();
+    Expect(() => model.set(0, 0, 10)).toThrow();
     Expect(oldValue).toEqual(undefined);
     Expect(newValue).toEqual(undefined);
     Expect(indexRow).toEqual(undefined);
     Expect(indexColumn).toEqual(undefined);
     model.addRow([1, 2]);
     model.addRow([3, 4]);
-    Expect(() => model.set(1,0, 9)).not.toThrow();
+    Expect(() => model.set(1, 0, 9)).not.toThrow();
     Expect(oldValue).toEqual(3);
     Expect(newValue).toEqual(9);
     Expect(indexRow).toEqual(1);
     Expect(indexColumn).toEqual(0);
-    Expect(() => model.get(0,0).toEqual(8));
-    Expect(() => model.get(1,0).toEqual(9));
-    oldValue = undefined;
-    newValue = undefined;
-    indexRow = undefined;
-    indexColumn = undefined;
-    Expect(() => model.set(0,8, 9)).toThrow();
-    Expect(oldValue).toEqual(undefined);
-    Expect(newValue).toEqual(undefined);
-    Expect(indexRow).toEqual(undefined);
-    Expect(indexColumn).toEqual(undefined);
-    Expect(() => model.set(8,0, 9)).toThrow();
-    Expect(oldValue).toEqual(undefined);
-    Expect(newValue).toEqual(undefined);
-    Expect(indexRow).toEqual(undefined);
-    Expect(indexColumn).toEqual(undefined);
+    Expect(() => model.get(0, 0).toEqual(8));
+    Expect(() => model.get(1, 0).toEqual(9));
+    Expect(() => model.set(0, 8, 9)).toThrow();
+    Expect(() => model.set(8, 0, 9)).toThrow();
     listener.unlisten();
   }
   /** Tests movings rows. */

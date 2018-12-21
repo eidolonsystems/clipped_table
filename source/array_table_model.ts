@@ -59,10 +59,10 @@ export class ArrayTableModel extends TableModel {
    *                      range.
    */
   public moveRow(source: number, destination: number): void {
-    if(source > this.rowCount || source < 0) {
+    if(source >= this.rowCount || source < 0) {
       throw RangeError();
     }
-    if(destination > this.rowCount || destination < 0) {
+    if(destination >= this.rowCount || destination < 0) {
       throw RangeError();
     }
     if(source === destination) {
@@ -71,7 +71,7 @@ export class ArrayTableModel extends TableModel {
     this.beginTransaction();
     const row = this.values[source];
     this.values.splice(source, 1);
-    this.values.splice(destination, 0, row.slice());
+    this.values.splice(destination, 0, row);
     this.operations.push(new MoveRowOperation(source, destination));
     this.endTransaction();
   }
@@ -81,13 +81,13 @@ export class ArrayTableModel extends TableModel {
    * @throws RangeError - The index is not within this table's range.
    */
   public removeRow(index: number): void {
-    if(index > this.rowCount - 1 || index < 0) {
-      this.dispatcher.dispatch(null);
+    if(index >= this.rowCount || index < 0) {
+
       throw RangeError();
     }
     this.beginTransaction();
     const row = new ArrayTableModel();
-    row.values.push(this.values.slice(index, index + 1));
+    row.values.push(this.values[index]);
     this.values.splice(index, 1);
     this.operations.push(new RemoveRowOperation(index, row));
     this.endTransaction();
@@ -100,28 +100,22 @@ export class ArrayTableModel extends TableModel {
    * @throws RangeError - The row or column is not within this table's range.
    */
   public set(row: number, column: number, value: any): void {
-    if(row > this.rowCount - 1 || row  < 0) {
+    if(row >= this.rowCount || row  < 0) {
       throw RangeError();
     }
-    if(column > this.columnCount - 1  || column < 0) {
+    if(column >= this.columnCount  || column < 0) {
       throw RangeError();
     }
     this.beginTransaction();
-    const table = new ArrayTableModel();
-    table.values = this.values.slice();
-    const previous = table.values[row].slice(column, column + 1);
-    table.values[row][column] = value;
+    const previous = this.values[row][column];
+    this.values[row][column] = value;
     this.operations.push(new UpdateValueOperation(
       row, column, previous, value));
     this.endTransaction();
   }
 
   public get rowCount(): number {
-    if(this.values.length === 1 && this.values[0].length === 0) {
-      return 0;
-    } else {
-      return this.values.length;
-    }
+    return this.values.length;
   }
 
   public get columnCount(): number {
