@@ -1,5 +1,5 @@
 import * as Kola from 'kola-signals';
-import { AddRowOperation, RemoveRowOperation, Operation, UpdateValueOperation } from './operations';
+import { AddRowOperation, RemoveRowOperation, Operation, UpdateValueOperation, MoveRowOperation } from './operations';
 import { TableModel } from './table_model';
 
 /** Implements a TableModel using an 2-dimensional array. */
@@ -69,6 +69,10 @@ export class ArrayTableModel extends TableModel {
       throw RangeError();
     }
     this.beginTransaction();
+    const row = this.values[source];
+    this.values.splice(source, 1);
+    this.values.splice(destination, 0, row.slice());
+    this.operations.push(new MoveRowOperation(source, destination));
     this.endTransaction();
   }
 
@@ -84,10 +88,10 @@ export class ArrayTableModel extends TableModel {
       throw RangeError();
     }
     this.beginTransaction();
-    const table = new ArrayTableModel();
-    table.values = this.values.slice(index, index+1);
+    const row = new ArrayTableModel();
+    row.values = this.values.slice(index, index+1);
     this.values.splice(index, 1);
-    this.operations.push(new RemoveRowOperation(index, table));
+    this.operations.push(new RemoveRowOperation(index, row));
     this.endTransaction();
   }
 
@@ -130,7 +134,6 @@ export class ArrayTableModel extends TableModel {
   }
 
   public get(row: number, column: number): any {
-    console.log('Value is: ' + this.values[row][column]);
     return this.values[row][column];
   }
 
