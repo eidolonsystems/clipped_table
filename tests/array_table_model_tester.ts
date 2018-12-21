@@ -1,4 +1,4 @@
-import { Expect, Test, IgnoreTest } from "alsatian";
+import { Expect, Test } from 'alsatian';
 import { AddRowOperation, ArrayTableModel, MoveRowOperation, Operation,
   RemoveRowOperation, UpdateValueOperation, TableModel } from '../source';
 
