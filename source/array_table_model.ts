@@ -20,11 +20,15 @@ export class ArrayTableModel extends TableModel {
    *  the parent transaction.
    */
   public beginTransaction(): void {
+    this.transactionCount = this.transactionCount + 1;
   }
 
   /** Ends a transaction. */
   public endTransaction(): void {
-    this.dispatcher.dispatch(this.operations);
+    this.transactionCount = this.transactionCount - 1;
+    if(this.transactionCount === 0) {
+      this.dispatcher.dispatch(this.operations);
+    }
   }
 
   /** Adds a row to the table.
