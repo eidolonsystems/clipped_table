@@ -51,6 +51,7 @@ export class ArrayTableModelTester {
     Expect(receivedIndex).toEqual(1);
     listener.unlisten();
   }
+
   /** Tests removing rows. */
   @Test()
   public testRemoveRow(): void {
@@ -98,6 +99,7 @@ export class ArrayTableModelTester {
     Expect(receivedIndex).toEqual(undefined);
     listener.unlisten();
   }
+
   /** Tests setting rows. */
   @Test()
   public testSetRow(): void {
@@ -142,6 +144,7 @@ export class ArrayTableModelTester {
     Expect(() => model.set(8, 0, 9)).toThrow();
     listener.unlisten();
   }
+
   /** Tests movings rows. */
   @Test()
   public testMoveRow(): void {

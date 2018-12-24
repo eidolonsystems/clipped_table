@@ -82,7 +82,6 @@ export class ArrayTableModel extends TableModel {
    */
   public removeRow(index: number): void {
     if(index >= this.rowCount || index < 0) {
-
       throw RangeError();
     }
     this.beginTransaction();
