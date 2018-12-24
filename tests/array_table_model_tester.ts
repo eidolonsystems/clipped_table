@@ -53,7 +53,7 @@ export class ArrayTableModelTester {
   }
 
   /** Tests removing rows. */
-//  @Test()
+  @Test()
   public testRemoveRow(): void {
     const model = new ArrayTableModel();
     let receivedIndex = undefined;
@@ -101,7 +101,7 @@ export class ArrayTableModelTester {
   }
 
   /** Tests setting rows. */
-//  @Test()
+  @Test()
   public testSetRow(): void {
     const model = new ArrayTableModel();
     let oldValue = undefined;
@@ -146,7 +146,7 @@ export class ArrayTableModelTester {
   }
 
   /** Tests movings rows. */
-//  @Test()
+  @Test()
   public testMoveRow(): void {
     const model = new ArrayTableModel();
     let sourceIndex = undefined;
@@ -200,7 +200,7 @@ export class ArrayTableModelTester {
     listener.unlisten();
   }
 
-  /** Tests movings rows. */
+  /** Tests recursive transactions. */
   @Test()
   public testRecursive(): void {
     const model = new ArrayTableModel();
