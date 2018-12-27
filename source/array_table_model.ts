@@ -27,6 +27,7 @@ export class ArrayTableModel extends TableModel {
   public endTransaction(): void {
     --this.transactionCount;
     if(this.transactionCount === 0) {
+      console.log(this.values);
       this.dispatcher.dispatch(this.operations);
     }
   }
