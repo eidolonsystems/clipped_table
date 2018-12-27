@@ -199,4 +199,58 @@ export class ArrayTableModelTester {
     Expect(destinationIndex).toEqual(2);
     listener.unlisten();
   }
+
+  /** Tests recursive transactions. */
+  @Test()
+  public testRecursive(): void {
+    const model = new ArrayTableModel();
+    const slot = (operations: Operation[]) => {
+      Expect(operations.length).toEqual(5);
+      if(operations) {
+        if(operations[0] instanceof AddRowOperation &&
+          operations[1] instanceof UpdateValueOperation &&
+          operations[2] instanceof AddRowOperation &&
+          operations[3] instanceof RemoveRowOperation &&
+          operations[4] instanceof AddRowOperation) {
+            Expect(true).toEqual(true);
+        }
+      } else {
+        Expect(false).toEqual(true);
+      }
+    };
+    const listener = model.connect(slot);
+    model.beginTransaction();
+    model.addRow([1, 2, 3]);
+    model.beginTransaction();
+    model.set(0, 0, 10);
+    model.beginTransaction();
+    model.addRow([9, 0, 2]);
+    model.endTransaction();
+    model.removeRow(1);
+    model.endTransaction();
+    model.addRow([8, 9, 9]);
+    model.endTransaction();
+    listener.unlisten();
+  }
+
+  /** Tests multiple adds and removals. */
+  @Test()
+  public testTwoAdds(): void {
+    const model = new ArrayTableModel();
+    let numberOfOperations = 0;
+    const slot = (operations: Operation[]) => {
+      if(operations) {
+        numberOfOperations = operations.length;
+      } else {
+        Expect(false).toEqual(true);
+      }
+    };
+    const listener = model.connect(slot);
+    model.addRow([1, 2, 3]);
+    model.addRow([9, 0, 2]);
+    model.removeRow(1);
+    model.removeRow(0);
+    Expect(numberOfOperations).toEqual(1);
+    listener.unlisten();
+  }
 }
