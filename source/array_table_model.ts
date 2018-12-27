@@ -11,7 +11,6 @@ export class ArrayTableModel extends TableModel {
     super();
     this.values = [];
     this.transactionCount = 0;
-    this.operations = [];
     this.dispatcher = new Kola.Dispatcher<Operation[]>();
   }
 
@@ -20,6 +19,9 @@ export class ArrayTableModel extends TableModel {
    *  the parent transaction.
    */
   public beginTransaction(): void {
+    if(this.transactionCount === 0) {
+      this.operations = [];
+    }
     ++this.transactionCount;
   }
 
@@ -27,7 +29,6 @@ export class ArrayTableModel extends TableModel {
   public endTransaction(): void {
     --this.transactionCount;
     if(this.transactionCount === 0) {
-      console.log(this.values);
       this.dispatcher.dispatch(this.operations);
     }
   }

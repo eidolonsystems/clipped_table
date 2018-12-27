@@ -6,7 +6,7 @@ import { AddRowOperation, ArrayTableModel, MoveRowOperation, Operation,
 export class ArrayTableModelTester {
 
   /** Tests adding rows. */
-//  @Test()
+  @Test()
   public testAddRow(): void {
     const model = new ArrayTableModel();
     let receivedIndex = undefined;
@@ -53,7 +53,7 @@ export class ArrayTableModelTester {
   }
 
   /** Tests removing rows. */
-// @Test()
+  @Test()
   public testRemoveRow(): void {
     const model = new ArrayTableModel();
     let receivedIndex = undefined;
@@ -101,7 +101,7 @@ export class ArrayTableModelTester {
   }
 
   /** Tests setting rows. */
-//  @Test()
+  @Test()
   public testSetRow(): void {
     const model = new ArrayTableModel();
     let oldValue = undefined;
@@ -146,7 +146,7 @@ export class ArrayTableModelTester {
   }
 
   /** Tests movings rows. */
-//  @Test()
+  @Test()
   public testMoveRow(): void {
     const model = new ArrayTableModel();
     let sourceIndex = undefined;
@@ -201,7 +201,7 @@ export class ArrayTableModelTester {
   }
 
   /** Tests recursive transactions. */
-//  @Test()
+  @Test()
   public testRecursive(): void {
     const model = new ArrayTableModel();
     const slot = (operations: Operation[]) => {
@@ -239,9 +239,8 @@ export class ArrayTableModelTester {
     const model = new ArrayTableModel();
     let numberOfOperations = 0;
     const slot = (operations: Operation[]) => {
-      numberOfOperations = operations.length;
       if(operations) {
-        // console.log(operations[operations.length - 1]);
+        numberOfOperations = operations.length;
       } else {
         Expect(false).toEqual(true);
       }
@@ -251,7 +250,7 @@ export class ArrayTableModelTester {
     model.addRow([9, 0, 2]);
     model.removeRow(1);
     model.removeRow(0);
-    Expect(numberOfOperations).toEqual(4);
+    Expect(numberOfOperations).toEqual(1);
     listener.unlisten();
   }
 }
