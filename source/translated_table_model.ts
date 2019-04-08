@@ -46,10 +46,10 @@ export class TranslatedTableModel extends TableModel {
    * @throws RangeError - The index specified is not within range.
    */
   public moveRow(source: number, destination: number): void {
-    if(source > this.rowCount || source < 0) {
+    if(source >= this.rowCount || source < 0) {
       throw RangeError();
     }
-    if(destination > this.rowCount || destination < 0) {
+    if(destination >= this.rowCount || destination < 0) {
       throw RangeError();
     }
     this.beginTransaction();
