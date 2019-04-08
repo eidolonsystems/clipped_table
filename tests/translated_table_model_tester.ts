@@ -1,6 +1,6 @@
 import { Expect, Test } from 'alsatian';
-import { ArrayTableModel, MoveRowOperation,  Operation,
-  TranslatedTableModel } from '../source';
+import { ArrayTableModel, AddRowOperation, Operation, RemoveRowOperation,
+  TranslatedTableModel, UpdateValueOperation } from '../source';
 
 /** Tests the TranslatedTableModel. */
 export class TranslatedTableModelTester {
@@ -182,5 +182,43 @@ export class TranslatedTableModelTester {
     Expect(translatedTable.get(0, 1)).toEqual(2);
     Expect(translatedTable.get(1, 0)).toEqual(9);
     Expect(translatedTable.get(1, 1)).toEqual(9);
+  }
+
+  /** Tests the signals that translated table model sends. */
+  @Test()
+  public testChildTable(): void {
+    const model = new ArrayTableModel();
+    const translatedTable = new TranslatedTableModel(model);
+    model.addRow([0,0,0]);
+    model.addRow([1,1,1]);
+    model.addRow([2,2,2]);
+    translatedTable.moveRow(2, 1);
+    const translatedTable2 = new TranslatedTableModel(translatedTable);
+    const slot = (operations: Operation[]) => {
+      console.log(operations);
+      Expect(operations.length).toEqual(3);
+      if(operations) {
+        if(operations[0] instanceof AddRowOperation &&
+          operations[1] instanceof UpdateValueOperation &&
+          operations[2] instanceof RemoveRowOperation) {
+            Expect(true).toEqual(true);
+        }
+      } else {
+        Expect(false).toEqual(true);
+      }
+    };
+    const listener = translatedTable2.connect(slot);
+    model.beginTransaction();
+    model.addRow([4, 4, 4]);
+    model.beginTransaction();
+    model.set(0, 1, 10);
+    model.endTransaction();
+    model.removeRow(1);
+    model.endTransaction();
+    listener.unlisten();
+    Expect(translatedTable2.get(0, 0)).toEqual(0);
+    Expect(translatedTable2.get(0, 1)).toEqual(10);
+    Expect(translatedTable2.get(1, 0)).toEqual(2);
+    Expect(translatedTable2.get(2, 0)).toEqual(4);
   }
 }

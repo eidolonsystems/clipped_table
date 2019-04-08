@@ -155,13 +155,13 @@ export class TranslatedTableModel extends TableModel {
         this.references[index] = this.references[index] + 1;
       }
     }
-    this.operations.push();
+    this.operations.push(new AddRowOperation(referenceIndex,operation.row));
     this.endTransaction();
   }
 
   private rowRemoved(operation: RemoveRowOperation) {
     this.beginTransaction();
-    let referenceIndex = -1;
+    let referenceIndex = operation.index;
     for(let index = 0; index < this.references.length; index++ ) {
       if(this.references[index] === operation.index) {
         referenceIndex = index;
@@ -180,7 +180,7 @@ export class TranslatedTableModel extends TableModel {
 
   private updateRow(operation: UpdateValueOperation) {
     this.beginTransaction();
-    let referenceIndex = -1;
+    let referenceIndex = operation.row;
     for(let index = 0; index < this.references.length; index++ ) {
       if(this.references[index] === operation.row) {
         referenceIndex = index;
