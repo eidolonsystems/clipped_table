@@ -1,5 +1,5 @@
 import * as Kola from 'kola-signals';
-import { Operation, AddRowOperation, MoveRowOperation, 
+import { Operation, AddRowOperation, MoveRowOperation,
   RemoveRowOperation, UpdateValueOperation } from './operations';
 import { TableModel } from './table_model';
 
