@@ -98,13 +98,12 @@ export class TranslatedTableModel extends TableModel {
   }
 
   private handleOperations(newOperations: Operation[]): void {
+    this.beginTransaction();
     for(const operation of newOperations) {
       if(operation instanceof AddRowOperation) {
-        this.references.push();
-        this.moveDown(operation.index, this.references.length);
-        this.references[operation.index] = operation.index;
+        this.rowAdded(operation.index);
       } else if (operation instanceof MoveRowOperation) {
-        this.moveRow(operation.source, operation.destination);
+        // ??????
       } else if (operation instanceof RemoveRowOperation) {
         this.rowRemoved(operation.index);
       } else if (operation instanceof UpdateValueOperation) {
@@ -113,6 +112,7 @@ export class TranslatedTableModel extends TableModel {
         throw TypeError;
       }
     }
+    this.endTransaction();
   }
 
   private moveUp(start: number, end: number) {
@@ -126,11 +126,33 @@ export class TranslatedTableModel extends TableModel {
   }
 
   private moveDown(start: number, end: number) {
+    if(start === end) {
+      return;
+    }
+    if(end > start) {
+      throw RangeError();
+    }
     for(let index = start; index > end ; --index ) {
       if(this.references[index - 1] >= 0) {
         this.references[index] = this.references[index - 1];
       } else {
         this.references[index] = index - 1;
+      }
+    }
+  }
+
+  private rowAdded(addedRow: number) {
+    this.references.push(undefined);
+    let referenceIndex = addedRow;
+    for(let index = 0; index < this.references.length; index++ ) {
+      if(this.references[index] === addedRow) {
+        referenceIndex = index;
+      }
+    }
+    this.moveDown(this.references.length - 1, referenceIndex);
+    for(let index = 0; index < this.references.length; index++ ) {
+      if(this.references[index] >= addedRow && index !== referenceIndex) {
+        this.references[index] = this.references[index] + 1;
       }
     }
   }

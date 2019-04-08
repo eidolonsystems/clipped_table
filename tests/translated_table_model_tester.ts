@@ -8,9 +8,9 @@ export class TranslatedTableModelTester {
   /** Tests if the number of rows is correct */
   @Test()
   public testRowCount(): void {
-    const model = new ArrayTableModel();
-    const translatedTable = new TranslatedTableModel(model);
+    const translatedTable = new TranslatedTableModel(new ArrayTableModel());
     Expect(translatedTable.rowCount).toEqual(0);
+    const model = new ArrayTableModel();
     model.addRow([1, 2 ,3]);
     model.addRow([4, 5, 6]);
     model.addRow([7, 8, 9]);
@@ -21,9 +21,9 @@ export class TranslatedTableModelTester {
   /** Tests if the number of columns is corrrect. */
   @Test()
   public testColumnCount(): void {
-    const model = new ArrayTableModel();
-    const translatedTable = new TranslatedTableModel(model);
+    const translatedTable = new TranslatedTableModel(new ArrayTableModel());
     Expect(translatedTable.columnCount).toEqual(0);
+    const model = new ArrayTableModel();
     model.addRow([1, 2, 3, 0]);
     model.addRow([4, 5, 6, 0]);
     model.addRow([7, 8, 9, 0]);
@@ -35,9 +35,9 @@ export class TranslatedTableModelTester {
   @Test()
   public testGet(): void {
     const model = new ArrayTableModel();
-    const translatedTable = new TranslatedTableModel(model);
     model.addRow([1, 2, 3, 4, 5]);
     model.addRow([6, 7, 8, 9, 10]);
+    const translatedTable = new TranslatedTableModel(model);
     Expect(translatedTable.get(0,1)).toEqual(2);
     Expect(translatedTable.get(1,3)).toEqual(9);
   }
@@ -99,7 +99,6 @@ export class TranslatedTableModelTester {
     let numberOfOperations = 0;
     const slot = (operations: Operation[]) => {
       if(operations) {
-        console.log(operations);
         numberOfOperations = operations.length;
       } else {
         Expect(false).toEqual(true);
@@ -116,15 +115,37 @@ export class TranslatedTableModelTester {
   @Test()
   public testSignalListeningAdd(): void {
     const model = new ArrayTableModel();
-    model.addRow([1, 2]);
-    model.addRow([3, 4]);
-    model.addRow([5, 6]);
     const translatedTable = new TranslatedTableModel(model);
-    model.addRow([0, 0], 1);
-    Expect(translatedTable.get(0, 0)).toEqual(1);
-    Expect(translatedTable.get(1, 0)).toEqual(0);
-    Expect(translatedTable.get(2, 0)).toEqual(3);
-    Expect(translatedTable.get(3, 0)).toEqual(5);
+    model.addRow([0,0]);
+    model.addRow([1,1]);
+    Expect(translatedTable.get(0, 0)).toEqual(0);
+    Expect(translatedTable.get(1, 0)).toEqual(1);
+    const model2 = new ArrayTableModel();
+    model2.addRow([1, 2]);
+    model2.addRow([3, 4]);
+    model2.addRow([5, 6]);
+    model2.addRow([7, 8]);
+    const translatedTable2 = new TranslatedTableModel(model2);
+    translatedTable2.moveRow(2, 0);
+    model2.addRow([0, 0], 1);
+    Expect(translatedTable2.get(0, 0)).toEqual(5);
+    Expect(translatedTable2.get(1, 0)).toEqual(1);
+    Expect(translatedTable2.get(2, 0)).toEqual(0);
+    Expect(translatedTable2.get(3, 0)).toEqual(3);
+    Expect(translatedTable2.get(4, 0)).toEqual(7);
+    const model3 = new ArrayTableModel();
+    model3.addRow([1, 2]);
+    model3.addRow([3, 4]);
+    model3.addRow([5, 6]);
+    model3.addRow([7, 8]);
+    const translatedTable3 = new TranslatedTableModel(model3);
+    translatedTable3.moveRow(1, 3);
+    model3.addRow([0,0]);
+    Expect(translatedTable3.get(0, 0)).toEqual(1);
+    Expect(translatedTable3.get(1, 0)).toEqual(5);
+    Expect(translatedTable3.get(2, 0)).toEqual(7);
+    Expect(translatedTable3.get(3, 0)).toEqual(3);
+    Expect(translatedTable3.get(4, 0)).toEqual(0);
   }
 
   /** Tests when a row is removed from the original model. */
@@ -138,8 +159,6 @@ export class TranslatedTableModelTester {
     const translatedTable = new TranslatedTableModel(model);
     translatedTable.moveRow(2, 0);
     model.removeRow(1);
-    console.log(model);
-    console.log(translatedTable);
     model.get(0,0);
     translatedTable.get(0, 0);
     Expect(translatedTable.get(0, 0)).toEqual(5);
