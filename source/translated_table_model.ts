@@ -15,9 +15,8 @@ export class TranslatedTableModel extends TableModel {
     this.references = new Array(model.rowCount);
     this.transactionCount = 0;
     this.dispatcher = new Kola.Dispatcher<Operation[]>();
-    model.connect(
-      (operations: Operation[]) => {
-      this.handleOperations(operations);});
+    model.connect((operations: Operation[]) =>
+      this.handleOperations(operations));
   }
 
   /** Marks the beginning of a transaction. In cases where a transaction is

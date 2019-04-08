@@ -54,6 +54,7 @@ export class TranslatedTableModelTester {
     const translatedTable = new TranslatedTableModel(model);
     Expect(() => translatedTable.moveRow(-1, 3)).toThrow();
     Expect(() => translatedTable.moveRow(10, 3)).toThrow();
+    Expect(() => translatedTable.moveRow(5, 3)).toThrow();
     translatedTable.moveRow(0, 2);
     Expect(translatedTable.get(0,0)).toEqual(3);
     Expect(translatedTable.get(1,0)).toEqual(5);
@@ -207,7 +208,7 @@ export class TranslatedTableModelTester {
         Expect(false).toEqual(true);
       }
     };
-    const listener = childTable.connect(slot);
+    const listener = parentTable.connect(slot);
     model.beginTransaction();
     model.addRow([4, 4, 4]);
     model.beginTransaction();
