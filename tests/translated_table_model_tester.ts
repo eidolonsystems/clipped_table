@@ -55,6 +55,7 @@ export class TranslatedTableModelTester {
     Expect(() => translatedTable.moveRow(-1, 3)).toThrow();
     Expect(() => translatedTable.moveRow(10, 3)).toThrow();
     Expect(() => translatedTable.moveRow(5, 3)).toThrow();
+    Expect(() => translatedTable.moveRow(0, 5)).toThrow();
     translatedTable.moveRow(0, 2);
     Expect(translatedTable.get(0,0)).toEqual(3);
     Expect(translatedTable.get(1,0)).toEqual(5);
