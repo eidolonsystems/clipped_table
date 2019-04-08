@@ -61,9 +61,9 @@ export class TranslatedTableModel extends TableModel {
       traveller = source;
     }
     if(source > destination) {
-      this.moveDown(source, destination);
+      this.slideDown(source, destination);
     } else if(destination > source) {
-      this.moveUp(source, destination);
+      this.slideUp(source, destination);
     }
     this.references[destination] = traveller;
     this.operations.push(new MoveRowOperation(source, destination));
@@ -101,13 +101,11 @@ export class TranslatedTableModel extends TableModel {
     this.beginTransaction();
     for(const operation of newOperations) {
       if(operation instanceof AddRowOperation) {
-        this.rowAdded(operation.index);
-      } else if (operation instanceof MoveRowOperation) {
-        // ??????
+        this.rowAdded(operation);
       } else if (operation instanceof RemoveRowOperation) {
-        this.rowRemoved(operation.index);
+        this.rowRemoved(operation);
       } else if (operation instanceof UpdateValueOperation) {
-        // do nothing
+        this.updateRow(operation);
       } else {
         throw TypeError;
       }
@@ -115,7 +113,7 @@ export class TranslatedTableModel extends TableModel {
     this.endTransaction();
   }
 
-  private moveUp(start: number, end: number) {
+  private slideUp(start: number, end: number) {
     for(let index = start; index < end; index++ ) {
       if(this.references[index + 1] >= 0) {
         this.references[index] = this.references[index + 1];
@@ -125,7 +123,7 @@ export class TranslatedTableModel extends TableModel {
     }
   }
 
-  private moveDown(start: number, end: number) {
+  private slideDown(start: number, end: number) {
     if(start === end) {
       return;
     }
@@ -141,36 +139,57 @@ export class TranslatedTableModel extends TableModel {
     }
   }
 
-  private rowAdded(addedRow: number) {
+  private rowAdded(operation: AddRowOperation) {
+    this.beginTransaction();
     this.references.push(undefined);
-    let referenceIndex = addedRow;
+    let referenceIndex = operation.index;
     for(let index = 0; index < this.references.length; index++ ) {
-      if(this.references[index] === addedRow) {
+      if(this.references[index] === operation.index) {
         referenceIndex = index;
       }
     }
-    this.moveDown(this.references.length - 1, referenceIndex);
+    this.slideDown(this.references.length - 1, referenceIndex);
     for(let index = 0; index < this.references.length; index++ ) {
-      if(this.references[index] >= addedRow && index !== referenceIndex) {
+      if(this.references[index] >= operation.index
+          && index !== referenceIndex) {
         this.references[index] = this.references[index] + 1;
       }
     }
+    this.operations.push();
+    this.endTransaction();
   }
 
-  private rowRemoved(deletedRow: number) {
+  private rowRemoved(operation: RemoveRowOperation) {
+    this.beginTransaction();
     let referenceIndex = -1;
     for(let index = 0; index < this.references.length; index++ ) {
-      if(this.references[index] === deletedRow) {
+      if(this.references[index] === operation.index) {
         referenceIndex = index;
       }
     }
-    this.moveUp(referenceIndex, this.references.length);
+    this.slideUp(referenceIndex, this.references.length);
     this.references.pop();
     for(let index = 0; index < this.references.length; index++ ) {
-      if(this.references[index] > deletedRow) {
+      if(this.references[index] > operation.index) {
         this.references[index] = this.references[index] - 1;
       }
     }
+    this.operations.push(new RemoveRowOperation(referenceIndex, operation.row));
+    this.endTransaction();
+  }
+
+  private updateRow(operation: UpdateValueOperation) {
+    this.beginTransaction();
+    let referenceIndex = -1;
+    for(let index = 0; index < this.references.length; index++ ) {
+      if(this.references[index] === operation.row) {
+        referenceIndex = index;
+      }
+    }
+    this.operations.push(
+      new UpdateValueOperation(referenceIndex, operation.column,
+        operation.previous, operation.current));
+    this.endTransaction();
   }
 
   private model: TableModel;
