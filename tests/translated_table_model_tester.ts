@@ -46,11 +46,11 @@ export class TranslatedTableModelTester {
   @Test()
   public testMoveRow(): void {
     const model = new ArrayTableModel();
-    model.addRow([1, 2, 1, 2]);
-    model.addRow([3, 4, 3, 4]);
-    model.addRow([5, 6, 5, 6]);
-    model.addRow([7, 8, 7, 8]);
-    model.addRow([9, 0, 9, 0]);
+    model.addRow([1]);
+    model.addRow([3]);
+    model.addRow([5]);
+    model.addRow([7]);
+    model.addRow([9]);
     const translatedTable = new TranslatedTableModel(model);
     Expect(() => translatedTable.moveRow(-1, 3)).toThrow();
     Expect(() => translatedTable.moveRow(10, 3)).toThrow();
