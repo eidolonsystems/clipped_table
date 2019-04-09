@@ -210,6 +210,7 @@ export class TranslatedTableModelTester {
       }
     };
     const listener = parentTable.connect(slot);
+    const listener2 = childTable.connect(slot);
     model.beginTransaction();
     model.addRow([4, 4, 4]);
     model.beginTransaction();
@@ -218,6 +219,7 @@ export class TranslatedTableModelTester {
     model.removeRow(1);
     model.endTransaction();
     listener.unlisten();
+    listener2.unlisten();
     Expect(childTable.get(0, 0)).toEqual(0);
     Expect(childTable.get(0, 1)).toEqual(10);
     Expect(childTable.get(1, 0)).toEqual(3);

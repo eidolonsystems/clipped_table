@@ -155,7 +155,8 @@ export class TranslatedTableModel extends TableModel {
         this.references[index] = this.references[index] + 1;
       }
     }
-    this.operations.push(new AddRowOperation(referenceIndex,operation.row));
+    const row = new TranslatedTableModel(operation.row);
+    this.operations.push(new AddRowOperation(referenceIndex, row));
     this.endTransaction();
   }
 
@@ -174,7 +175,8 @@ export class TranslatedTableModel extends TableModel {
         this.references[index] = this.references[index] - 1;
       }
     }
-    this.operations.push(new RemoveRowOperation(referenceIndex, operation.row));
+    const row = new TranslatedTableModel(operation.row);
+    this.operations.push(new RemoveRowOperation(referenceIndex, row));
     this.endTransaction();
   }
 
