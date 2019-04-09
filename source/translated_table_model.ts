@@ -53,12 +53,13 @@ export class TranslatedTableModel extends TableModel {
       throw RangeError();
     }
     this.beginTransaction();
-    let traveller;
-    if(this.references[source] >= 0) {
-      traveller = this.references[source];
-    } else {
-      traveller = source;
-    }
+    const traveller = (() => {
+      if(this.references[source] >= 0) {
+        return this.references[source];
+      } else {
+        return source;
+      }
+    })();
     if(source > destination) {
       this.slideDown(source, destination);
     } else if(destination > source) {
@@ -70,22 +71,22 @@ export class TranslatedTableModel extends TableModel {
   }
 
   public get rowCount(): number {
-    return this.model.rowCount.valueOf();
+    return this.model.rowCount;
   }
 
   public get columnCount(): number {
-    return this.model.columnCount.valueOf();
+    return this.model.columnCount;
   }
 
   public get(row: number, column: number): any {
-    if(row >= this.rowCount || row  < 0) {
+    if(row >= this.rowCount || row < 0) {
       throw RangeError();
     }
-    if(column >= this.columnCount  || column < 0) {
+    if(column >= this.columnCount || column < 0) {
       throw RangeError();
     }
     if(this.references[row] >= 0) {
-        return this.model.get(this.references[row], column);
+      return this.model.get(this.references[row], column);
     } else {
       return this.model.get(row, column);
     }
@@ -106,14 +107,14 @@ export class TranslatedTableModel extends TableModel {
       } else if (operation instanceof UpdateValueOperation) {
         this.updateRow(operation);
       } else {
-        throw TypeError;
+        throw TypeError();
       }
     }
     this.endTransaction();
   }
 
   private slideUp(start: number, end: number) {
-    for(let index = start; index < end; index++ ) {
+    for(let index = start; index < end; ++index) {
       if(this.references[index + 1] >= 0) {
         this.references[index] = this.references[index + 1];
       } else {
@@ -129,7 +130,7 @@ export class TranslatedTableModel extends TableModel {
     if(end > start) {
       throw RangeError();
     }
-    for(let index = start; index > end ; --index ) {
+    for(let index = start; index > end; --index) {
       if(this.references[index - 1] >= 0) {
         this.references[index] = this.references[index - 1];
       } else {
@@ -142,13 +143,13 @@ export class TranslatedTableModel extends TableModel {
     this.beginTransaction();
     this.references.push(undefined);
     let referenceIndex = operation.index;
-    for(let index = 0; index < this.references.length; index++ ) {
+    for(let index = 0; index < this.references.length; ++index) {
       if(this.references[index] === operation.index) {
         referenceIndex = index;
       }
     }
     this.slideDown(this.references.length - 1, referenceIndex);
-    for(let index = 0; index < this.references.length; index++ ) {
+    for(let index = 0; index < this.references.length; ++index) {
       if(this.references[index] >= operation.index
           && index !== referenceIndex) {
         this.references[index] = this.references[index] + 1;
@@ -161,14 +162,14 @@ export class TranslatedTableModel extends TableModel {
   private rowRemoved(operation: RemoveRowOperation) {
     this.beginTransaction();
     let referenceIndex = operation.index;
-    for(let index = 0; index < this.references.length; index++ ) {
+    for(let index = 0; index < this.references.length; ++index) {
       if(this.references[index] === operation.index) {
         referenceIndex = index;
       }
     }
     this.slideUp(referenceIndex, this.references.length);
     this.references.pop();
-    for(let index = 0; index < this.references.length; index++ ) {
+    for(let index = 0; index < this.references.length; ++index) {
       if(this.references[index] > operation.index) {
         this.references[index] = this.references[index] - 1;
       }
@@ -180,7 +181,7 @@ export class TranslatedTableModel extends TableModel {
   private updateRow(operation: UpdateValueOperation) {
     this.beginTransaction();
     let referenceIndex = operation.row;
-    for(let index = 0; index < this.references.length; index++ ) {
+    for(let index = 0; index < this.references.length; ++index) {
       if(this.references[index] === operation.row) {
         referenceIndex = index;
       }
