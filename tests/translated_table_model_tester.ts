@@ -205,24 +205,54 @@ export class TranslatedTableModelTester {
             operations[2] instanceof RemoveRowOperation) {
           Expect(true).toEqual(true);
         }
+        for(const operation of operations) {
+          if(operation instanceof AddRowOperation) {
+            Expect(operation.index).toEqual(4);
+          } else if (operation instanceof RemoveRowOperation) {
+            Expect(operation.index).toEqual(1);
+          } else if (operation instanceof UpdateValueOperation) {
+            Expect(operation.row).toEqual(3);
+          }
+        }
       } else {
         Expect(false).toEqual(true);
       }
     };
-    const listener = parentTable.connect(slot);
-    const listener2 = childTable.connect(slot);
+    const slot2 = (operations: Operation[]) => {
+      Expect(operations.length).toEqual(3);
+      if(operations) {
+        if(operations[0] instanceof AddRowOperation &&
+            operations[1] instanceof UpdateValueOperation &&
+            operations[2] instanceof RemoveRowOperation) {
+          Expect(true).toEqual(true);
+        }
+        for(const operation of operations) {
+          if(operation instanceof AddRowOperation) {
+            Expect(operation.index).toEqual(4);
+          } else if (operation instanceof RemoveRowOperation) {
+            Expect(operation.index).toEqual(2);
+          } else if (operation instanceof UpdateValueOperation) {
+            Expect(operation.row).toEqual(1);
+          }
+        }
+      } else {
+        Expect(false).toEqual(true);
+      }
+    };
+    const listener = model.connect(slot);
+    const listener2 = parentTable.connect(slot2);
     model.beginTransaction();
     model.addRow([4, 4, 4]);
     model.beginTransaction();
-    model.set(0, 1, 10);
+    model.set(3, 1, 10);
     model.endTransaction();
     model.removeRow(1);
     model.endTransaction();
     listener.unlisten();
     listener2.unlisten();
     Expect(childTable.get(0, 0)).toEqual(0);
-    Expect(childTable.get(0, 1)).toEqual(10);
     Expect(childTable.get(1, 0)).toEqual(3);
+    Expect(childTable.get(1, 1)).toEqual(10);
     Expect(childTable.get(2, 0)).toEqual(2);
     Expect(childTable.get(3, 0)).toEqual(4);
     childTable.moveRow(0,3);
