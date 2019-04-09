@@ -1,6 +1,7 @@
 import { Expect, Test } from 'alsatian';
 import { ArrayTableModel, AddRowOperation, Operation, RemoveRowOperation,
-  TranslatedTableModel, UpdateValueOperation } from '../source';
+  TranslatedTableModel, UpdateValueOperation, MoveRowOperation } from '../source';
+import { TypeMatcher } from 'alsatian/core/spying';
 
 /** Tests the TranslatedTableModel. */
 export class TranslatedTableModelTester {
@@ -11,9 +12,9 @@ export class TranslatedTableModelTester {
     const translatedTable = new TranslatedTableModel(new ArrayTableModel());
     Expect(translatedTable.rowCount).toEqual(0);
     const model = new ArrayTableModel();
-    model.addRow([1, 2 ,3]);
-    model.addRow([4, 5, 6]);
-    model.addRow([7, 8, 9]);
+    model.addRow([1, 2]);
+    model.addRow([4, 5]);
+    model.addRow([7, 8]);
     const translatedTable2 = new TranslatedTableModel(model);
     Expect(translatedTable2.rowCount).toEqual(3);
   }
@@ -88,34 +89,9 @@ export class TranslatedTableModelTester {
     Expect(translatedTable.get(4,0)).toEqual(9);
   }
 
-  /** Tests if signaling for the move operation works. */
-  @Test()
-  public testTwoMoves(): void {
-    const model = new ArrayTableModel();
-    model.addRow([1, 2]);
-    model.addRow([3, 4]);
-    model.addRow([5, 6]);
-    model.addRow([7, 8]);
-    model.addRow([9, 0]);
-    const translatedTable = new TranslatedTableModel(model);
-    let numberOfOperations = 0;
-    const slot = (operations: Operation[]) => {
-      if(operations) {
-        numberOfOperations = operations.length;
-      } else {
-        Expect(false).toEqual(true);
-      }
-    };
-    const listener = translatedTable.connect(slot);
-    translatedTable.moveRow(0, 2);
-    translatedTable.moveRow(1, 3);
-    Expect(numberOfOperations).toEqual(1);
-    listener.unlisten();
-  }
-
   /** Tests when a row is added to the original model. */
   @Test()
-  public testSignalListeningAdd(): void {
+  public testReceiveAdd(): void {
     const model = new ArrayTableModel();
     const translatedTable = new TranslatedTableModel(model);
     model.addRow([0,0]);
@@ -152,7 +128,7 @@ export class TranslatedTableModelTester {
 
   /** Tests when a row is removed from the original model. */
   @Test()
-  public testSignalListeningRemove(): void {
+  public testReceiveRemove(): void {
     const model = new ArrayTableModel();
     model.addRow([1, 2]);
     model.addRow([3, 4]);
@@ -170,7 +146,7 @@ export class TranslatedTableModelTester {
 
   /** Tests when a cell is updated in the original model. */
   @Test()
-  public testUpdatedValues(): void {
+  public testReceiveUpdateValue(): void {
     const model = new ArrayTableModel();
     model.addRow([0, 0]);
     model.addRow([1, 1]);
@@ -186,84 +162,125 @@ export class TranslatedTableModelTester {
     Expect(translatedTable.get(1, 1)).toEqual(9);
   }
 
-  /** Tests the signals that translated table model sends. */
+   /** Tests signals when value is updated. */
   @Test()
-  public testChildTable(): void {
+  public testUpdateValueSignal(): void {
     const model = new ArrayTableModel();
-    const parentTable = new TranslatedTableModel(model);
-    model.addRow([0,0,0]);
-    model.addRow([1,1,1]);
-    model.addRow([2,2,2]);
-    model.addRow([3,3,3]);
-    parentTable.moveRow(3, 1);
-    const childTable = new TranslatedTableModel(parentTable);
-    const slot = (operations: Operation[]) => {
-      Expect(operations.length).toEqual(3);
-      if(operations) {
-        if(operations[0] instanceof AddRowOperation &&
-            operations[1] instanceof UpdateValueOperation &&
-            operations[2] instanceof RemoveRowOperation) {
-          Expect(true).toEqual(true);
-        }
-        for(const operation of operations) {
-          if(operation instanceof AddRowOperation) {
-            Expect(operation.index).toEqual(4);
-          } else if (operation instanceof RemoveRowOperation) {
-            Expect(operation.index).toEqual(1);
-          } else if (operation instanceof UpdateValueOperation) {
-            Expect(operation.row).toEqual(3);
-          }
-        }
-      } else {
-        Expect(false).toEqual(true);
-      }
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([2]);
+    const translatedTable = new TranslatedTableModel(model);
+    translatedTable.moveRow(2, 1);
+    let signalsReceived = 0;
+    const makeListener = (expectedRow: number) => {
+      return (operations: Operation[]) => {
+        Expect(operations.length).toEqual(1);
+        const operation = operations[0] as UpdateValueOperation;
+        Expect(operation).not.toBeNull();
+        Expect(operation.row).toEqual(expectedRow);
+        ++signalsReceived;
+      };
     };
-    const slot2 = (operations: Operation[]) => {
-      Expect(operations.length).toEqual(3);
-      if(operations) {
-        if(operations[0] instanceof AddRowOperation &&
-            operations[1] instanceof UpdateValueOperation &&
-            operations[2] instanceof RemoveRowOperation) {
-          Expect(true).toEqual(true);
-        }
-        for(const operation of operations) {
-          if(operation instanceof AddRowOperation) {
-            Expect(operation.index).toEqual(4);
-          } else if (operation instanceof RemoveRowOperation) {
-            Expect(operation.index).toEqual(2);
-          } else if (operation instanceof UpdateValueOperation) {
-            Expect(operation.row).toEqual(1);
-          }
-        }
-      } else {
-        Expect(false).toEqual(true);
-      }
-    };
-    const listener = model.connect(slot);
-    const listener2 = parentTable.connect(slot2);
-    model.beginTransaction();
-    model.addRow([4, 4, 4]);
-    model.beginTransaction();
-    model.set(3, 1, 10);
-    model.endTransaction();
-    model.removeRow(1);
-    model.endTransaction();
+    let listener = translatedTable.connect(makeListener(1));
+    model.set(2, 0, 9);
+    Expect(signalsReceived).toEqual(1);
     listener.unlisten();
-    listener2.unlisten();
-    Expect(childTable.get(0, 0)).toEqual(0);
-    Expect(childTable.get(1, 0)).toEqual(3);
-    Expect(childTable.get(1, 1)).toEqual(10);
-    Expect(childTable.get(2, 0)).toEqual(2);
-    Expect(childTable.get(3, 0)).toEqual(4);
-    childTable.moveRow(0,3);
-    Expect(parentTable.get(0, 0)).toEqual(0);
-    Expect(parentTable.get(1, 0)).toEqual(3);
-    Expect(parentTable.get(2, 0)).toEqual(2);
-    Expect(parentTable.get(3, 0)).toEqual(4);
-    Expect(childTable.get(3, 0)).toEqual(0);
-    Expect(childTable.get(3, 1)).toEqual(10);
-    Expect(childTable.get(0, 0)).toEqual(3);
-    Expect(childTable.get(1, 0)).toEqual(2);
-    Expect(childTable.get(2, 0)).toEqual(4);
+    listener = translatedTable.connect(makeListener(0));
+    model.set(0, 0, 8);
+    Expect(signalsReceived).toEqual(2);
+    listener.unlisten();
+  }
+
+  /** Tests signals when row is added. */
+  @Test()
+  public testAddRowSignal(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([2]);
+    const translatedTable = new TranslatedTableModel(model);
+    translatedTable.moveRow(2, 1);
+    let signalsReceived = 0;
+    const makeListener = (expectedRow: number) => {
+      return (operations: Operation[]) => {
+        Expect(operations.length).toEqual(1);
+        const operation = operations[0] as AddRowOperation;
+        Expect(operation).not.toBeNull();
+        Expect(operation.row instanceof TranslatedTableModel).toEqual(true);
+        Expect(operation.index).toEqual(expectedRow);
+        ++signalsReceived;
+      };
+    };
+    let listener = translatedTable.connect(makeListener(3));
+    model.addRow([3]);
+    Expect(signalsReceived).toEqual(1);
+    listener.unlisten();
+    listener = translatedTable.connect(makeListener(2));
+    model.addRow([4], 1);
+    Expect(signalsReceived).toEqual(2);
+    listener.unlisten();
+    listener = translatedTable.connect(makeListener(0));
+    model.addRow([5], 0);
+    Expect(signalsReceived).toEqual(3);
+    listener.unlisten();
+  }
+
+  /** Tests signals sent when a row is removed. */
+  @Test()
+  public testRemoveRowSignal(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([2]);
+    model.addRow([3]);
+    model.addRow([4]);
+    const translatedTable = new TranslatedTableModel(model);
+    translatedTable.moveRow(4, 1);
+    let signalsReceived = 0;
+    const makeListener = (expectedRow: number) => {
+      return (operations: Operation[]) => {
+        Expect(operations.length).toEqual(1);
+        const operation = operations[0] as RemoveRowOperation;
+        Expect(operation).not.toBeNull();
+        Expect(operation.row instanceof TranslatedTableModel).toEqual(true);
+        Expect(operation.index).toEqual(expectedRow);
+        ++signalsReceived;
+      };
+    };
+    let listener = translatedTable.connect(makeListener(1));
+    model.removeRow(4);
+    Expect(signalsReceived).toEqual(1);
+    listener.unlisten();
+    listener = translatedTable.connect(makeListener(0));
+    model.removeRow(0);
+    Expect(signalsReceived).toEqual(2);
+    listener.unlisten();
+  }
+
+  /** Tests signals sent when a row is moved around. */
+  @Test()
+  public testMoveRowSignal(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([2]);
+    model.addRow([3]);
+    model.addRow([4]);
+    const translatedTable = new TranslatedTableModel(model);
+    let signalsReceived = 0;
+    const makeListener = (sourceRow: number, destinationRow: number) => {
+      return (operations: Operation[]) => {
+        Expect(operations.length).toEqual(1);
+        const operation = operations[0] as MoveRowOperation;
+        Expect(operation).not.toBeNull();
+        Expect(operation.source).toEqual(0);
+        Expect(operation.destination).toEqual(0);
+        ++signalsReceived;
+      };
+    };
+    const listener = translatedTable.connect(makeListener(4, 1));
+    translatedTable.moveRow(4, 1);
+    Expect(signalsReceived).toEqual(1);
+    listener.unlisten();
   }
 }
