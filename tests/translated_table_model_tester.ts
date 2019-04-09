@@ -1,7 +1,7 @@
 import { Expect, Test } from 'alsatian';
-import { ArrayTableModel, AddRowOperation, Operation, RemoveRowOperation,
-  TranslatedTableModel, UpdateValueOperation, MoveRowOperation } from '../source';
-import { TypeMatcher } from 'alsatian/core/spying';
+import { ArrayTableModel, AddRowOperation, MoveRowOperation , Operation,
+  RemoveRowOperation, TranslatedTableModel, UpdateValueOperation }
+  from '../source';
 
 /** Tests the TranslatedTableModel. */
 export class TranslatedTableModelTester {
@@ -12,9 +12,9 @@ export class TranslatedTableModelTester {
     const translatedTable = new TranslatedTableModel(new ArrayTableModel());
     Expect(translatedTable.rowCount).toEqual(0);
     const model = new ArrayTableModel();
-    model.addRow([1, 2]);
-    model.addRow([4, 5]);
-    model.addRow([7, 8]);
+    model.addRow([1]);
+    model.addRow([4]);
+    model.addRow([7]);
     const translatedTable2 = new TranslatedTableModel(model);
     Expect(translatedTable2.rowCount).toEqual(3);
   }
@@ -26,8 +26,6 @@ export class TranslatedTableModelTester {
     Expect(translatedTable.columnCount).toEqual(0);
     const model = new ArrayTableModel();
     model.addRow([1, 2, 3, 0]);
-    model.addRow([4, 5, 6, 0]);
-    model.addRow([7, 8, 9, 0]);
     const translatedTable2 = new TranslatedTableModel(model);
     Expect(translatedTable2.columnCount).toEqual(4);
   }
@@ -257,7 +255,7 @@ export class TranslatedTableModelTester {
     listener.unlisten();
   }
 
-  /** Tests signals sent when a row is moved around. */
+  /** Tests signal sent when a row is moved around. */
   @Test()
   public testMoveRowSignal(): void {
     const model = new ArrayTableModel();
@@ -273,8 +271,8 @@ export class TranslatedTableModelTester {
         Expect(operations.length).toEqual(1);
         const operation = operations[0] as MoveRowOperation;
         Expect(operation).not.toBeNull();
-        Expect(operation.source).toEqual(0);
-        Expect(operation.destination).toEqual(0);
+        Expect(operation.source).toEqual(sourceRow);
+        Expect(operation.destination).toEqual(destinationRow);
         ++signalsReceived;
       };
     };
