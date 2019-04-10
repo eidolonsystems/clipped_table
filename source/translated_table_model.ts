@@ -19,8 +19,7 @@ export class TranslatedTableModel extends TableModel {
     this.transactionCount = 0;
     this.dispatcher = new Kola.Dispatcher<Operation[]>();
     this.handleOperations.bind(this);
-    model.connect((operations: Operation[]) =>
-      this.handleOperations(operations));
+    model.connect(this.handleOperations.bind(this));
   }
 
   /** Marks the beginning of a transaction. In cases where a transaction is
@@ -60,13 +59,13 @@ export class TranslatedTableModel extends TableModel {
       return;
     }
     this.beginTransaction();
-    const movedRow = this.translation[source];
+    const movingRow = this.translation[source];
     if(source > destination) {
       this.slideDown(source, destination);
     } else if(destination > source) {
       this.slideUp(source, destination);
     }
-    this.translation[destination] = movedRow;
+    this.translation[destination] = movingRow;
     this.operations.push(new MoveRowOperation(source, destination));
     this.endTransaction();
   }
@@ -125,33 +124,32 @@ export class TranslatedTableModel extends TableModel {
   private rowAdded(operation: AddRowOperation) {
     this.beginTransaction();
     this.translation.push(this.translation.length);
-    console.log(this.translation);
-    let referenceIndex = operation.index;
+    let operationIndex = operation.index;
     for(let index = 0; index < this.translation.length; ++index) {
       if(this.translation[index] === operation.index) {
-        referenceIndex = index;
+        operationIndex = index;
       }
     }
-    this.slideDown(this.translation.length - 1, referenceIndex);
+    this.slideDown(this.translation.length - 1, operationIndex);
     for(let index = 0; index < this.translation.length; ++index) {
       if(this.translation[index] >= operation.index
-          && index !== referenceIndex) {
+          && index !== operationIndex) {
         this.translation[index] = this.translation[index] + 1;
       }
     }
-    this.operations.push(new AddRowOperation(referenceIndex, operation.row));
+    this.operations.push(new AddRowOperation(operationIndex, operation.row));
     this.endTransaction();
   }
 
   private rowRemoved(operation: RemoveRowOperation) {
     this.beginTransaction();
-    let referenceIndex = operation.index;
+    let operationIndex = operation.index;
     for(let index = 0; index < this.translation.length; ++index) {
       if(this.translation[index] === operation.index) {
-        referenceIndex = index;
+        operationIndex = index;
       }
     }
-    this.slideUp(referenceIndex, this.translation.length);
+    this.slideUp(operationIndex, this.translation.length);
     this.translation.pop();
     for(let index = 0; index < this.translation.length; ++index) {
       if(this.translation[index] > operation.index) {
@@ -159,7 +157,7 @@ export class TranslatedTableModel extends TableModel {
       }
     }
     this.operations.push(
-      new RemoveRowOperation(referenceIndex, operation.row));
+      new RemoveRowOperation(operationIndex, operation.row));
     this.endTransaction();
   }
 
@@ -171,9 +169,8 @@ export class TranslatedTableModel extends TableModel {
         referenceIndex = index;
       }
     }
-    this.operations.push(
-      new UpdateValueOperation(referenceIndex, operation.column,
-        operation.previous, operation.current));
+    this.operations.push(new UpdateValueOperation(referenceIndex,
+      operation.column, operation.previous, operation.current));
     this.endTransaction();
   }
 

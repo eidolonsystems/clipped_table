@@ -1,5 +1,5 @@
 import { Expect, Test } from 'alsatian';
-import { ArrayTableModel, AddRowOperation, MoveRowOperation , Operation,
+import { AddRowOperation, ArrayTableModel, MoveRowOperation , Operation,
   RemoveRowOperation, TranslatedTableModel, UpdateValueOperation }
   from '../source';
 
@@ -56,35 +56,35 @@ export class TranslatedTableModelTester {
     Expect(() => translatedTable.moveRow(5, 3)).toThrow();
     Expect(() => translatedTable.moveRow(0, 5)).toThrow();
     translatedTable.moveRow(0, 2);
-    Expect(translatedTable.get(0,0)).toEqual(3);
-    Expect(translatedTable.get(1,0)).toEqual(5);
-    Expect(translatedTable.get(2,0)).toEqual(1);
-    Expect(translatedTable.get(3,0)).toEqual(7);
-    Expect(translatedTable.get(4,0)).toEqual(9);
+    Expect(translatedTable.get(0, 0)).toEqual(3);
+    Expect(translatedTable.get(1, 0)).toEqual(5);
+    Expect(translatedTable.get(2, 0)).toEqual(1);
+    Expect(translatedTable.get(3, 0)).toEqual(7);
+    Expect(translatedTable.get(4, 0)).toEqual(9);
     translatedTable.moveRow(3, 1);
-    Expect(translatedTable.get(0,0)).toEqual(3);
-    Expect(translatedTable.get(1,0)).toEqual(7);
-    Expect(translatedTable.get(2,0)).toEqual(5);
-    Expect(translatedTable.get(3,0)).toEqual(1);
-    Expect(translatedTable.get(4,0)).toEqual(9);
+    Expect(translatedTable.get(0, 0)).toEqual(3);
+    Expect(translatedTable.get(1, 0)).toEqual(7);
+    Expect(translatedTable.get(2, 0)).toEqual(5);
+    Expect(translatedTable.get(3, 0)).toEqual(1);
+    Expect(translatedTable.get(4, 0)).toEqual(9);
     translatedTable.moveRow(3, 3);
-    Expect(translatedTable.get(0,0)).toEqual(3);
-    Expect(translatedTable.get(1,0)).toEqual(7);
-    Expect(translatedTable.get(2,0)).toEqual(5);
-    Expect(translatedTable.get(3,0)).toEqual(1);
-    Expect(translatedTable.get(4,0)).toEqual(9);
+    Expect(translatedTable.get(0, 0)).toEqual(3);
+    Expect(translatedTable.get(1, 0)).toEqual(7);
+    Expect(translatedTable.get(2, 0)).toEqual(5);
+    Expect(translatedTable.get(3, 0)).toEqual(1);
+    Expect(translatedTable.get(4, 0)).toEqual(9);
     translatedTable.moveRow(0, 4);
-    Expect(translatedTable.get(0,0)).toEqual(7);
-    Expect(translatedTable.get(1,0)).toEqual(5);
-    Expect(translatedTable.get(2,0)).toEqual(1);
-    Expect(translatedTable.get(3,0)).toEqual(9);
-    Expect(translatedTable.get(4,0)).toEqual(3);
+    Expect(translatedTable.get(0, 0)).toEqual(7);
+    Expect(translatedTable.get(1, 0)).toEqual(5);
+    Expect(translatedTable.get(2, 0)).toEqual(1);
+    Expect(translatedTable.get(3, 0)).toEqual(9);
+    Expect(translatedTable.get(4, 0)).toEqual(3);
     translatedTable.moveRow(4, 0);
-    Expect(translatedTable.get(0,0)).toEqual(3);
-    Expect(translatedTable.get(1,0)).toEqual(7);
-    Expect(translatedTable.get(2,0)).toEqual(5);
-    Expect(translatedTable.get(3,0)).toEqual(1);
-    Expect(translatedTable.get(4,0)).toEqual(9);
+    Expect(translatedTable.get(0, 0)).toEqual(3);
+    Expect(translatedTable.get(1, 0)).toEqual(7);
+    Expect(translatedTable.get(2, 0)).toEqual(5);
+    Expect(translatedTable.get(3, 0)).toEqual(1);
+    Expect(translatedTable.get(4, 0)).toEqual(9);
   }
 
   /** Tests when a row is added to the original model. */
