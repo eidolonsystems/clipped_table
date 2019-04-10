@@ -204,7 +204,6 @@ export class TranslatedTableModelTester {
         Expect(operations.length).toEqual(1);
         const operation = operations[0] as AddRowOperation;
         Expect(operation).not.toBeNull();
-        Expect(operation.row instanceof TranslatedTableModel).toEqual(true);
         Expect(operation.index).toEqual(expectedRow);
         ++signalsReceived;
       };
@@ -240,7 +239,6 @@ export class TranslatedTableModelTester {
         Expect(operations.length).toEqual(1);
         const operation = operations[0] as RemoveRowOperation;
         Expect(operation).not.toBeNull();
-        Expect(operation.row instanceof TranslatedTableModel).toEqual(true);
         Expect(operation.index).toEqual(expectedRow);
         ++signalsReceived;
       };

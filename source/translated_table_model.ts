@@ -1,5 +1,5 @@
 import * as Kola from 'kola-signals';
-import { Operation, AddRowOperation, MoveRowOperation,
+import { AddRowOperation, MoveRowOperation, Operation,
   RemoveRowOperation, UpdateValueOperation } from './operations';
 import { TableModel } from './table_model';
 
@@ -15,6 +15,7 @@ export class TranslatedTableModel extends TableModel {
     this.references = new Array(model.rowCount);
     this.transactionCount = 0;
     this.dispatcher = new Kola.Dispatcher<Operation[]>();
+    this.handleOperations.bind(this);
     model.connect((operations: Operation[]) =>
       this.handleOperations(operations));
   }
@@ -47,10 +48,10 @@ export class TranslatedTableModel extends TableModel {
    */
   public moveRow(source: number, destination: number): void {
     if(source >= this.rowCount || source < 0) {
-      throw RangeError();
+      throw RangeError('Source is out of bounds.');
     }
     if(destination >= this.rowCount || destination < 0) {
-      throw RangeError();
+      throw RangeError('Destination out of bounds.');
     }
     this.beginTransaction();
     const traveller = (() => {
@@ -102,9 +103,9 @@ export class TranslatedTableModel extends TableModel {
     for(const operation of newOperations) {
       if(operation instanceof AddRowOperation) {
         this.rowAdded(operation);
-      } else if (operation instanceof RemoveRowOperation) {
+      } else if(operation instanceof RemoveRowOperation) {
         this.rowRemoved(operation);
-      } else if (operation instanceof UpdateValueOperation) {
+      } else if(operation instanceof UpdateValueOperation) {
         this.updateRow(operation);
       } else {
         throw TypeError();
@@ -124,12 +125,6 @@ export class TranslatedTableModel extends TableModel {
   }
 
   private slideDown(start: number, end: number) {
-    if(start === end) {
-      return;
-    }
-    if(end > start) {
-      throw RangeError();
-    }
     for(let index = start; index > end; --index) {
       if(this.references[index - 1] >= 0) {
         this.references[index] = this.references[index - 1];
@@ -155,8 +150,7 @@ export class TranslatedTableModel extends TableModel {
         this.references[index] = this.references[index] + 1;
       }
     }
-    const row = new TranslatedTableModel(operation.row);
-    this.operations.push(new AddRowOperation(referenceIndex, row));
+    this.operations.push(new AddRowOperation(referenceIndex, operation.row));
     this.endTransaction();
   }
 
@@ -175,8 +169,8 @@ export class TranslatedTableModel extends TableModel {
         this.references[index] = this.references[index] - 1;
       }
     }
-    const row = new TranslatedTableModel(operation.row);
-    this.operations.push(new RemoveRowOperation(referenceIndex, row));
+    this.operations.push(
+      new RemoveRowOperation(referenceIndex, operation.row));
     this.endTransaction();
   }
 
