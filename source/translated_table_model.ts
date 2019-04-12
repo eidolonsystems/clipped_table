@@ -62,11 +62,7 @@ export class TranslatedTableModel extends TableModel {
       return;
     }
     this.beginTransaction();
-    if(source > destination) {
-      this.moveUp(source, destination);
-    } else if(destination > source) {
-      this.moveDown(source, destination);
-    }
+    this.move(source, destination);
     this.operations.push(new MoveRowOperation(source, destination));
     this.endTransaction();
   }
@@ -110,42 +106,31 @@ export class TranslatedTableModel extends TableModel {
     this.endTransaction();
   }
 
-  private moveDown(source: number, dest: number) {
-    const movingRow = this.translation[source];
-    for(let index = source; index < dest; ++index) {
-      this.translation[index] = this.translation[index + 1];
-    }
-    this.translation[dest] = movingRow;
-    this.reverseTranslation[source] =
-      this.reverseTranslation[source] + Math.abs(dest - source);
-    for(let index = dest; index > source; --index) {
-      this.reverseTranslation[source] = this.reverseTranslation[source] - 1;
-    }
-  }
-
-  private moveUp(source: number, dest: number) {
-    const movingRow = this.translation[source];
-    for(let index = source; index > dest; --index) {
-      this.translation[index] = this.translation[index - 1];
-    }
-    this.translation[dest] = movingRow;
-    this.reverseTranslation[this.translation[dest]] =
-      this.reverseTranslation[this.translation[dest]] - Math.abs(source - dest);
-    for(let index = source; index > dest; --index) {
-      this.reverseTranslation[this.translation[index]] =
-        this.reverseTranslation[this.translation[index]] + 1;
-    }
-  }
-
-  private slideUp(start: number, end: number) {
-    for(let index = start; index < end; ++index) {
-      this.translation[index] = this.translation[index + 1];
-    }
-  }
-
-  private slideDown(start: number, end: number) {
-    for(let index = start; index > end; --index) {
-      this.translation[index] = this.translation[index - 1];
+  private move(source: number, dest: number) {
+    if(source > dest) {
+      const movingRow = this.translation[source];
+      for(let index = source; index > dest; --index) {
+        this.translation[index] = this.translation[index - 1];
+      }
+      this.translation[dest] = movingRow;
+      this.reverseTranslation[this.translation[dest]] =
+        this.reverseTranslation[this.translation[dest]] -
+        Math.abs(source - dest);
+      for(let index = source; index > dest; --index) {
+        this.reverseTranslation[this.translation[index]] =
+          this.reverseTranslation[this.translation[index]] + 1;
+      }
+    } else {
+      const movingRow = this.translation[source];
+      for(let index = source; index < dest; ++index) {
+        this.translation[index] = this.translation[index + 1];
+      }
+      this.translation[dest] = movingRow;
+      this.reverseTranslation[source] =
+        this.reverseTranslation[source] + Math.abs(dest - source);
+      for(let index = dest; index > source; --index) {
+        this.reverseTranslation[source] = this.reverseTranslation[source] - 1;
+      }
     }
   }
 
