@@ -114,7 +114,7 @@ export class TranslatedTableModel extends TableModel {
 
   private moveDown(source: number, dest: number) {
     const movingRow = this.translation[source];
-    for(let index = source; index < dest; ++index) { //slide up
+    for(let index = source; index < dest; ++index) {
       this.translation[index] = this.translation[index + 1];
     }
     this.translation[dest] = movingRow;
@@ -127,7 +127,7 @@ export class TranslatedTableModel extends TableModel {
 
   private moveUp(source: number, dest: number) {
     const movingRow = this.translation[source];
-    for(let index = source; index > dest; --index) { // slide uppp
+    for(let index = source; index > dest; --index) {
       this.translation[index] = this.translation[index - 1];
     }
     this.translation[dest] = movingRow;
@@ -153,13 +153,11 @@ export class TranslatedTableModel extends TableModel {
       if(this.translation[index] >= operation.index) {
         this.translation[index] = this.translation[index] + 1;
       }
-    }
-    this.translation.splice(newIndex, 0, operation.index);
-    for(let index = 0; index < this.reverseTranslation.length; ++index) {
       if(this.reverseTranslation[index] >= newIndex) {
         this.reverseTranslation[index] = this.reverseTranslation[index] + 1;
       }
     }
+    this.translation.splice(newIndex, 0, operation.index);
     this.reverseTranslation.splice(operation.index, 0, newIndex);
     this.operations.push(new
       AddRowOperation(newIndex, operation.row));
@@ -175,9 +173,7 @@ export class TranslatedTableModel extends TableModel {
       if(this.translation[index] >= operation.index) {
         this.translation[index] = this.translation[index] - 1;
       }
-    }
-    for(let index = 0; index < this.translation.length; ++index) {
-       if(this.reverseTranslation[index] > operation.index) {
+      if(this.reverseTranslation[index] > operation.index) {
         this.reverseTranslation[index] = this.reverseTranslation[index] - 1;
       }
     }
