@@ -214,7 +214,7 @@ export class TranslatedTableModelTester {
     listener.unlisten();
     listener = translatedTable.connect(makeListener(2));
     model.addRow([4], 1);
-    Expect(signalsReceived).toEqual(2); // wut?
+    Expect(signalsReceived).toEqual(2);
     listener.unlisten();
     listener = translatedTable.connect(makeListener(0));
     model.addRow([5], 0);
