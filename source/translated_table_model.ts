@@ -64,13 +64,11 @@ export class TranslatedTableModel extends TableModel {
       return;
     }
     this.beginTransaction();
-    const movingRow = this.translation[source];
     if(source > destination) {
       this.moveUp(source, destination);
     } else if(destination > source) {
       this.moveDown(source, destination);
     }
-    this.translation[destination] = movingRow;
     this.operations.push(new MoveRowOperation(source, destination));
     this.endTransaction();
   }
@@ -115,12 +113,11 @@ export class TranslatedTableModel extends TableModel {
   }
 
   private moveDown(source: number, dest: number) {
-    const insides = this.translation.slice(source, dest + 1 );
-    const movedItem = insides.shift();
-    insides.push(movedItem);
-    this.translation =
-      this.translation.slice(
-        0,source).concat(insides.concat(this.translation.slice(dest + 1)));
+    const movingRow = this.translation[source];
+    for(let index = source; index < dest; ++index) { //slide up
+      this.translation[index] = this.translation[index + 1];
+    }
+    this.translation[dest] = movingRow;
     this.reverseTranslation[source] =
       this.reverseTranslation[source] + Math.abs(dest - source);
     for(let index = dest; index > source; --index) {
@@ -129,12 +126,11 @@ export class TranslatedTableModel extends TableModel {
   }
 
   private moveUp(source: number, dest: number) {
-    const insides = this.translation.slice(dest, source + 1);
-    const movedItem = insides.pop();
-    insides.unshift(movedItem);
-    this.translation =
-      this.translation.slice(
-        0,dest).concat(insides.concat(this.translation.slice(source + 1)));
+    const movingRow = this.translation[source];
+    for(let index = source; index > dest; --index) { // slide uppp
+      this.translation[index] = this.translation[index - 1];
+    }
+    this.translation[dest] = movingRow;
     this.reverseTranslation[this.translation[dest]] =
       this.reverseTranslation[this.translation[dest]] - Math.abs(source - dest);
     for(let index = source; index > dest; --index) {
