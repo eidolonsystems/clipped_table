@@ -2,7 +2,6 @@ import * as Kola from 'kola-signals';
 import { AddRowOperation, MoveRowOperation, Operation,
   RemoveRowOperation, UpdateValueOperation } from './operations';
 import { TableModel } from './table_model';
-import { reverse } from 'dns';
 
 /** Adapts an existing TableModel with the ability to rearrange rows. */
 export class TranslatedTableModel extends TableModel {
@@ -23,7 +22,6 @@ export class TranslatedTableModel extends TableModel {
     }
     this.transactionCount = 0;
     this.dispatcher = new Kola.Dispatcher<Operation[]>();
-    this.handleOperations.bind(this);
     model.connect(this.handleOperations.bind(this));
   }
 
@@ -139,6 +137,18 @@ export class TranslatedTableModel extends TableModel {
     }
   }
 
+  private slideUp(start: number, end: number) {
+    for(let index = start; index < end; ++index) {
+      this.translation[index] = this.translation[index + 1];
+    }
+  }
+
+  private slideDown(start: number, end: number) {
+    for(let index = start; index > end; --index) {
+      this.translation[index] = this.translation[index - 1];
+    }
+  }
+
   private rowAdded(operation: AddRowOperation) {
     this.beginTransaction();
     if(operation.index >= this.translation.length) {
@@ -157,18 +167,30 @@ export class TranslatedTableModel extends TableModel {
         this.reverseTranslation[index] = this.reverseTranslation[index] + 1;
       }
     }
-    this.translation.splice(newIndex, 0, operation.index);
-    this.reverseTranslation.splice(operation.index, 0, newIndex);
-    this.operations.push(new
-      AddRowOperation(newIndex, operation.row));
+    this.reverseTranslation.push(0);
+    this.translation.push(0);
+    for(let index = this.translation.length - 1; index > newIndex; --index) {
+      this.translation[index] = this.translation[index - 1];
+      this.reverseTranslation[index] = this.reverseTranslation[index - 1];
+    }
+    this.translation[newIndex] = operation.index;
+    this.reverseTranslation[newIndex] = newIndex;
+    this.operations.push(new AddRowOperation(newIndex, operation.row));
     this.endTransaction();
   }
 
   private rowRemoved(operation: RemoveRowOperation) {
     this.beginTransaction();
     const operationIndex = this.reverseTranslation[operation.index];
-    this.translation.splice(operationIndex, 1);
-    this.reverseTranslation.splice(operation.index, 1);
+    const end = this.translation.length - 1;
+    for(let index = operationIndex; index < end; ++index) {
+      this.translation[index] = this.translation[index + 1];
+    }
+    for(let index = operation.index; index < end; ++index) {
+      this.reverseTranslation[index] = this.reverseTranslation[index + 1];
+    }
+    this.translation.pop();
+    this.reverseTranslation.pop();
     for(let index = 0; index < this.translation.length; ++index) {
       if(this.translation[index] >= operation.index) {
         this.translation[index] = this.translation[index] - 1;
@@ -177,19 +199,13 @@ export class TranslatedTableModel extends TableModel {
         this.reverseTranslation[index] = this.reverseTranslation[index] - 1;
       }
     }
-    this.operations.push(
-      new RemoveRowOperation(operationIndex, operation.row));
+    this.operations.push(new RemoveRowOperation(operationIndex, operation.row));
     this.endTransaction();
   }
 
   private updateRow(operation: UpdateValueOperation) {
     this.beginTransaction();
-    let referenceIndex = operation.row;
-    for(let index = 0; index < this.translation.length; ++index) {
-      if(this.translation[index] === operation.row) {
-        referenceIndex = index;
-      }
-    }
+    const referenceIndex = this.reverseTranslation[operation.row];
     this.operations.push(new UpdateValueOperation(referenceIndex,
       operation.column, operation.previous, operation.current));
     this.endTransaction();
