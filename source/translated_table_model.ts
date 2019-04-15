@@ -166,8 +166,6 @@ export class TranslatedTableModel extends TableModel {
     for(let index = 0; index < end; ++index) {
       if(index >= operationIndex) {
         this.translation[index] = this.translation[index + 1];
-      }
-      if(index >= operation.index) {
         this.reverseTranslation[index] = this.reverseTranslation[index + 1];
       }
       if(this.translation[index] >= operation.index) {
