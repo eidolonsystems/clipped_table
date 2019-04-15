@@ -144,19 +144,20 @@ export class TranslatedTableModel extends TableModel {
       return;
     }
     const newIndex = this.reverseTranslation[operation.index];
-    for(let index = 0; index < this.translation.length; ++index) {
-      if(this.translation[index] >= operation.index) {
-        this.translation[index] = this.translation[index] + 1;
-      }
-      if(this.reverseTranslation[index] >= newIndex) {
-        this.reverseTranslation[index] = this.reverseTranslation[index] + 1;
-      }
-    }
-    this.reverseTranslation.push(0);
     this.translation.push(0);
-    for(let index = this.translation.length - 1; index > newIndex; --index) {
-      this.translation[index] = this.translation[index - 1];
-      this.reverseTranslation[index] = this.reverseTranslation[index - 1];
+    this.reverseTranslation.push(0);
+    for(let index = this.translation.length - 1; index > 0; --index) {
+      if(this.translation[index - 1] >= operation.index) {
+        this.translation[index - 1] = this.translation[index - 1] + 1;
+      }
+      if(this.reverseTranslation[index - 1] >= newIndex) {
+        this.reverseTranslation[index - 1] =
+          this.reverseTranslation[index - 1] + 1;
+      }
+      if(index > newIndex) {
+        this.translation[index] = this.translation[index - 1];
+        this.reverseTranslation[index] = this.reverseTranslation[index - 1];
+      }
     }
     this.translation[newIndex] = operation.index;
     this.reverseTranslation[newIndex] = newIndex;
