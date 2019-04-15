@@ -175,10 +175,6 @@ export class TranslatedTableModel extends TableModel {
       if(index >= operation.index) {
         this.reverseTranslation[index] = this.reverseTranslation[index + 1];
       }
-    }
-    this.translation.pop();
-    this.reverseTranslation.pop();
-    for(let index = 0; index < this.translation.length; ++index) {
       if(this.translation[index] >= operation.index) {
         this.translation[index] = this.translation[index] - 1;
       }
@@ -186,6 +182,8 @@ export class TranslatedTableModel extends TableModel {
         this.reverseTranslation[index] = this.reverseTranslation[index] - 1;
       }
     }
+    this.translation.pop();
+    this.reverseTranslation.pop();
     this.operations.push(new RemoveRowOperation(operationIndex, operation.row));
     this.endTransaction();
   }
