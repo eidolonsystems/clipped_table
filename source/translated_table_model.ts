@@ -107,31 +107,25 @@ export class TranslatedTableModel extends TableModel {
   }
 
   private move(source: number, dest: number) {
+    const movingRow = this.translation[source];
     if(source > dest) {
-      const movingRow = this.translation[source];
+      this.reverseTranslation[movingRow] =
+        this.reverseTranslation[movingRow] - Math.abs(source - dest);
       for(let index = source; index > dest; --index) {
         this.translation[index] = this.translation[index - 1];
-      }
-      this.translation[dest] = movingRow;
-      this.reverseTranslation[this.translation[dest]] =
-        this.reverseTranslation[this.translation[dest]] -
-        Math.abs(source - dest);
-      for(let index = source; index > dest; --index) {
         this.reverseTranslation[this.translation[index]] =
           this.reverseTranslation[this.translation[index]] + 1;
       }
     } else {
-      const movingRow = this.translation[source];
+      this.reverseTranslation[movingRow] =
+        this.reverseTranslation[movingRow] + Math.abs(dest - source);
       for(let index = source; index < dest; ++index) {
         this.translation[index] = this.translation[index + 1];
-      }
-      this.translation[dest] = movingRow;
-      this.reverseTranslation[source] =
-        this.reverseTranslation[source] + Math.abs(dest - source);
-      for(let index = dest; index > source; --index) {
-        this.reverseTranslation[source] = this.reverseTranslation[source] - 1;
+        this.reverseTranslation[this.translation[index]] =
+          this.reverseTranslation[this.translation[index]] - 1;
       }
     }
+    this.translation[dest] = movingRow;
   }
 
   private rowAdded(operation: AddRowOperation) {
