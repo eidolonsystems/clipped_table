@@ -168,11 +168,13 @@ export class TranslatedTableModel extends TableModel {
     this.beginTransaction();
     const operationIndex = this.reverseTranslation[operation.index];
     const end = this.translation.length - 1;
-    for(let index = operationIndex; index < end; ++index) {
-      this.translation[index] = this.translation[index + 1];
-    }
-    for(let index = operation.index; index < end; ++index) {
-      this.reverseTranslation[index] = this.reverseTranslation[index + 1];
+    for(let index = 0; index < end; ++index) {
+      if(index >= operationIndex) {
+        this.translation[index] = this.translation[index + 1];
+      }
+      if(index >= operation.index) {
+        this.reverseTranslation[index] = this.reverseTranslation[index + 1];
+      }
     }
     this.translation.pop();
     this.reverseTranslation.pop();
