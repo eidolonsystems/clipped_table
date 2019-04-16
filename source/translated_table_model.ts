@@ -129,8 +129,6 @@ export class TranslatedTableModel extends TableModel {
   }
 
   private rowAdded(operation: AddRowOperation) {
-    console.log('start: ', this.translation);
-    console.log('start: ', this.reverseTranslation);
     this.beginTransaction();
     if(operation.index >= this.translation.length) {
       this.reverseTranslation.push(operation.index);
@@ -160,8 +158,6 @@ export class TranslatedTableModel extends TableModel {
     this.translation[operationIndex] = operation.index;
     this.reverseTranslation[operationIndex] = operationIndex;
     this.operations.push(new AddRowOperation(operationIndex, operation.row));
-    console.log('end: ', this.translation);
-    console.log('end: ', this.reverseTranslation);
     this.endTransaction();
   }
 
