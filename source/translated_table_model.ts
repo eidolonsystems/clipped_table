@@ -129,6 +129,8 @@ export class TranslatedTableModel extends TableModel {
   }
 
   private rowAdded(operation: AddRowOperation) {
+    console.log('start: ', this.translation);
+    console.log('start: ', this.reverseTranslation);
     this.beginTransaction();
     if(operation.index >= this.translation.length) {
       this.reverseTranslation.push(operation.index);
@@ -137,25 +139,29 @@ export class TranslatedTableModel extends TableModel {
       this.endTransaction();
       return;
     }
-    const newIndex = this.reverseTranslation[operation.index];
+    const operationIndex = this.reverseTranslation[operation.index];
     this.translation.push(0);
     this.reverseTranslation.push(0);
-    for(let index = this.translation.length - 1; index > 0; --index) {
-      if(this.translation[index - 1] >= operation.index) {
-        this.translation[index - 1] = this.translation[index - 1] + 1;
-      }
-      if(this.reverseTranslation[index - 1] >= newIndex) {
-        this.reverseTranslation[index - 1] =
-          this.reverseTranslation[index - 1] + 1;
-      }
-      if(index > newIndex) {
+    for(let index = this.translation.length - 1; index >= 0; --index) {
+      if(index > operationIndex) {
         this.translation[index] = this.translation[index - 1];
+      }
+      if(index > operation.index) {
         this.reverseTranslation[index] = this.reverseTranslation[index - 1];
       }
+      if(this.translation[index] >= operation.index) {
+        this.translation[index] = this.translation[index] + 1;
+      }
+      if(this.reverseTranslation[index] >= operation.index) {
+        this.reverseTranslation[index] =
+          this.reverseTranslation[index] + 1;
+      }
     }
-    this.translation[newIndex] = operation.index;
-    this.reverseTranslation[newIndex] = newIndex;
-    this.operations.push(new AddRowOperation(newIndex, operation.row));
+    this.translation[operationIndex] = operation.index;
+    this.reverseTranslation[operationIndex] = operationIndex;
+    this.operations.push(new AddRowOperation(operationIndex, operation.row));
+    console.log('end: ', this.translation);
+    console.log('end: ', this.reverseTranslation);
     this.endTransaction();
   }
 
@@ -166,9 +172,11 @@ export class TranslatedTableModel extends TableModel {
     for(let index = 0; index < end; ++index) {
       if(index >= operationIndex) {
         this.translation[index] = this.translation[index + 1];
+      }
+      if(index >= operation.index) {
         this.reverseTranslation[index] = this.reverseTranslation[index + 1];
       }
-      if(this.translation[index] >= operation.index) {
+      if(this.translation[index] > operation.index) {
         this.translation[index] = this.translation[index] - 1;
       }
       if(this.reverseTranslation[index] > operation.index) {
