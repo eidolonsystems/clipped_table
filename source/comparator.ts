@@ -43,11 +43,7 @@ export class Comparator {
         break;
       case 'number':
         if(isFinite(left) && isFinite(right)) {
-          if(left > right) {
-            return 1;
-          } else {
-            return -1;
-          }
+          return left - right;
         } else {
           if(left === -Infinity || right === -Infinity) {
             if(right === -Infinity) {
