@@ -10,56 +10,61 @@ export class Comparator {
    * @throws {TypeError} - The parameters can not be compared to one another.
    */
   public compareValues(left: any, right: any): number {
-    if (left === right) {
+    if(left === right) {
       return 0;
     }
-    if (left === undefined) {
+    if(left === undefined) {
       return -1;
     }
-    if (right === undefined) {
+    if(right === undefined) {
       return 1;
     }
-    if (left === null) {
+    if(left === null) {
       return -1;
     }
-    if (right === null) {
+    if(right === null) {
       return 1;
     }
-    if (typeof left !== typeof right) {
+    if(typeof left !== typeof right) {
       throw TypeError('The parameters can not be compared to one another');
+    }
+    if(typeof left === 'object') {
+      if(!(left instanceof Date) || !(right instanceof Date)) {
+        throw TypeError('The parameters can not be compared to one another');
+      }
     }
     switch (typeof left) {
       case 'boolean':
-        if (left) {
+        if(left) {
           return 1;
         } else {
           return -1;
         }
         break;
       case 'number':
-        if (isFinite(left) && isFinite(right)) {
-          if (left > right) {
+        if(isFinite(left) && isFinite(right)) {
+          if(left > right) {
             return 1;
           } else {
             return -1;
           }
         } else {
-          if (left === -Infinity || right === -Infinity) {
-            if (right === -Infinity) {
+          if(left === -Infinity || right === -Infinity) {
+            if(right === -Infinity) {
               return 1;
             } else {
               return -1;
             }
           }
-          if (left === Infinity || right === Infinity) {
-            if (left === Infinity) {
+          if(left === Infinity || right === Infinity) {
+            if(left === Infinity) {
               return 1;
             } else {
               return -1;
             }
           }
-          if (isNaN(left) || isNaN(right)) {
-            if (isNaN(right)) {
+          if(isNaN(left) || isNaN(right)) {
+            if(isNaN(right)) {
               return 1;
             } else {
               return -1;
@@ -68,14 +73,10 @@ export class Comparator {
         }
         break;
       case 'object':
-        if(left instanceof Date && right instanceof Date) {
-          if (left.valueOf() > right.valueOf()) {
-            return 1;
-          } else {
-            return -1;
-          }
+        if (left.valueOf() > right.valueOf()) {
+          return 1;
         } else {
-          throw TypeError('The parameters can not be compared to one another.');
+          return -1;
         }
       case 'string':
         return left.localeCompare(right);

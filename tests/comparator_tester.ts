@@ -4,7 +4,16 @@ import { Comparator } from '../source';
 /** Tests the ArrayTableModel. */
 export class ComparatorTestor {
 
-  /** Tests adding rows. */
+  /** Tests that values of different types don't get compared. */
+  @Test()
+  public invalidInputs(): void {
+    const comparator = new Comparator();
+    Expect(() => comparator.compareValues(true, 'mooo')).toThrow();
+    Expect(() => comparator.compareValues(
+      new Date(), new Comparator())).toThrow();
+  }
+
+  /** Tests comparing booleans. */
   @Test()
   public compareBooleans(): void {
     const comparator = new Comparator();
@@ -15,6 +24,7 @@ export class ComparatorTestor {
     Expect(comparator.compareValues(null, false)).toEqual(-1);
   }
 
+  /** Tests comparing numbers. */
   @Test()
   public compareNumbers(): void {
     const comparator = new Comparator();
@@ -27,6 +37,7 @@ export class ComparatorTestor {
     Expect(comparator.compareValues(Infinity, NaN)).toEqual(1);
   }
 
+  /* Tests comparing dates. */
   @Test()
   public compareDates(): void {
     const earlierDate = new Date(1992, 1, 12);
@@ -38,6 +49,7 @@ export class ComparatorTestor {
     Expect(comparator.compareValues(laterDate, null)).toEqual(1);
   }
 
+  /** Tests comparing strings. */
   @Test()
   public compareStrings(): void {
     const comparator = new Comparator();
@@ -46,6 +58,7 @@ export class ComparatorTestor {
     Expect(comparator.compareValues('réservé', 'reserve')).toEqual(1);
   }
 
+  /** Tests comparing symbols. */
   @Test()
   public compareSymbols(): void {
     const comparator = new Comparator();
