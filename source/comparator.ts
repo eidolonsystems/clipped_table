@@ -83,6 +83,5 @@ export class Comparator {
       case 'symbol':
         return left.toString().localeCompare(right.toString());
     }
-    throw TypeError('The parameters could not be compared to one another');
   }
 }
