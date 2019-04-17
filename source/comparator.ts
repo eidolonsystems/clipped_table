@@ -13,75 +13,75 @@ export class Comparator {
     if (left === right) {
       return 0;
     }
-    if (left === undefined || right === undefined) {
-      if (left === undefined) {
-        return -1;
-      } else {
-        return 1;
-      }
+    if (left === undefined) {
+      return -1;
     }
-    if (left === null || right === null) {
-
-      if (left === null) {
-        return -1;
-      } else {
-        return 1;
-      }
+    if (right === undefined) {
+      return 1;
     }
-    if(typeof left !== typeof right) {
+    if (left === null) {
+      return -1;
+    }
+    if (right === null) {
+      return 1;
+    }
+    if (typeof left !== typeof right) {
       throw TypeError('The parameters can not be compared to one another');
     }
-    if (typeof left === 'boolean') {
-      if (left) {
-        return 1;
-      } else {
-        return -1;
-      }
-    }
-    if (typeof left === 'number') {
-      if (isFinite(left) && isFinite(right)) {
-        if (left > right) {
+    switch (typeof left) {
+      case 'boolean':
+        if (left) {
           return 1;
         } else {
           return -1;
         }
-      } else {
-        if(left === -Infinity || right === -Infinity) {
-          if(right === -Infinity) {
+        break;
+      case 'number':
+        if (isFinite(left) && isFinite(right)) {
+          if (left > right) {
             return 1;
           } else {
             return -1;
           }
+        } else {
+          if (left === -Infinity || right === -Infinity) {
+            if (right === -Infinity) {
+              return 1;
+            } else {
+              return -1;
+            }
+          }
+          if (left === Infinity || right === Infinity) {
+            if (left === Infinity) {
+              return 1;
+            } else {
+              return -1;
+            }
+          }
+          if (isNaN(left) || isNaN(right)) {
+            if (isNaN(right)) {
+              return 1;
+            } else {
+              return -1;
+            }
+          }
         }
-        if(left === Infinity || right === Infinity) {
-          if(left === Infinity) {
+        break;
+      case 'object':
+        if(left instanceof Date && right instanceof Date) {
+          if (left.valueOf() > right.valueOf()) {
             return 1;
           } else {
             return -1;
           }
+        } else {
+          throw TypeError('The parameters can not be compared to one another.');
         }
-        if(isNaN(left) || isNaN(right)) {
-          if(isNaN(right)) {
-            return 1;
-          } else {
-            return -1;
-          }
-        }
-      }
+      case 'string':
+        return left.localeCompare(right);
+      case 'symbol':
+        return left.toString().localeCompare(right.toString());
     }
-    if(left instanceof Date && right instanceof Date) {
-      if(left.valueOf() > right.valueOf()) {
-        return 1;
-      } else {
-        return -1;
-      }
-    }
-    if(typeof left === 'string') {
-      return left.localeCompare(right);
-    }
-    if(typeof left === 'symbol') {
-      return left.toString().localeCompare(right.toString());
-    }
-    throw TypeError('The parameters could not be compared to one another.');
+    throw TypeError('The parameters could not be compared to one another');
   }
 }
