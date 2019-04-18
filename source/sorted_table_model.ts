@@ -22,13 +22,13 @@ export class ColumnOrder {
    *        order.
    */
   constructor(index: number, sortOrder: SortOrder = SortOrder.ASCENDING) {
-    this.index = index;
+    this.columnIndex = index;
     this.order = sortOrder;
   }
 
   /** Returns the column's index. */
   public get index(): number {
-    return this.index;
+    return this.columnIndex;
   }
 
   /** Returns the column's sort order. */
@@ -39,13 +39,13 @@ export class ColumnOrder {
   /** Returns a new ColumnOrder with a reversed sort order. */
   public reverseSortOrder(): ColumnOrder {
     if(this.order === SortOrder.ASCENDING) {
-      return new ColumnOrder(this.index, SortOrder.DESCENDING);
+      return new ColumnOrder(this.columnIndex, SortOrder.DESCENDING);
     } else {
-      return new ColumnOrder(this.index, SortOrder.ASCENDING);
+      return new ColumnOrder(this.columnIndex, SortOrder.ASCENDING);
     }
   }
 
-  private index: number;
+  private columnIndex: number;
   private order: SortOrder;
 }
 
