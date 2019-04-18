@@ -22,31 +22,31 @@ export class ColumnOrder {
    *        order.
    */
   constructor(index: number, sortOrder: SortOrder = SortOrder.ASCENDING) {
-    this.columnIndex = index;
-    this.order = sortOrder;
+    this._index = index;
+    this._sortOrder = sortOrder;
   }
 
   /** Returns the column's index. */
   public get index(): number {
-    return this.columnIndex;
+    return this._index;
   }
 
   /** Returns the column's sort order. */
   public get sortOrder(): SortOrder {
-    return this.order;
+    return this._sortOrder;
   }
 
   /** Returns a new ColumnOrder with a reversed sort order. */
   public reverseSortOrder(): ColumnOrder {
-    if(this.order === SortOrder.ASCENDING) {
-      return new ColumnOrder(this.columnIndex, SortOrder.DESCENDING);
+    if(this._sortOrder === SortOrder.ASCENDING) {
+      return new ColumnOrder(this._index, SortOrder.DESCENDING);
     } else {
-      return new ColumnOrder(this.columnIndex, SortOrder.ASCENDING);
+      return new ColumnOrder(this._index, SortOrder.ASCENDING);
     }
   }
 
-  private columnIndex: number;
-  private order: SortOrder;
+  private _index: number;
+  private _sortOrder: SortOrder;
 }
 
 /** Implements a TableModel that maintains its rows in sorted order.
