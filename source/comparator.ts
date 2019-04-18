@@ -10,6 +10,61 @@ export class Comparator {
    * @throws {TypeError} - The parameters can not be compared to one another.
    */
   public compareValues(left: any, right: any): number {
-    return 0;
+    if(left === right) {
+      return 0;
+    }
+    if(left === undefined) {
+      return -1;
+    } else if(right === undefined) {
+      return 1;
+    } else if(left === null) {
+      return -1;
+    } else if(right === null) {
+      return 1;
+    }
+    if(typeof left !== typeof right) {
+      throw TypeError('The parameters can not be compared to one another');
+    }
+    if(typeof left === 'object') {
+      if(!(left instanceof Date) || !(right instanceof Date)) {
+        throw TypeError('The parameters can not be compared to one another');
+      }
+    }
+    switch(typeof left) {
+      case 'boolean':
+        if(left) {
+          return 1;
+        } else {
+          return -1;
+        }
+      case 'number':
+        if(isFinite(left) && isFinite(right)) {
+          return left - right;
+        } else {
+          if(right === -Infinity) {
+            return 1;
+          } else if(left === -Infinity) {
+            return -1;
+          } else if(left === Infinity) {
+            return 1;
+          } else if(right === Infinity) {
+            return -1;
+          } else if(isNaN(right)) {
+            return 1;
+          } else if(isNaN(left)) {
+            return -1;
+          }
+        }
+      case 'object':
+        if(left.valueOf() > right.valueOf()) {
+          return 1;
+        } else {
+          return -1;
+        }
+      case 'string':
+        return left.localeCompare(right);
+      case 'symbol':
+        return left.toString().localeCompare(right.toString());
+    }
   }
 }
