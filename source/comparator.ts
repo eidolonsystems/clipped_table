@@ -15,14 +15,11 @@ export class Comparator {
     }
     if(left === undefined) {
       return -1;
-    }
-    if(right === undefined) {
+    } else if(right === undefined) {
       return 1;
-    }
-    if(left === null) {
+    } else if(left === null) {
       return -1;
-    }
-    if(right === null) {
+    } else if(right === null) {
       return 1;
     }
     if(typeof left !== typeof right) {
@@ -44,29 +41,20 @@ export class Comparator {
         if(isFinite(left) && isFinite(right)) {
           return left - right;
         } else {
-          if(left === -Infinity || right === -Infinity) {
-            if(right === -Infinity) {
+          if(right === -Infinity) {
+            return 1;
+          } else if(left === -Infinity) {
+            return -1;
+          } else if(left === Infinity) {
               return 1;
-            } else {
-              return -1;
-            }
-          }
-          if(left === Infinity || right === Infinity) {
-            if(left === Infinity) {
+          } else if(right === Infinity) {
+            return -1;
+          } else if(isNaN(right)) {
               return 1;
-            } else {
+          } else if(isNaN(left)) {
               return -1;
-            }
-          }
-          if(isNaN(left) || isNaN(right)) {
-            if(isNaN(right)) {
-              return 1;
-            } else {
-              return -1;
-            }
           }
         }
-        break;
       case 'object':
         if (left.valueOf() > right.valueOf()) {
           return 1;
