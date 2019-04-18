@@ -33,14 +33,13 @@ export class Comparator {
         throw TypeError('The parameters can not be compared to one another');
       }
     }
-    switch (typeof left) {
+    switch(typeof left) {
       case 'boolean':
         if(left) {
           return 1;
         } else {
           return -1;
         }
-        break;
       case 'number':
         if(isFinite(left) && isFinite(right)) {
           return left - right;
