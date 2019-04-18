@@ -46,17 +46,17 @@ export class Comparator {
           } else if(left === -Infinity) {
             return -1;
           } else if(left === Infinity) {
-              return 1;
+            return 1;
           } else if(right === Infinity) {
             return -1;
           } else if(isNaN(right)) {
-              return 1;
+            return 1;
           } else if(isNaN(left)) {
-              return -1;
+            return -1;
           }
         }
       case 'object':
-        if (left.valueOf() > right.valueOf()) {
+        if(left.valueOf() > right.valueOf()) {
           return 1;
         } else {
           return -1;
