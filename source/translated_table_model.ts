@@ -13,11 +13,9 @@ export class TranslatedTableModel extends TableModel {
     super();
     this.model = model;
     this.translation = [];
-    for(let i = 0; i < model.rowCount; ++i) {
-      this.translation[i] = i;
-    }
     this.reverseTranslation = [];
     for(let i = 0; i < model.rowCount; ++i) {
+      this.translation[i] = i;
       this.reverseTranslation[i] = i;
     }
     this.transactionCount = 0;
@@ -108,22 +106,19 @@ export class TranslatedTableModel extends TableModel {
 
   private move(source: number, dest: number) {
     const movingRow = this.translation[source];
-    if(source > dest) {
-      this.reverseTranslation[movingRow] =
-        this.reverseTranslation[movingRow] - Math.abs(source - dest);
-      for(let index = source; index > dest; --index) {
-        this.translation[index] = this.translation[index - 1];
-        this.reverseTranslation[this.translation[index]] =
-          this.reverseTranslation[this.translation[index]] + 1;
+    const direction =(() => {
+      if(source > dest) {
+        return -1;
+      } else {
+        return 1;
       }
-    } else {
-      this.reverseTranslation[movingRow] =
-        this.reverseTranslation[movingRow] + Math.abs(dest - source);
-      for(let index = source; index < dest; ++index) {
-        this.translation[index] = this.translation[index + 1];
-        this.reverseTranslation[this.translation[index]] =
-          this.reverseTranslation[this.translation[index]] - 1;
-      }
+    })();
+    this.reverseTranslation[movingRow] =
+      this.reverseTranslation[movingRow] + (dest - source);
+    for(let index = source; index !== dest; index = index + direction) {
+      this.translation[index] = this.translation[index + direction];
+      this.reverseTranslation[this.translation[index]] =
+        this.reverseTranslation[this.translation[index]] - direction;
     }
     this.translation[dest] = movingRow;
   }
@@ -149,6 +144,7 @@ export class TranslatedTableModel extends TableModel {
       }
       if(this.translation[index] >= operation.index) {
         this.translation[index] = this.translation[index] + 1;
+//        this.reverseTranslation[this.translation[index]] = whatever
       }
       if(this.reverseTranslation[index] >= operation.index) {
         this.reverseTranslation[index] =
