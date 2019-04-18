@@ -21,22 +21,32 @@ export class ColumnOrder {
    * @param sortOrder - Whether the column is ordered in ascending or descending
    *        order.
    */
-  constructor(index: number, sortOrder: SortOrder = SortOrder.ASCENDING) {}
+  constructor(index: number, sortOrder: SortOrder = SortOrder.ASCENDING) {
+    this._index = index;
+    this._sortOrder = sortOrder;
+  }
 
   /** Returns the column's index. */
   public get index(): number {
-    return 0;
+    return this._index;
   }
 
   /** Returns the column's sort order. */
   public get sortOrder(): SortOrder {
-    return null;
+    return this._sortOrder;
   }
 
   /** Returns a new ColumnOrder with a reversed sort order. */
   public reverseSortOrder(): ColumnOrder {
-    return null;
+    if(this._sortOrder === SortOrder.ASCENDING) {
+      return new ColumnOrder(this._index, SortOrder.DESCENDING);
+    } else {
+      return new ColumnOrder(this._index, SortOrder.ASCENDING);
+    }
   }
+
+  private _index: number;
+  private _sortOrder: SortOrder;
 }
 
 /** Implements a TableModel that maintains its rows in sorted order.
