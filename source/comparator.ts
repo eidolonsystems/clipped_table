@@ -12,8 +12,7 @@ export class Comparator {
   public compareValues(left: any, right: any): number {
     if(left === right) {
       return 0;
-    }
-    if(left === undefined) {
+    } else if(left === undefined) {
       return -1;
     } else if(right === undefined) {
       return 1;
@@ -21,11 +20,9 @@ export class Comparator {
       return -1;
     } else if(right === null) {
       return 1;
-    }
-    if(typeof left !== typeof right) {
+    } else if(typeof left !== typeof right) {
       throw TypeError('The parameters can not be compared to one another');
-    }
-    if(typeof left === 'object') {
+    } else if(typeof left === 'object') {
       if(!(left instanceof Date) || !(right instanceof Date)) {
         throw TypeError('The parameters can not be compared to one another');
       }
@@ -40,21 +37,20 @@ export class Comparator {
       case 'number':
         if(isFinite(left) && isFinite(right)) {
           return left - right;
-        } else {
-          if(right === -Infinity) {
-            return 1;
-          } else if(left === -Infinity) {
-            return -1;
-          } else if(left === Infinity) {
-            return 1;
-          } else if(right === Infinity) {
-            return -1;
-          } else if(isNaN(right)) {
-            return 1;
-          } else if(isNaN(left)) {
-            return -1;
-          }
+        } else if(right === -Infinity) {
+          return 1;
+        } else if(left === -Infinity) {
+          return -1;
+        } else if(left === Infinity) {
+          return 1;
+        } else if(right === Infinity) {
+          return -1;
+        } else if(isNaN(right)) {
+          return 1;
+        } else if(isNaN(left)) {
+          return -1;
         }
+        throw TypeError('The numbers can not be compared to one another');
       case 'object':
         if(left.valueOf() > right.valueOf()) {
           return 1;
