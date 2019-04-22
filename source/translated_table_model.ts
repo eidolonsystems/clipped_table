@@ -133,23 +133,7 @@ export class TranslatedTableModel extends TableModel {
       return;
     }
     const operationIndex = this.reverseTranslation[operation.index];
-    const start = (() => {
-      if(operationIndex < operation.index) {
-        return operationIndex;
-      } else {
-        return operation.index;
-      }
-    })();
-    for(let index = start; index < this.translation.length; ++index) {
-      if(index >= operation.index) { //increment in og
-        this.translation[this.reverseTranslation[index]] =
-          this.translation[this.reverseTranslation[index]] + 1;
-      }
-      if(index >= operationIndex) { // increment in rev
-        this.reverseTranslation[this.translation[index]] =
-          this.reverseTranslation[this.translation[index]] + 1;
-      }
-    }
+    this.shift(1, operation.index);
     this.translation.splice(operationIndex, 0, operation.index);
     this.reverseTranslation.splice(operation.index, 0, operationIndex);
     this.operations.push(new AddRowOperation(operationIndex, operation.row));
@@ -159,27 +143,32 @@ export class TranslatedTableModel extends TableModel {
   private rowRemoved(operation: RemoveRowOperation) {
     this.beginTransaction();
     const operationIndex = this.reverseTranslation[operation.index];
-    const start = (() => {
-      if(operationIndex < operation.index) {
-        return operationIndex;
-      } else {
-        return operation.index;
-      }
-    })();
-    for(let index = start; index < this.translation.length; ++index) {
-      if(index >= operation.index) {
-        this.translation[this.reverseTranslation[index]] =
-          this.translation[this.reverseTranslation[index]] - 1;
-      }
-      if(index >= operationIndex) {
-        this.reverseTranslation[this.translation[index]] =
-          this.reverseTranslation[this.translation[index]] - 1;
-      }
-    }
+    this.shift(-1, operation.index);
     this.translation.splice(operationIndex, 1);
     this.reverseTranslation.splice(operation.index, 1);
     this.operations.push(new RemoveRowOperation(operationIndex, operation.row));
     this.endTransaction();
+  }
+
+  private shift(ammount: number, opIndex: number) {
+    const operationIndex = this.reverseTranslation[opIndex];
+    const start = (() => {
+      if(operationIndex < opIndex) {
+        return operationIndex;
+      } else {
+        return opIndex;
+      }
+    })();
+    for(let index = start; index < this.translation.length; ++index) {
+      if(index >= opIndex) {
+        this.translation[this.reverseTranslation[index]] =
+          this.translation[this.reverseTranslation[index]] - ammount;
+      }
+      if(index >= operationIndex) {
+        this.reverseTranslation[this.translation[index]] =
+          this.reverseTranslation[this.translation[index]] - ammount;
+      }
+    }
   }
 
   private updateRow(operation: UpdateValueOperation) {
