@@ -132,41 +132,40 @@ export class TranslatedTableModel extends TableModel {
       this.endTransaction();
       return;
     }
-    const operationIndex = this.reverseTranslation[operation.index];
-    this.shift(1, operation.index);
-    this.translation.splice(operationIndex, 0, operation.index);
-    this.reverseTranslation.splice(operation.index, 0, operationIndex);
-    this.operations.push(new AddRowOperation(operationIndex, operation.row));
+    const reverseIndex = this.reverseTranslation[operation.index];
+    this.shift(1, operation.index, reverseIndex);
+    this.translation.splice(reverseIndex, 0, operation.index);
+    this.reverseTranslation.splice(operation.index, 0, reverseIndex);
+    this.operations.push(new AddRowOperation(reverseIndex, operation.row));
     this.endTransaction();
   }
 
   private rowRemoved(operation: RemoveRowOperation) {
     this.beginTransaction();
-    const operationIndex = this.reverseTranslation[operation.index];
-    this.shift(-1, operation.index);
-    this.translation.splice(operationIndex, 1);
+    const reverseIndex = this.reverseTranslation[operation.index];
+    this.shift(-1, operation.index, reverseIndex);
+    this.translation.splice(reverseIndex, 1);
     this.reverseTranslation.splice(operation.index, 1);
-    this.operations.push(new RemoveRowOperation(operationIndex, operation.row));
+    this.operations.push(new RemoveRowOperation(reverseIndex, operation.row));
     this.endTransaction();
   }
 
-  private shift(ammount: number, opIndex: number) {
-    const operationIndex = this.reverseTranslation[opIndex];
+  private shift(ammount: number, rowIndex: number, reverseIndex: number) {
     const start = (() => {
-      if(operationIndex < opIndex) {
-        return operationIndex;
+      if(reverseIndex < rowIndex) {
+        return reverseIndex;
       } else {
-        return opIndex;
+        return rowIndex;
       }
     })();
     for(let index = start; index < this.translation.length; ++index) {
-      if(index >= opIndex) {
+      if(index >= rowIndex) {
         this.translation[this.reverseTranslation[index]] =
-          this.translation[this.reverseTranslation[index]] - ammount;
+          this.translation[this.reverseTranslation[index]] + ammount;
       }
-      if(index >= operationIndex) {
+      if(index >= reverseIndex) {
         this.reverseTranslation[this.translation[index]] =
-          this.reverseTranslation[this.translation[index]] - ammount;
+          this.reverseTranslation[this.translation[index]] + ammount;
       }
     }
   }
