@@ -15,8 +15,8 @@ export class TranslatedTableModel extends TableModel {
     this.translation = [];
     this.reverseTranslation = [];
     for(let i = 0; i < model.rowCount; ++i) {
-      this.translation[i] = i;
-      this.reverseTranslation[i] = i;
+      this.translation.push(i);
+      this.reverseTranslation.push(i);
     }
     this.transactionCount = 0;
     this.dispatcher = new Kola.Dispatcher<Operation[]>();
@@ -117,8 +117,7 @@ export class TranslatedTableModel extends TableModel {
       this.reverseTranslation[movingRow] + (dest - source);
     for(let index = source; index !== dest; index = index + direction) {
       this.translation[index] = this.translation[index + direction];
-      this.reverseTranslation[this.translation[index]] =
-        this.reverseTranslation[this.translation[index]] - direction;
+      this.reverseTranslation[this.translation[index]] -= direction;
     }
     this.translation[dest] = movingRow;
   }
@@ -150,7 +149,7 @@ export class TranslatedTableModel extends TableModel {
     this.endTransaction();
   }
 
-  private shift(ammount: number, rowIndex: number, reverseIndex: number) {
+  private shift(amount: number, rowIndex: number, reverseIndex: number) {
     const start = (() => {
       if(reverseIndex < rowIndex) {
         return reverseIndex;
@@ -160,12 +159,10 @@ export class TranslatedTableModel extends TableModel {
     })();
     for(let index = start; index < this.translation.length; ++index) {
       if(index >= rowIndex) {
-        this.translation[this.reverseTranslation[index]] =
-          this.translation[this.reverseTranslation[index]] + ammount;
+        this.translation[this.reverseTranslation[index]] += amount;
       }
       if(index >= reverseIndex) {
-        this.reverseTranslation[this.translation[index]] =
-          this.reverseTranslation[this.translation[index]] + ammount;
+        this.reverseTranslation[this.translation[index]] += amount;
       }
     }
   }
