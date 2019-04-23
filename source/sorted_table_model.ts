@@ -1,7 +1,8 @@
 import * as Kola from 'kola-signals';
 import { Comparator } from './comparator';
 import { TableModel } from './table_model';
-import { Operation } from './operations';
+import { AddRowOperation, MoveRowOperation, Operation,
+  RemoveRowOperation, UpdateValueOperation  } from './operations';
 
 /** Specifies whether to sort in ascending order or descending order. */
 export enum SortOrder {
@@ -38,7 +39,7 @@ export class ColumnOrder {
 
   /** Returns a new ColumnOrder with a reversed sort order. */
   public reverseSortOrder(): ColumnOrder {
-    if(this._sortOrder === SortOrder.ASCENDING) {
+    if (this._sortOrder === SortOrder.ASCENDING) {
       return new ColumnOrder(this._index, SortOrder.DESCENDING);
     } else {
       return new ColumnOrder(this._index, SortOrder.ASCENDING);
@@ -63,32 +64,75 @@ export class SortedTableModel extends TableModel {
    * @param columnOrder - The column sort order.
    */
   public constructor(source: TableModel, comparator?: Comparator,
-      columnOrder?: ColumnOrder[]) {
+    columnOrder?: ColumnOrder[]) {
     super();
+    this.model = source;
+    this._columnOrder = columnOrder;
+    this.model.connect(this.handleOperations.bind(this));
+  }
+
+  /** Marks the beginning of a transaction. In cases where a transaction is
+   *  already being processed, then the sub-transaction gets consolidated into
+   *  the parent transaction.
+   */
+  public beginTransaction(): void {
+    if (this.transactionCount === 0) {
+      this.operations = [];
+    }
+    ++this.transactionCount;
+  }
+
+  /** Ends a transaction. */
+  public endTransaction(): void {
+    --this.transactionCount;
+    if (this.transactionCount === 0) {
+      this.dispatcher.dispatch(this.operations);
+    }
   }
 
   /** Returns the column sort order. */
   public get columnOrder(): ColumnOrder[] {
-    return null;
+    return this._columnOrder;
   }
 
   /** Sets the order that the columns are sorted by. */
-  public set columnOrder(columnOrder: ColumnOrder[]) {}
+  public set columnOrder(columnOrder: ColumnOrder[]) {
+    this._columnOrder = columnOrder;
+  }
 
   public get rowCount(): number {
-    return 0;
+    return this.model.rowCount;
   }
 
   public get columnCount(): number {
-    return 0;
+    return this.model.columnCount;
   }
 
   public get(row: number, column: number): any {
-    return null;
+    return this.model.get(row, column);
   }
 
   public connect(slot: (operations: Operation[]) => void):
       Kola.Listener<Operation[]> {
-    return null;
+    return this.dispatcher.listen(slot);
   }
+
+  private handleOperations(newOperations: Operation[]): void {
+    this.beginTransaction();
+    for (const operation of newOperations) {
+      if (operation instanceof AddRowOperation) {
+      } else if (operation instanceof RemoveRowOperation) {
+      } else if (operation instanceof UpdateValueOperation) {
+      } else {
+        throw TypeError();
+      }
+    }
+    this.endTransaction();
+  }
+
+  private model: TableModel;
+  private _columnOrder: ColumnOrder[];
+  private transactionCount: number;
+  private operations: Operation[];
+  private dispatcher: Kola.Dispatcher<Operation[]>;
 }
