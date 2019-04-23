@@ -3,6 +3,7 @@ import { Comparator } from './comparator';
 import { TableModel } from './table_model';
 import { AddRowOperation, MoveRowOperation, Operation,
   RemoveRowOperation, UpdateValueOperation  } from './operations';
+import { TranslatedTableModel } from './translated_table_model';
 
 /** Specifies whether to sort in ascending order or descending order. */
 export enum SortOrder {
@@ -67,6 +68,7 @@ export class SortedTableModel extends TableModel {
     columnOrder?: ColumnOrder[]) {
     super();
     this.model = source;
+    this.translatedTable = new TranslatedTableModel(this.model);
     this.order = columnOrder;
     this.model.connect(this.handleOperations.bind(this));
   }
@@ -117,6 +119,10 @@ export class SortedTableModel extends TableModel {
     return this.dispatcher.listen(slot);
   }
 
+  private sort() {
+    return;
+  }
+
   private handleOperations(newOperations: Operation[]): void {
     this.beginTransaction();
     for (const operation of newOperations) {
@@ -131,6 +137,7 @@ export class SortedTableModel extends TableModel {
   }
 
   private model: TableModel;
+  private translatedTable: TranslatedTableModel;
   private order: ColumnOrder[];
   private transactionCount: number;
   private operations: Operation[];
