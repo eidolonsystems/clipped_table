@@ -88,7 +88,7 @@ export class SortedTableModelTester {
     Expect(sortedTable.get(3, 0)).toEqual(5);
   }
 
-  /** Tests the behavior when the table recives a row added signal. */
+  /** Tests the behavior when the table recives a row removed signal. */
   @Test()
   public testReciveRemove(): void {
     const model = new ArrayTableModel();
@@ -102,6 +102,7 @@ export class SortedTableModelTester {
     Expect(sortedTable.get(0, 1)).toEqual(7);
   }
 
+  /** Tests the behavior when the table recives a row update signal. */
   @Test()
   public testReciveUpdate(): void {
     const orders = [new ColumnOrder(1, SortOrder.ASCENDING)];
