@@ -67,7 +67,7 @@ export class SortedTableModel extends TableModel {
     columnOrder?: ColumnOrder[]) {
     super();
     this.model = source;
-    this._columnOrder = columnOrder;
+    this.order = columnOrder;
     this.model.connect(this.handleOperations.bind(this));
   }
 
@@ -92,12 +92,12 @@ export class SortedTableModel extends TableModel {
 
   /** Returns the column sort order. */
   public get columnOrder(): ColumnOrder[] {
-    return this._columnOrder;
+    return this.order;
   }
 
   /** Sets the order that the columns are sorted by. */
   public set columnOrder(columnOrder: ColumnOrder[]) {
-    this._columnOrder = columnOrder;
+    this.order = columnOrder;
   }
 
   public get rowCount(): number {
@@ -131,7 +131,7 @@ export class SortedTableModel extends TableModel {
   }
 
   private model: TableModel;
-  private _columnOrder: ColumnOrder[];
+  private order: ColumnOrder[];
   private transactionCount: number;
   private operations: Operation[];
   private dispatcher: Kola.Dispatcher<Operation[]>;
