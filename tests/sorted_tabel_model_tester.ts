@@ -36,6 +36,15 @@ export class SortedTableModelTester {
 
   @Test()
   public testReciveRemove(): void {
+    const model = new ArrayTableModel();
+    model.addRow([1]);
+    model.addRow([6]);
+    model.addRow([7]);
+    const sortedTable = new SortedTableModel(model);
+    model.removeRow(1);
+    Expect(sortedTable.rowCount).toEqual(2);
+    Expect(sortedTable.get(0, 0)).toEqual(1);
+    Expect(sortedTable.get(0, 1)).toEqual(7);
   }
 
   @Test()
