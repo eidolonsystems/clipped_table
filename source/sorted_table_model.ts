@@ -70,20 +70,17 @@ export class SortedTableModel extends TableModel {
   public constructor(source: TableModel, comparator?: Comparator,
     columnOrder?: ColumnOrder[]) {
     super();
-    this.originalTable = source;
-    const rowOrdering = [];
+    this.sourceTable = source;
+    this.rowTransltion = [];
     for (let index = 0; index < source.rowCount; ++index) {
-      rowOrdering.push(index);
+      this.rowTransltion.push(index);
     }
-    this.rowTransltion = rowOrdering;
     if (comparator) {
-      this.compaerer = comparator;
+      this.comparator = comparator;
     }
-    if (columnOrder !== undefined) {
+    if (columnOrder) {
       this.order = columnOrder;
       this.sort(source);
-    } else {
-      this.order = [];
     }
   }
 
@@ -117,36 +114,20 @@ export class SortedTableModel extends TableModel {
   }
 
   public get rowCount(): number {
-    return this.originalTable.rowCount;
+    return this.sourceTable.rowCount;
   }
 
   public get columnCount(): number {
-    return this.originalTable.columnCount;
+    return this.sourceTable.columnCount;
   }
 
   public get(row: number, column: number): any {
-    return this.originalTable.get(this.rowTransltion[row], column);
+    return this.sourceTable.get(this.rowTransltion[row], column);
   }
 
   public connect(slot: (operations: Operation[]) => void):
     Kola.Listener<Operation[]> {
     return this.dispatcher.listen(slot);
-  }
-
-  public compareRows(row1: number, row2: number): number {
-    for (let index = 0; index < 1; ++index) {
-      const value = this.compaerer.compareValues(
-        this.originalTable.get(row1, this.order[index].index),
-        this.originalTable.get(row2, this.order[index].index));
-      if (value !== 0) {
-        if (this.order[index].sortOrder === SortOrder.ASCENDING) {
-          return value;
-        } else {
-          return value * -1;
-        }
-      }
-    }
-    return 0;
   }
 
   private handleOperations(newOperations: Operation[]): void {
@@ -170,9 +151,9 @@ export class SortedTableModel extends TableModel {
     rowOrdering.sort(
       (row1, row2) => {
         for (let index = 0; index < this.order.length; ++index) {
-          const value = this.compaerer.compareValues(
-            this.originalTable.get(row1, this.order[index].index),
-            this.originalTable.get(row2, this.order[index].index));
+          const value = this.comparator.compareValues(
+            this.sourceTable.get(row1, this.order[index].index),
+            this.sourceTable.get(row2, this.order[index].index));
           if (value !== 0) {
             if (this.order[index].sortOrder === SortOrder.ASCENDING) {
               return value;
@@ -183,13 +164,18 @@ export class SortedTableModel extends TableModel {
         }
         return 0;
       });
-    console.log(rowOrdering);
     this.rowTransltion = rowOrdering;
+    console.log(this.rowTransltion);
+    this.reverseRowTranslation = [];
+    for(let index = 0; index < this.order.length; ++index) {
+      this.reverseRowTranslation[this.rowTransltion[index]] = index;
+    }
   }
 
-  private originalTable: TableModel;
+  private sourceTable: TableModel;
   private rowTransltion: number[];
-  private compaerer: Comparator;
+  private reverseRowTranslation: number[];
+  private comparator: Comparator;
   private order: ColumnOrder[];
   private transactionCount: number;
   private operations: Operation[];
