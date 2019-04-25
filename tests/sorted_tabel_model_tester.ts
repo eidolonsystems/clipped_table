@@ -100,42 +100,4 @@ export class SortedTableModelTester {
     Expect(sortedTable.get(0, 0)).toEqual(7);
     Expect(sortedTable.rowCount).toEqual(1);
   }
-  /** Tests the behavior when the table recives a row added signal. */
-  //@Test()
-  public testReceiveAdd(): void {
-    const orders = [new ColumnOrder(1, SortOrder.ASCENDING)];
-    const comp = new Comparator();
-    const model = new ArrayTableModel();
-    model.addRow([2]);
-    model.addRow([5]);
-    model.addRow([4]);
-    const sortedTable = new SortedTableModel(model, comp, orders);
-    Expect(sortedTable.get(0, 0)).toEqual(2);
-    Expect(sortedTable.get(1, 0)).toEqual(4);
-    Expect(sortedTable.get(2, 0)).toEqual(5);
-    model.addRow([3]);
-    Expect(sortedTable.get(0, 0)).toEqual(2);
-    Expect(sortedTable.get(1, 0)).toEqual(3);
-    Expect(sortedTable.get(2, 0)).toEqual(4);
-    Expect(sortedTable.get(3, 0)).toEqual(5);
-  }
-
-  /** Tests the behavior when the table recives a row update signal. */
-  //@Test()
-  public testReciveUpdate(): void {
-    const orders = [new ColumnOrder(1, SortOrder.ASCENDING)];
-    const comp = new Comparator();
-    const model = new ArrayTableModel();
-    model.addRow([2]);
-    model.addRow([5]);
-    model.addRow([4]);
-    const sortedTable = new SortedTableModel(model, comp, orders);
-    Expect(sortedTable.get(0, 0)).toEqual(2);
-    Expect(sortedTable.get(1, 0)).toEqual(4);
-    Expect(sortedTable.get(2, 0)).toEqual(5);
-    model.set(1, 0, 9);
-    Expect(sortedTable.get(0, 0)).toEqual(2);
-    Expect(sortedTable.get(1, 0)).toEqual(4);
-    Expect(sortedTable.get(2, 0)).toEqual(9);
-  }
 }
