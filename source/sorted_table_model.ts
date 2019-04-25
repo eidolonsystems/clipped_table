@@ -1,12 +1,9 @@
 import * as Kola from 'kola-signals';
 import { Comparator } from './comparator';
 import { TableModel } from './table_model';
-import {
-  AddRowOperation, MoveRowOperation, Operation,
-  RemoveRowOperation, UpdateValueOperation
-} from './operations';
+import { Operation } from './operations';
 import { TranslatedTableModel } from './translated_table_model';
-import { timingSafeEqual } from 'crypto';
+
 
 /** Specifies whether to sort in ascending order or descending order. */
 export enum SortOrder {
@@ -70,17 +67,17 @@ export class SortedTableModel extends TableModel {
   public constructor(source: TableModel, comparator?: Comparator,
     columnOrder?: ColumnOrder[]) {
     super();
-    this.sourceTable = source;
-    this.rowTransltion = [];
-    for (let index = 0; index < source.rowCount; ++index) {
-      this.rowTransltion.push(index);
-    }
+    this.translatedTable = new TranslatedTableModel(source);
     if (comparator) {
       this.comparator = comparator;
+    } else {
+        this.comparator = new Comparator();
     }
     if (columnOrder) {
-      this.order = columnOrder;
+      this.order = columnOrder.slice();
       this.sort(source);
+    } else {
+      this.order = [];
     }
   }
 
@@ -89,6 +86,7 @@ export class SortedTableModel extends TableModel {
    *  the parent transaction.
    */
   public beginTransaction(): void {
+    console.log('begin!');
     if (this.transactionCount === 0) {
       this.operations = [];
     }
@@ -114,15 +112,15 @@ export class SortedTableModel extends TableModel {
   }
 
   public get rowCount(): number {
-    return this.sourceTable.rowCount;
+    return this.translatedTable.rowCount;
   }
 
   public get columnCount(): number {
-    return this.sourceTable.columnCount;
+    return this.translatedTable.columnCount;
   }
 
   public get(row: number, column: number): any {
-    return this.sourceTable.get(this.rowTransltion[row], column);
+    return this.translatedTable.get(row, column);
   }
 
   public connect(slot: (operations: Operation[]) => void):
@@ -130,51 +128,39 @@ export class SortedTableModel extends TableModel {
     return this.dispatcher.listen(slot);
   }
 
-  private handleOperations(newOperations: Operation[]): void {
-    this.beginTransaction();
-    for (const operation of newOperations) {
-      if (operation instanceof AddRowOperation) {
-      } else if (operation instanceof RemoveRowOperation) {
-      } else if (operation instanceof UpdateValueOperation) {
-      } else {
-        throw TypeError();
-      }
-    }
-    this.endTransaction();
-  }
-
   private sort(tableMode: TableModel): void {
     const rowOrdering = [];
-    for (let index = 0; index < tableMode.rowCount; ++index) {
+    for(let index = 0; index < tableMode.rowCount; ++index) {
       rowOrdering.push(index);
     }
-    rowOrdering.sort(
-      (row1, row2) => {
-        for (let index = 0; index < this.order.length; ++index) {
-          const value = this.comparator.compareValues(
-            this.sourceTable.get(row1, this.order[index].index),
-            this.sourceTable.get(row2, this.order[index].index));
-          if (value !== 0) {
-            if (this.order[index].sortOrder === SortOrder.ASCENDING) {
-              return value;
-            } else {
-              return value * -1;
-            }
-          }
+    rowOrdering.sort((a, b) => this.compareRows(a,b));
+    for(let index = 0; index < rowOrdering.length - 1; ++index) {
+      this.translatedTable.moveRow(rowOrdering[index], index);
+      for(let j = index + 1; j < rowOrdering.length; ++j) {
+        if(rowOrdering[j] <= rowOrdering[index]) {
+          rowOrdering[j] += 1;
         }
-        return 0;
-      });
-    this.rowTransltion = rowOrdering;
-    console.log(this.rowTransltion);
-    this.reverseRowTranslation = [];
-    for(let index = 0; index < this.order.length; ++index) {
-      this.reverseRowTranslation[this.rowTransltion[index]] = index;
+      }
     }
   }
 
-  private sourceTable: TableModel;
-  private rowTransltion: number[];
-  private reverseRowTranslation: number[];
+  private compareRows(row1: number, row2: number) {
+    for(let index = 0; index < this.order.length; ++index) {
+      const value = this.comparator.compareValues(
+        this.translatedTable.get(row1, this.order[index].index),
+        this.translatedTable.get(row2, this.order[index].index));
+      if(value !== 0) {
+        if(this.order[index].sortOrder === SortOrder.ASCENDING) {
+          return value;
+        } else {
+          return value * -1;
+        }
+      }
+    }
+    return 0;
+  }
+
+  private translatedTable: TranslatedTableModel;
   private comparator: Comparator;
   private order: ColumnOrder[];
   private transactionCount: number;

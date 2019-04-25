@@ -66,8 +66,40 @@ export class SortedTableModelTester {
     Expect(sortedTable.get(1, 1)).toEqual(9);
     Expect(sortedTable.get(2, 1)).toEqual(3);
     Expect(sortedTable.get(3, 1)).toEqual(9);
+    Expect(sortedTable.columnCount).toEqual(2);
+    Expect(sortedTable.rowCount).toEqual(4);
+    const orders2 = [new ColumnOrder(0, SortOrder.ASCENDING)];
+    const model2 = new ArrayTableModel();
+    model2.addRow(['a', 2]);
+    model2.addRow(['z', 9]);
+    model2.addRow(['z', 9]);
+    model2.addRow(['z', 7]);
+    model2.addRow(['q', 9]);
+    const sortedTable2 = new SortedTableModel(model2, comp, orders2);
+    Expect(sortedTable2.get(0, 0)).toEqual('a');
+    Expect(sortedTable2.get(1, 0)).toEqual('q');
+    Expect(sortedTable2.get(2, 0)).toEqual('z');
+    Expect(sortedTable2.get(3, 0)).toEqual('z');
+    Expect(sortedTable2.get(3, 0)).toEqual('z');
   }
 
+  /** Tests the behavior when the table recives a row removed signal. */
+  @Test()
+  public testReciveRemove(): void {
+    const model = new ArrayTableModel();
+    model.addRow([1]);
+    model.addRow([6]);
+    model.addRow([7]);
+    const sortedTable = new SortedTableModel(model);
+    model.removeRow(1);
+    Expect(sortedTable.rowCount).toEqual(2);
+    Expect(sortedTable.get(0, 0)).toEqual(1);
+    Expect(sortedTable.get(1, 0)).toEqual(7);
+    Expect(sortedTable.rowCount).toEqual(2);
+    model.removeRow(0);
+    Expect(sortedTable.get(0, 0)).toEqual(7);
+    Expect(sortedTable.rowCount).toEqual(1);
+  }
   /** Tests the behavior when the table recives a row added signal. */
   //@Test()
   public testReceiveAdd(): void {
@@ -86,20 +118,6 @@ export class SortedTableModelTester {
     Expect(sortedTable.get(1, 0)).toEqual(3);
     Expect(sortedTable.get(2, 0)).toEqual(4);
     Expect(sortedTable.get(3, 0)).toEqual(5);
-  }
-
-  /** Tests the behavior when the table recives a row removed signal. */
-  //@Test()
-  public testReciveRemove(): void {
-    const model = new ArrayTableModel();
-    model.addRow([1]);
-    model.addRow([6]);
-    model.addRow([7]);
-    const sortedTable = new SortedTableModel(model);
-    model.removeRow(1);
-    Expect(sortedTable.rowCount).toEqual(2);
-    Expect(sortedTable.get(0, 0)).toEqual(1);
-    Expect(sortedTable.get(0, 1)).toEqual(7);
   }
 
   /** Tests the behavior when the table recives a row update signal. */
