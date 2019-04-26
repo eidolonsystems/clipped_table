@@ -2,6 +2,7 @@ import * as Kola from 'kola-signals';
 import { Comparator } from './comparator';
 import { TableModel } from './table_model';
 import { Operation } from './operations';
+import { TranslatedTableModel } from './translated_table_model';
 
 /** Specifies whether to sort in ascending order or descending order. */
 export enum SortOrder {
@@ -65,30 +66,79 @@ export class SortedTableModel extends TableModel {
   public constructor(source: TableModel, comparator?: Comparator,
       columnOrder?: ColumnOrder[]) {
     super();
+    this.translatedTable = new TranslatedTableModel(source);
+    if(comparator) {
+      this.comparator = comparator;
+    } else {
+      this.comparator = new Comparator();
+    }
+    if(columnOrder) {
+      this.order = columnOrder.slice();
+    } else {
+      this.order = [];
+    }
+    this.sort(source);
   }
 
   /** Returns the column sort order. */
   public get columnOrder(): ColumnOrder[] {
-    return null;
+    return this.order.slice();
   }
 
   /** Sets the order that the columns are sorted by. */
-  public set columnOrder(columnOrder: ColumnOrder[]) {}
+  public set columnOrder(columnOrder: ColumnOrder[]) {
+  }
 
   public get rowCount(): number {
-    return 0;
+    return this.translatedTable.rowCount;
   }
 
   public get columnCount(): number {
-    return 0;
+    return this.translatedTable.columnCount;
   }
 
   public get(row: number, column: number): any {
-    return null;
+    return this.translatedTable.get(row, column);
   }
 
   public connect(slot: (operations: Operation[]) => void):
       Kola.Listener<Operation[]> {
     return null;
   }
+
+  private sort(tableModel: TableModel) {
+    const rowOrdering = [];
+    for(let i = 0; i < tableModel.rowCount; ++i) {
+      rowOrdering.push(i);
+    }
+    rowOrdering.sort((a, b) => this.compareRows(a, b));
+    for(let i = 0; i < rowOrdering.length - 1; ++i) {
+      this.translatedTable.moveRow(rowOrdering[i], i);
+      for(let j = i + 1; j < rowOrdering.length; ++j) {
+        if(rowOrdering[j] < rowOrdering[i]) {
+          ++rowOrdering[j];
+        }
+      }
+    }
+  }
+
+  private compareRows(row1: number, row2: number) {
+    for(let i = 0; i < this.order.length; ++i) {
+      const value = this.comparator.compareValues(
+        this.translatedTable.get(row1, this.order[i].index),
+        this.translatedTable.get(row2, this.order[i].index));
+      if(value !== 0) {
+        if(this.order[i].sortOrder === SortOrder.ASCENDING) {
+          return value;
+        } else {
+          return -value;
+        }
+      }
+    }
+    return 0;
+  }
+
+  private translatedTable: TranslatedTableModel;
+  private comparator: Comparator;
+  private order: ColumnOrder[];
 }
