@@ -87,7 +87,6 @@ export class SortedTableModel extends TableModel {
 
   /** Sets the order that the columns are sorted by. */
   public set columnOrder(columnOrder: ColumnOrder[]) {
-    this.order = columnOrder.slice();
   }
 
   public get rowCount(): number {
@@ -104,8 +103,7 @@ export class SortedTableModel extends TableModel {
 
   public connect(slot: (operations: Operation[]) => void):
       Kola.Listener<Operation[]> {
-    this.translatedTable.connect(slot);
-    return this.dispatcher.listen(slot);
+    return null;
   }
 
   private sort(tableModel: TableModel) {
@@ -117,7 +115,7 @@ export class SortedTableModel extends TableModel {
     for(let i = 0; i < rowOrdering.length - 1; ++i) {
       this.translatedTable.moveRow(rowOrdering[i], i);
       for(let j = i + 1; j < rowOrdering.length; ++j) {
-        if(rowOrdering[j] <= rowOrdering[i]) {
+        if(rowOrdering[j] < rowOrdering[i]) {
           ++rowOrdering[j];
         }
       }
@@ -143,5 +141,4 @@ export class SortedTableModel extends TableModel {
   private translatedTable: TranslatedTableModel;
   private comparator: Comparator;
   private order: ColumnOrder[];
-  private dispatcher: Kola.Dispatcher<Operation[]>;
 }
