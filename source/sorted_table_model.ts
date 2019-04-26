@@ -80,34 +80,14 @@ export class SortedTableModel extends TableModel {
     this.sort(source);
   }
 
-  /** Marks the beginning of a transaction. In cases where a transaction is
-   *  already being processed, then the sub-transaction gets consolidated into
-   *  the parent transaction.
-   */
-  public beginTransaction(): void {
-    console.log('begin!');
-    if(this.transactionCount === 0) {
-      this.operations = [];
-    }
-    ++this.transactionCount;
-  }
-
-  /** Ends a transaction. */
-  public endTransaction(): void {
-    --this.transactionCount;
-    if(this.transactionCount === 0) {
-      this.dispatcher.dispatch(this.operations);
-    }
-  }
-
   /** Returns the column sort order. */
   public get columnOrder(): ColumnOrder[] {
-    return this.order;
+    return this.order.slice();
   }
 
   /** Sets the order that the columns are sorted by. */
   public set columnOrder(columnOrder: ColumnOrder[]) {
-    this.order = columnOrder;
+    this.order = columnOrder.slice();
   }
 
   public get rowCount(): number {
@@ -123,36 +103,36 @@ export class SortedTableModel extends TableModel {
   }
 
   public connect(slot: (operations: Operation[]) => void):
-    Kola.Listener<Operation[]> {
+      Kola.Listener<Operation[]> {
     return this.dispatcher.listen(slot);
   }
 
-  private sort(tableMode: TableModel): void {
+  private sort(tableModel: TableModel) {
     const rowOrdering = [];
-    for(let index = 0; index < tableMode.rowCount; ++index) {
-      rowOrdering.push(index);
+    for(let i = 0; i < tableModel.rowCount; ++i) {
+      rowOrdering.push(i);
     }
-    rowOrdering.sort((a, b) => this.compareRows(a,b));
-    for(let index = 0; index < rowOrdering.length - 1; ++index) {
-      this.translatedTable.moveRow(rowOrdering[index], index);
-      for(let j = index + 1; j < rowOrdering.length; ++j) {
-        if(rowOrdering[j] <= rowOrdering[index]) {
-          rowOrdering[j] += 1;
+    rowOrdering.sort((a, b) => this.compareRows(a, b));
+    for(let i = 0; i < rowOrdering.length - 1; ++i) {
+      this.translatedTable.moveRow(rowOrdering[i], i);
+      for(let j = i + 1; j < rowOrdering.length; ++j) {
+        if(rowOrdering[j] <= rowOrdering[i]) {
+          ++rowOrdering[j];
         }
       }
     }
   }
 
   private compareRows(row1: number, row2: number) {
-    for(let index = 0; index < this.order.length; ++index) {
+    for(let i = 0; i < this.order.length; ++i) {
       const value = this.comparator.compareValues(
-        this.translatedTable.get(row1, this.order[index].index),
-        this.translatedTable.get(row2, this.order[index].index));
+        this.translatedTable.get(row1, this.order[i].index),
+        this.translatedTable.get(row2, this.order[i].index));
       if(value !== 0) {
-        if(this.order[index].sortOrder === SortOrder.ASCENDING) {
+        if(this.order[i].sortOrder === SortOrder.ASCENDING) {
           return value;
         } else {
-          return value * -1;
+          return -value;
         }
       }
     }
@@ -162,7 +142,5 @@ export class SortedTableModel extends TableModel {
   private translatedTable: TranslatedTableModel;
   private comparator: Comparator;
   private order: ColumnOrder[];
-  private transactionCount: number;
-  private operations: Operation[];
   private dispatcher: Kola.Dispatcher<Operation[]>;
 }

@@ -1,8 +1,8 @@
 import { Expect, Test } from 'alsatian';
-import { AddRowOperation, SortedTableModel, MoveRowOperation , Operation,
-  RemoveRowOperation, TranslatedTableModel,
-  UpdateValueOperation, ArrayTableModel, ColumnOrder, SortOrder, Comparator } from '../source';
+import { SortedTableModel,  TranslatedTableModel, ArrayTableModel,
+  ColumnOrder, SortOrder, Comparator } from '../source';
 
+/** Tests the SortedTableModel. */
 export class SortedTableModelTester {
 
   /** Tests that the number of rows is correct. */
@@ -83,9 +83,9 @@ export class SortedTableModelTester {
     Expect(sortedTable2.get(3, 0)).toEqual('z');
   }
 
-  /** Tests the behavior when the table recives a row removed signal. */
+  /** Tests the behavior when the table receives a row removed signal. */
   @Test()
-  public testReciveRemove(): void {
+  public testReceiveRemove(): void {
     const model = new ArrayTableModel();
     model.addRow([1]);
     model.addRow([6]);
