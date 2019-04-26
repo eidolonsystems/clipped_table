@@ -104,7 +104,8 @@ export class SortedTableModel extends TableModel {
 
   public connect(slot: (operations: Operation[]) => void):
       Kola.Listener<Operation[]> {
-    return this.translatedTable.connect(slot);
+    this.translatedTable.connect(slot);
+    return this.dispatcher.listen(slot);
   }
 
   private sort(tableModel: TableModel) {
