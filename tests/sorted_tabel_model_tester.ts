@@ -119,25 +119,43 @@ export class SortedTableModelTester {
     const orders = [new ColumnOrder(0, SortOrder.ASCENDING)];
     const sortedTable = new SortedTableModel(model, comp, orders);
     model.addRow([9]);
-    console.log('ADDED AND SORTED.');
     Expect(sortedTable.get(0, 0)).toEqual(1);
     Expect(sortedTable.get(1, 0)).toEqual(6);
     Expect(sortedTable.get(2, 0)).toEqual(7);
     Expect(sortedTable.get(3, 0)).toEqual(9);
-    ///
     model.addRow([0]);
+    //console.log(sortedTable);
     Expect(sortedTable.get(0, 0)).toEqual(0);
     Expect(sortedTable.get(1, 0)).toEqual(1);
     Expect(sortedTable.get(2, 0)).toEqual(6);
     Expect(sortedTable.get(3, 0)).toEqual(7);
     Expect(sortedTable.get(4, 0)).toEqual(9);
-
+    console.log(sortedTable);
     model.addRow([10], 0);
+    console.log(sortedTable);
     Expect(sortedTable.get(0, 0)).toEqual(0);
     Expect(sortedTable.get(1, 0)).toEqual(1);
     Expect(sortedTable.get(2, 0)).toEqual(6);
     Expect(sortedTable.get(3, 0)).toEqual(7);
     Expect(sortedTable.get(4, 0)).toEqual(9);
     Expect(sortedTable.get(5, 0)).toEqual(10);
+    const model2 = new ArrayTableModel();
+    const tTable = new TranslatedTableModel(model);
+    model2.addRow([1]);
+    model2.addRow([6]);
+    model2.addRow([7]);
+    model2.addRow([8]);
+    model2.addRow([9]);
+    model2.addRow([2]);
+    tTable.moveRow(0,1);
+    tTable.moveRow(0,2);
+    tTable.moveRow(4,3);
+    tTable.moveRow(5,0);
+    model2.addRow([100], 1);
+    tTable.moveRow(1,4);
+    //console.log(tTable);
+
+
+
   }
 }
