@@ -103,7 +103,9 @@ export class TranslatedTableModelTester {
     model2.addRow([7, 8]);
     const translatedTable2 = new TranslatedTableModel(model2);
     translatedTable2.moveRow(2, 0);
+    console.log(translatedTable2);
     model2.addRow([0, 0], 1);
+    console.log(translatedTable2);
     Expect(translatedTable2.get(0, 0)).toEqual(5);
     Expect(translatedTable2.get(1, 0)).toEqual(1);
     Expect(translatedTable2.get(2, 0)).toEqual(0);

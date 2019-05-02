@@ -161,8 +161,9 @@ export class TranslatedTableModel extends TableModel {
       if(index >= rowIndex) {
         this.translation[this.reverseTranslation[index]] += amount;
       }
-      if(index >= reverseIndex) {
-        this.reverseTranslation[this.translation[index]] += amount;
+      if(this.reverseTranslation[index] >= reverseIndex) { //nooooope
+        //??????
+        this.reverseTranslation[index] += amount;
       }
     }
   }
