@@ -79,7 +79,9 @@ export class SortedTableModel extends TableModel {
       this.order = [];
     }
     this.sort();
+    this.transactionCount = 0;
     this.operations = [];
+    this.dispatcher = new Kola.Dispatcher<Operation[]>();
     this.translatedTable.connect(this.handleOperations.bind(this));
   }
 
@@ -136,11 +138,13 @@ export class SortedTableModel extends TableModel {
       if(operation instanceof AddRowOperation) {
         this.rowAdded(operation);
       } else if(operation instanceof RemoveRowOperation) {
-      } else {
-
+        this.beginTransaction();
+        this.operations.push(
+          new RemoveRowOperation(operation.index, operation.row));
+        this.endTransaction();
       }
     }
-    this.beginTransaction();
+    this.endTransaction();
   }
 
   private sort() {
@@ -192,18 +196,15 @@ export class SortedTableModel extends TableModel {
         return rowAddedIndex + 1;
       }
     })();
-    let destination = -1;
+    let destination = rowAddedIndex;
     if(this.compareRows(topIndex, rowAddedIndex) > 0) {
        destination = this.findIndex(0, topIndex, rowAddedIndex);
     } else if(this.compareRows(rowAddedIndex, bottomIndex) > 0) {
       destination = this.findIndex(bottomIndex,
        this.translatedTable.rowCount - 1, rowAddedIndex);
     }
-    this.operations.push(new AddRowOperation(operation.index, operation.row));
-    if(destination > -1) {
-      this.translatedTable.moveRow(rowAddedIndex, destination);
-      this.operations.push(new MoveRowOperation(rowAddedIndex, destination));
-    }
+    this.translatedTable.moveRow(rowAddedIndex, destination);
+    this.operations.push(new AddRowOperation(destination, operation.row));
     this.endTransaction();
     return;
   }

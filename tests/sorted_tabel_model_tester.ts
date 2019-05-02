@@ -1,6 +1,7 @@
 import { Expect, Test } from 'alsatian';
 import { SortedTableModel,  TranslatedTableModel, ArrayTableModel,
-  ColumnOrder, SortOrder, Comparator } from '../source';
+  ColumnOrder, SortOrder, Comparator, Operation, RemoveRowOperation,
+  AddRowOperation } from '../source';
 
 /** Tests the SortedTableModel. */
 export class SortedTableModelTester {
@@ -144,5 +145,66 @@ export class SortedTableModelTester {
     Expect(sortedTable.get(4, 0)).toEqual(7);
     Expect(sortedTable.get(5, 0)).toEqual(9);
     Expect(sortedTable.get(6, 0)).toEqual(10);
+  }
+
+  @Test()
+  public testRemoveRowSignal(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([3]);
+    model.addRow([4]);
+    model.addRow([2]);
+    const orders = [new ColumnOrder(0, SortOrder.ASCENDING)];
+    const comp = new Comparator();
+    const sortedTable = new SortedTableModel(model, comp, orders);
+    let signalsReceived = 0;
+    const makeListener = (expectedRow: number) => {
+      return (operations: Operation[]) => {
+        Expect(operations.length).toEqual(1);
+        const operation = operations[0] as RemoveRowOperation;
+        Expect(operation).not.toBeNull();
+        Expect(operation.index).toEqual(expectedRow);
+        ++signalsReceived;
+      };
+    };
+    let listener = sortedTable.connect(makeListener(0));
+    model.removeRow(0);
+    Expect(signalsReceived).toEqual(1);
+    listener.unlisten();
+    listener = sortedTable.connect(makeListener(3));
+    model.removeRow(2);
+    Expect(signalsReceived).toEqual(2);
+    listener.unlisten();
+  }
+
+  /** Tests signals when row is added. */
+  @Test()
+  public testAddRowSignal(): void {
+    const model = new ArrayTableModel();
+    model.addRow([2]);
+    model.addRow([0]);
+    model.addRow([1]);
+    const orders = [new ColumnOrder(0, SortOrder.ASCENDING)];
+    const comp = new Comparator();
+    const sortedTable = new SortedTableModel(model, comp, orders);
+    let signalsReceived = 0;
+    const makeListener = (expectedRow: number) => {
+      return (operations: Operation[]) => {
+        Expect(operations.length).toEqual(1);
+        const operation = operations[0] as AddRowOperation;
+        Expect(operation).not.toBeNull();
+        Expect(operation.index).toEqual(expectedRow);
+        ++signalsReceived;
+      };
+    };
+    let listener = sortedTable.connect(makeListener(2));
+    model.addRow([1.5]);
+    Expect(signalsReceived).toEqual(1);
+    listener.unlisten();
+    listener = sortedTable.connect(makeListener(4));
+    model.addRow([4], 1);
+    Expect(signalsReceived).toEqual(2);
+    listener.unlisten();
   }
 }
