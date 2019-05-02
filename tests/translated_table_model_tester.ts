@@ -103,9 +103,7 @@ export class TranslatedTableModelTester {
     model2.addRow([7, 8]);
     const translatedTable2 = new TranslatedTableModel(model2);
     translatedTable2.moveRow(2, 0);
-    console.log(translatedTable2);
     model2.addRow([0, 0], 1);
-    console.log(translatedTable2);
     Expect(translatedTable2.get(0, 0)).toEqual(5);
     Expect(translatedTable2.get(1, 0)).toEqual(1);
     Expect(translatedTable2.get(2, 0)).toEqual(0);
@@ -124,6 +122,12 @@ export class TranslatedTableModelTester {
     Expect(translatedTable3.get(2, 0)).toEqual(7);
     Expect(translatedTable3.get(3, 0)).toEqual(3);
     Expect(translatedTable3.get(4, 0)).toEqual(0);
+    translatedTable3.moveRow(3,1);
+    Expect(translatedTable3.get(0, 0)).toEqual(1);
+    Expect(translatedTable3.get(1, 0)).toEqual(3);
+    Expect(translatedTable3.get(2, 0)).toEqual(5);
+    Expect(translatedTable3.get(3, 0)).toEqual(7);
+    Expect(translatedTable3.get(4, 0)).toEqual(0);
   }
 
   /** Tests when a row is removed from the original model. */
@@ -141,6 +145,10 @@ export class TranslatedTableModelTester {
     translatedTable.get(0, 0);
     Expect(translatedTable.get(0, 0)).toEqual(5);
     Expect(translatedTable.get(1, 0)).toEqual(1);
+    Expect(translatedTable.get(2, 0)).toEqual(7);
+    translatedTable.moveRow(1, 0);
+    Expect(translatedTable.get(0, 0)).toEqual(1);
+    Expect(translatedTable.get(1, 0)).toEqual(5);
     Expect(translatedTable.get(2, 0)).toEqual(7);
   }
 
