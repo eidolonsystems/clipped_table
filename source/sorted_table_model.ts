@@ -79,6 +79,7 @@ export class SortedTableModel extends TableModel {
       this.order = [];
     }
     this.sort();
+    this.operations = [];
     this.translatedTable.connect(this.handleOperations.bind(this));
   }
 
@@ -130,17 +131,16 @@ export class SortedTableModel extends TableModel {
   }
 
   private handleOperations(newOperations: Operation[]): void {
+    this.beginTransaction();
     for(const operation of newOperations) {
       if(operation instanceof AddRowOperation) {
         this.rowAdded(operation);
       } else if(operation instanceof RemoveRowOperation) {
-        
-      } else if(operation instanceof UpdateValueOperation) {
-
       } else {
-        
+
       }
     }
+    this.beginTransaction();
   }
 
   private sort() {
@@ -176,7 +176,7 @@ export class SortedTableModel extends TableModel {
   }
 
   private rowAdded(operation: AddRowOperation) {
-    //console.log(this.translatedTable);
+    this.beginTransaction();
     const rowAddedIndex = operation.index;
     const topIndex = (() => {
       if(rowAddedIndex === 0) {
@@ -193,48 +193,40 @@ export class SortedTableModel extends TableModel {
       }
     })();
     let destination = -1;
-    //console.log(rowAddedIndex);
-    console.log("START!");
-    console.log(bottomIndex, this.translatedTable.rowCount - 1);
     if(this.compareRows(topIndex, rowAddedIndex) > 0) {
        destination = this.findIndex(0, topIndex, rowAddedIndex);
     } else if(this.compareRows(rowAddedIndex, bottomIndex) > 0) {
-      // something bad happens here
       destination = this.findIndex(bottomIndex,
        this.translatedTable.rowCount - 1, rowAddedIndex);
-    } else {
-      return;
     }
-    console.log('destination: ', destination);
-    this.translatedTable.moveRow(rowAddedIndex, destination);
+    this.operations.push(new AddRowOperation(operation.index, operation.row));
+    if(destination > -1) {
+      this.translatedTable.moveRow(rowAddedIndex, destination);
+      this.operations.push(new MoveRowOperation(rowAddedIndex, destination));
+    }
+    this.endTransaction();
+    return;
   }
 
   private findIndex(start: number, end: number, index: number): number {
     if(start === end) {
       return start;
     }
-    console.log('start end ', start, end);
     const mid = Math.ceil((start + end) / 2);
-    console.log('mid ', mid);
     if(start < mid) {
-      console.log('compare top ', this.compareRows(mid - 1, index));
-      console.log(mid - 1 , index);
       if(this.compareRows(mid - 1, index) > 0) {
         return(this.findIndex(start, mid - 1, index));
       }
     }
     if(mid < end) {
-      console.log('compare bottom ', this.compareRows(index, mid) > 0);
       if(this.compareRows(index, mid) > 0) {
-        return(this.findIndex(mid, end, index));
+        return(this.findIndex(mid + 1, end, index));
       }
     }
-    console.log('returned mid ' + mid);
     return mid;
   }
 
   private translatedTable: TranslatedTableModel;
-  private translationListener: TranslatedTableModel;
   private comparator: Comparator;
   private order: ColumnOrder[];
   private transactionCount: number;
