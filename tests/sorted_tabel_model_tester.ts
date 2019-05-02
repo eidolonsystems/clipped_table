@@ -80,7 +80,14 @@ export class SortedTableModelTester {
     Expect(sortedTable2.get(1, 0)).toEqual('q');
     Expect(sortedTable2.get(2, 0)).toEqual('z');
     Expect(sortedTable2.get(3, 0)).toEqual('z');
-    Expect(sortedTable2.get(3, 0)).toEqual('z');
+    Expect(sortedTable2.get(4, 0)).toEqual('z');
+    const orders3 = [new ColumnOrder(1, SortOrder.DESCENDING)];
+    sortedTable2.columnOrder = orders3;
+    Expect(sortedTable2.get(0, 1)).toEqual(9);
+    Expect(sortedTable2.get(1, 1)).toEqual(9);
+    Expect(sortedTable2.get(2, 1)).toEqual(9);
+    Expect(sortedTable2.get(3, 1)).toEqual(7);
+    Expect(sortedTable2.get(4, 1)).toEqual(2);
   }
 
   /** Tests the behavior when the table receives a row removed signal. */
@@ -99,5 +106,38 @@ export class SortedTableModelTester {
     model.removeRow(0);
     Expect(sortedTable.get(0, 0)).toEqual(7);
     Expect(sortedTable.rowCount).toEqual(1);
+  }
+
+  /** Tests the behavior when the table receives a row added signal. */
+  @Test()
+  public testReceiveAdd(): void {
+    const model = new ArrayTableModel();
+    const comp = new Comparator();
+    model.addRow([1]);
+    model.addRow([6]);
+    model.addRow([7]);
+    const orders = [new ColumnOrder(0, SortOrder.ASCENDING)];
+    const sortedTable = new SortedTableModel(model, comp, orders);
+    model.addRow([9]);
+    console.log('ADDED AND SORTED.');
+    Expect(sortedTable.get(0, 0)).toEqual(1);
+    Expect(sortedTable.get(1, 0)).toEqual(6);
+    Expect(sortedTable.get(2, 0)).toEqual(7);
+    Expect(sortedTable.get(3, 0)).toEqual(9);
+    ///
+    model.addRow([0]);
+    Expect(sortedTable.get(0, 0)).toEqual(0);
+    Expect(sortedTable.get(1, 0)).toEqual(1);
+    Expect(sortedTable.get(2, 0)).toEqual(6);
+    Expect(sortedTable.get(3, 0)).toEqual(7);
+    Expect(sortedTable.get(4, 0)).toEqual(9);
+
+    model.addRow([10], 0);
+    Expect(sortedTable.get(0, 0)).toEqual(0);
+    Expect(sortedTable.get(1, 0)).toEqual(1);
+    Expect(sortedTable.get(2, 0)).toEqual(6);
+    Expect(sortedTable.get(3, 0)).toEqual(7);
+    Expect(sortedTable.get(4, 0)).toEqual(9);
+    Expect(sortedTable.get(5, 0)).toEqual(10);
   }
 }
