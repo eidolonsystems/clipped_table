@@ -73,9 +73,9 @@ export class SortedTableModel extends TableModel {
       this.comparator = new Comparator();
     }
     if(columnOrder) {
-      this.columnOrder = columnOrder.slice();
+      this._columnOrder = columnOrder.slice();
     } else {
-      this.columnOrder = [];
+      this._columnOrder = [];
     }
     this.sort();
     this.transactionCount = 0;
@@ -105,12 +105,12 @@ export class SortedTableModel extends TableModel {
 
   /** Returns the column sort order. */
   public get columnOrder(): ColumnOrder[] {
-    return this.columnOrder.slice();
+    return this._columnOrder.slice();
   }
 
   /** Sets the order that the columns are sorted by. */
   public set columnOrder(columnOrder: ColumnOrder[]) {
-    this.columnOrder = columnOrder.slice();
+    this._columnOrder = columnOrder.slice();
     this.sort();
   }
 
@@ -161,12 +161,12 @@ export class SortedTableModel extends TableModel {
   }
 
   private compareRows(row1: number, row2: number) {
-    for(let i = 0; i < this.columnOrder.length; ++i) {
+    for(let i = 0; i < this._columnOrder.length; ++i) {
       const value = this.comparator.compareValues(
-        this.translatedTable.get(row1, this.columnOrder[i].index),
-        this.translatedTable.get(row2, this.columnOrder[i].index));
+        this.translatedTable.get(row1, this._columnOrder[i].index),
+        this.translatedTable.get(row2, this._columnOrder[i].index));
       if(value !== 0) {
-        if(this.columnOrder[i].sortOrder === SortOrder.ASCENDING) {
+        if(this._columnOrder[i].sortOrder === SortOrder.ASCENDING) {
           return value;
         } else {
           return -value;
@@ -225,7 +225,7 @@ export class SortedTableModel extends TableModel {
 
   private translatedTable: TranslatedTableModel;
   private comparator: Comparator;
-  private columnOrder: ColumnOrder[];
+  private _columnOrder: ColumnOrder[];
   private transactionCount: number;
   private operations: Operation[];
   private dispatcher: Kola.Dispatcher<Operation[]>;
