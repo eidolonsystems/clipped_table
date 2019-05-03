@@ -1,8 +1,7 @@
 import * as Kola from 'kola-signals';
 import { Comparator } from './comparator';
 import { TableModel } from './table_model';
-import { AddRowOperation, MoveRowOperation, Operation,
-  RemoveRowOperation, UpdateValueOperation } from './operations';
+import { AddRowOperation, Operation, RemoveRowOperation } from './operations';
 import { TranslatedTableModel } from './translated_table_model';
 
 /** Specifies whether to sort in ascending order or descending order. */
@@ -182,14 +181,14 @@ export class SortedTableModel extends TableModel {
   private rowAdded(operation: AddRowOperation) {
     this.beginTransaction();
     const rowAddedIndex = operation.index;
-    const topIndex = (() => {
+    const leftIndex = (() => {
       if(rowAddedIndex === 0) {
         return rowAddedIndex;
       } else {
         return rowAddedIndex - 1;
       }
     })();
-    const bottomIndex = (() => {
+    const rightIndex = (() => {
       if(rowAddedIndex === this.translatedTable.rowCount - 1 ) {
         return rowAddedIndex;
       } else {
@@ -197,10 +196,10 @@ export class SortedTableModel extends TableModel {
       }
     })();
     let destination = rowAddedIndex;
-    if(this.compareRows(topIndex, rowAddedIndex) > 0) {
-       destination = this.findIndex(0, topIndex, rowAddedIndex);
-    } else if(this.compareRows(rowAddedIndex, bottomIndex) > 0) {
-      destination = this.findIndex(bottomIndex,
+    if(this.compareRows(leftIndex, rowAddedIndex) > 0) {
+       destination = this.findIndex(0, leftIndex, rowAddedIndex);
+    } else if(this.compareRows(rowAddedIndex, rightIndex) > 0) {
+      destination = this.findIndex(rightIndex,
        this.translatedTable.rowCount - 1, rowAddedIndex);
     }
     this.translatedTable.moveRow(rowAddedIndex, destination);

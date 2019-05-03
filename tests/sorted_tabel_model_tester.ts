@@ -1,7 +1,7 @@
 import { Expect, Test } from 'alsatian';
-import { SortedTableModel,  TranslatedTableModel, ArrayTableModel,
-  ColumnOrder, SortOrder, Comparator, Operation, RemoveRowOperation,
-  AddRowOperation } from '../source';
+import { AddRowOperation, ArrayTableModel, ColumnOrder, Comparator, Operation,
+  RemoveRowOperation, SortOrder, SortedTableModel,  TranslatedTableModel }
+  from '../source';
 
 /** Tests the SortedTableModel. */
 export class SortedTableModelTester {
@@ -124,12 +124,14 @@ export class SortedTableModelTester {
     Expect(sortedTable.get(1, 0)).toEqual(6);
     Expect(sortedTable.get(2, 0)).toEqual(7);
     Expect(sortedTable.get(3, 0)).toEqual(9);
+    Expect(sortedTable.rowCount).toEqual(4);
     model.addRow([1]);
     Expect(sortedTable.get(0, 0)).toEqual(1);
     Expect(sortedTable.get(1, 0)).toEqual(1);
     Expect(sortedTable.get(2, 0)).toEqual(6);
     Expect(sortedTable.get(3, 0)).toEqual(7);
     Expect(sortedTable.get(4, 0)).toEqual(9);
+    Expect(sortedTable.rowCount).toEqual(5);
     model.addRow([10], 0);
     Expect(sortedTable.get(0, 0)).toEqual(1);
     Expect(sortedTable.get(1, 0)).toEqual(1);
@@ -137,6 +139,7 @@ export class SortedTableModelTester {
     Expect(sortedTable.get(3, 0)).toEqual(7);
     Expect(sortedTable.get(4, 0)).toEqual(9);
     Expect(sortedTable.get(5, 0)).toEqual(10);
+    Expect(sortedTable.rowCount).toEqual(6);
     model.addRow([5], 3);
     Expect(sortedTable.get(0, 0)).toEqual(1);
     Expect(sortedTable.get(1, 0)).toEqual(1);
@@ -145,8 +148,10 @@ export class SortedTableModelTester {
     Expect(sortedTable.get(4, 0)).toEqual(7);
     Expect(sortedTable.get(5, 0)).toEqual(9);
     Expect(sortedTable.get(6, 0)).toEqual(10);
+    Expect(sortedTable.rowCount).toEqual(7);
   }
 
+  /** Tests signals that are sent when a row is removed. */
   @Test()
   public testRemoveRowSignal(): void {
     const model = new ArrayTableModel();
@@ -178,7 +183,7 @@ export class SortedTableModelTester {
     listener.unlisten();
   }
 
-  /** Tests signals when row is added. */
+  /** Tests signals that are sent when row is added. */
   @Test()
   public testAddRowSignal(): void {
     const model = new ArrayTableModel();
