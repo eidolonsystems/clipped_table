@@ -73,9 +73,9 @@ export class SortedTableModel extends TableModel {
       this.comparator = new Comparator();
     }
     if(columnOrder) {
-      this.order = columnOrder.slice();
+      this.columnOrder = columnOrder.slice();
     } else {
-      this.order = [];
+      this.columnOrder = [];
     }
     this.sort();
     this.transactionCount = 0;
@@ -105,12 +105,12 @@ export class SortedTableModel extends TableModel {
 
   /** Returns the column sort order. */
   public get columnOrder(): ColumnOrder[] {
-    return this.order.slice();
+    return this.columnOrder.slice();
   }
 
   /** Sets the order that the columns are sorted by. */
   public set columnOrder(columnOrder: ColumnOrder[]) {
-    this.order = columnOrder.slice();
+    this.columnOrder = columnOrder.slice();
     this.sort();
   }
 
@@ -137,10 +137,8 @@ export class SortedTableModel extends TableModel {
       if(operation instanceof AddRowOperation) {
         this.rowAdded(operation);
       } else if(operation instanceof RemoveRowOperation) {
-        this.beginTransaction();
         this.operations.push(
           new RemoveRowOperation(operation.index, operation.row));
-        this.endTransaction();
       }
     }
     this.endTransaction();
@@ -163,12 +161,12 @@ export class SortedTableModel extends TableModel {
   }
 
   private compareRows(row1: number, row2: number) {
-    for(let i = 0; i < this.order.length; ++i) {
+    for(let i = 0; i < this.columnOrder.length; ++i) {
       const value = this.comparator.compareValues(
-        this.translatedTable.get(row1, this.order[i].index),
-        this.translatedTable.get(row2, this.order[i].index));
+        this.translatedTable.get(row1, this.columnOrder[i].index),
+        this.translatedTable.get(row2, this.columnOrder[i].index));
       if(value !== 0) {
-        if(this.order[i].sortOrder === SortOrder.ASCENDING) {
+        if(this.columnOrder[i].sortOrder === SortOrder.ASCENDING) {
           return value;
         } else {
           return -value;
@@ -197,22 +195,21 @@ export class SortedTableModel extends TableModel {
     })();
     let destination = rowAddedIndex;
     if(this.compareRows(leftIndex, rowAddedIndex) > 0) {
-       destination = this.findIndex(0, leftIndex, rowAddedIndex);
+      destination = this.findIndex(0, leftIndex, rowAddedIndex);
     } else if(this.compareRows(rowAddedIndex, rightIndex) > 0) {
       destination = this.findIndex(rightIndex,
-       this.translatedTable.rowCount - 1, rowAddedIndex);
+        this.translatedTable.rowCount - 1, rowAddedIndex);
     }
     this.translatedTable.moveRow(rowAddedIndex, destination);
     this.operations.push(new AddRowOperation(destination, operation.row));
     this.endTransaction();
-    return;
   }
 
   private findIndex(start: number, end: number, index: number): number {
     if(start === end) {
       return start;
     }
-    const mid = Math.ceil((start + end) / 2);
+    const mid = Math.floor((start + end) / 2);
     if(start < mid) {
       if(this.compareRows(mid - 1, index) > 0) {
         return(this.findIndex(start, mid - 1, index));
@@ -228,7 +225,7 @@ export class SortedTableModel extends TableModel {
 
   private translatedTable: TranslatedTableModel;
   private comparator: Comparator;
-  private order: ColumnOrder[];
+  private columnOrder: ColumnOrder[];
   private transactionCount: number;
   private operations: Operation[];
   private dispatcher: Kola.Dispatcher<Operation[]>;
