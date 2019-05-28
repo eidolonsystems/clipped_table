@@ -17,6 +17,7 @@ const header = ['one', 'two', 'three', 'four', 'five'];
 
 const someStyle = {
   table: {
+    fontFamily: 'Arial, Helvetica, sans-serif',
     fontSize: '20px',
     borderCollapse: 'collapse',
     boxSizing: 'border-box',
@@ -25,13 +26,11 @@ const someStyle = {
   td: {
     border: '1px solid #4b23a0' ,
     color: '#4b23a0',
-    fontFamily: 'Arial, Helvetica, sans-serif',
     padding: '10px'
   },
   th: {
     color: '#4b23a0',
-    backgroundColor: '#d4cee0',
-    fontFamily: 'Arial, Helvetica, sans-serif'
+    backgroundColor: '#d4cee0'
   }
 };
 
