@@ -7,29 +7,30 @@ import { withRouter } from 'react-router';
 const model = new ArrayTableModel();
 for(let row = 0; row < 500; ++row) {
   const r = [];
-  for(let column = 0; column < 3; ++column) {
+  for(let column = 0; column < 5; ++column) {
     r.push(Math.floor(Math.random() * 1000000));
   }
   model.addRow(r);
 }
 
-const header = ['one', 'two', 'three'];
+const header = ['one', 'two', 'three', 'four', 'five'];
 
 const someStyle = {
   table: {
-    backgroundColor: '#4b23a0',
-    fontColor: 'white',
     fontSize: '20px',
-    borderCollapse: 'collapse'
+    borderCollapse: 'collapse',
+    boxSizing: 'border-box',
+    border: '1px solid #4b23a0'
   },
   td: {
-    border: '1px solid #c1aaff' ,
-    color: '#c1aaff',
+    border: '1px solid #4b23a0' ,
+    color: '#4b23a0',
     fontFamily: 'Arial, Helvetica, sans-serif',
     padding: '10px'
   },
   th: {
-    color: 'white',
+    color: '#4b23a0',
+    backgroundColor: '#d4cee0',
     fontFamily: 'Arial, Helvetica, sans-serif'
   }
 };
