@@ -6,7 +6,7 @@ import { TableView } from './table_view';
 const model = new ArrayTableModel();
 for(let row = 0; row < 100000; ++row) {
   const r = [];
-  for(let column = 0; column < model.columnCount; ++column) {
+  for(let column = 0; column < 10; ++column) {
     r.push(Math.floor(Math.random() * 1000000));
   }
   model.addRow(r);
