@@ -16,7 +16,7 @@ export class TableView extends React.Component<Properties> {
       const row = [];
       for(let j = 0; j < this.props.model.columnCount; ++j) {
         row.push(
-          <td key={(i*this.props.model.columnCount)+j}>
+          <td key={(i * this.props.model.columnCount) + j}>
             {this.props.model.get(i, j)}
           </td>);
       }
