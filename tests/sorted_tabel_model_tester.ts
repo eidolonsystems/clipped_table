@@ -1,6 +1,7 @@
 import { Expect, Test } from 'alsatian';
-import { SortedTableModel,  TranslatedTableModel, ArrayTableModel,
-  ColumnOrder, SortOrder, Comparator } from '../source';
+import { AddRowOperation, ArrayTableModel, ColumnOrder, Comparator, Operation,
+  RemoveRowOperation, SortOrder, SortedTableModel,  TranslatedTableModel }
+  from '../source';
 
 /** Tests the SortedTableModel. */
 export class SortedTableModelTester {
@@ -80,7 +81,14 @@ export class SortedTableModelTester {
     Expect(sortedTable2.get(1, 0)).toEqual('q');
     Expect(sortedTable2.get(2, 0)).toEqual('z');
     Expect(sortedTable2.get(3, 0)).toEqual('z');
-    Expect(sortedTable2.get(3, 0)).toEqual('z');
+    Expect(sortedTable2.get(4, 0)).toEqual('z');
+    const orders3 = [new ColumnOrder(1, SortOrder.DESCENDING)];
+    sortedTable2.columnOrder = orders3;
+    Expect(sortedTable2.get(0, 1)).toEqual(9);
+    Expect(sortedTable2.get(1, 1)).toEqual(9);
+    Expect(sortedTable2.get(2, 1)).toEqual(9);
+    Expect(sortedTable2.get(3, 1)).toEqual(7);
+    Expect(sortedTable2.get(4, 1)).toEqual(2);
   }
 
   /** Tests the behavior when the table receives a row removed signal. */
@@ -99,5 +107,109 @@ export class SortedTableModelTester {
     model.removeRow(0);
     Expect(sortedTable.get(0, 0)).toEqual(7);
     Expect(sortedTable.rowCount).toEqual(1);
+  }
+
+  /** Tests the behavior when the table receives a row added signal. */
+  @Test()
+  public testReceiveAdd(): void {
+    const model = new ArrayTableModel();
+    const comp = new Comparator();
+    model.addRow([1]);
+    model.addRow([6]);
+    model.addRow([7]);
+    const orders = [new ColumnOrder(0, SortOrder.ASCENDING)];
+    const sortedTable = new SortedTableModel(model, comp, orders);
+    model.addRow([9]);
+    Expect(sortedTable.get(0, 0)).toEqual(1);
+    Expect(sortedTable.get(1, 0)).toEqual(6);
+    Expect(sortedTable.get(2, 0)).toEqual(7);
+    Expect(sortedTable.get(3, 0)).toEqual(9);
+    Expect(sortedTable.rowCount).toEqual(4);
+    model.addRow([1]);
+    Expect(sortedTable.get(0, 0)).toEqual(1);
+    Expect(sortedTable.get(1, 0)).toEqual(1);
+    Expect(sortedTable.get(2, 0)).toEqual(6);
+    Expect(sortedTable.get(3, 0)).toEqual(7);
+    Expect(sortedTable.get(4, 0)).toEqual(9);
+    Expect(sortedTable.rowCount).toEqual(5);
+    model.addRow([10], 0);
+    Expect(sortedTable.get(0, 0)).toEqual(1);
+    Expect(sortedTable.get(1, 0)).toEqual(1);
+    Expect(sortedTable.get(2, 0)).toEqual(6);
+    Expect(sortedTable.get(3, 0)).toEqual(7);
+    Expect(sortedTable.get(4, 0)).toEqual(9);
+    Expect(sortedTable.get(5, 0)).toEqual(10);
+    Expect(sortedTable.rowCount).toEqual(6);
+    model.addRow([5], 3);
+    Expect(sortedTable.get(0, 0)).toEqual(1);
+    Expect(sortedTable.get(1, 0)).toEqual(1);
+    Expect(sortedTable.get(2, 0)).toEqual(5);
+    Expect(sortedTable.get(3, 0)).toEqual(6);
+    Expect(sortedTable.get(4, 0)).toEqual(7);
+    Expect(sortedTable.get(5, 0)).toEqual(9);
+    Expect(sortedTable.get(6, 0)).toEqual(10);
+    Expect(sortedTable.rowCount).toEqual(7);
+  }
+
+  /** Tests signals that are sent when a row is removed. */
+  @Test()
+  public testRemoveRowSignal(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([3]);
+    model.addRow([4]);
+    model.addRow([2]);
+    const orders = [new ColumnOrder(0, SortOrder.ASCENDING)];
+    const comp = new Comparator();
+    const sortedTable = new SortedTableModel(model, comp, orders);
+    let signalsReceived = 0;
+    const makeListener = (expectedRow: number) => {
+      return (operations: Operation[]) => {
+        Expect(operations.length).toEqual(1);
+        const operation = operations[0] as RemoveRowOperation;
+        Expect(operation).not.toBeNull();
+        Expect(operation.index).toEqual(expectedRow);
+        ++signalsReceived;
+      };
+    };
+    let listener = sortedTable.connect(makeListener(0));
+    model.removeRow(0);
+    Expect(signalsReceived).toEqual(1);
+    listener.unlisten();
+    listener = sortedTable.connect(makeListener(3));
+    model.removeRow(2);
+    Expect(signalsReceived).toEqual(2);
+    listener.unlisten();
+  }
+
+  /** Tests signals that are sent when row is added. */
+  @Test()
+  public testAddRowSignal(): void {
+    const model = new ArrayTableModel();
+    model.addRow([2]);
+    model.addRow([0]);
+    model.addRow([1]);
+    const orders = [new ColumnOrder(0, SortOrder.ASCENDING)];
+    const comp = new Comparator();
+    const sortedTable = new SortedTableModel(model, comp, orders);
+    let signalsReceived = 0;
+    const makeListener = (expectedRow: number) => {
+      return (operations: Operation[]) => {
+        Expect(operations.length).toEqual(1);
+        const operation = operations[0] as AddRowOperation;
+        Expect(operation).not.toBeNull();
+        Expect(operation.index).toEqual(expectedRow);
+        ++signalsReceived;
+      };
+    };
+    let listener = sortedTable.connect(makeListener(2));
+    model.addRow([1.5]);
+    Expect(signalsReceived).toEqual(1);
+    listener.unlisten();
+    listener = sortedTable.connect(makeListener(4));
+    model.addRow([4], 1);
+    Expect(signalsReceived).toEqual(2);
+    listener.unlisten();
   }
 }
