@@ -14,7 +14,7 @@ for(let row = 0; row < 500; ++row) {
 
 const header = ['one', 'two', 'three', 'four', 'five'];
 
-const style = {
+const someStyle = {
   table: {
     fontFamily: 'Arial, Helvetica, sans-serif',
     fontSize: '20px',
@@ -30,5 +30,5 @@ const style = {
 };
 
 ReactDOM.render(
-  <TableView model={model} header={header} style={style} className={'foobar'}/>,
+  <TableView model={model} labels={header} style={someStyle}/>,
   document.getElementById('main'));

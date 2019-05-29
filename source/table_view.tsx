@@ -7,7 +7,7 @@ interface Properties {
   model: TableModel;
 
   /**  The label for the columns of the table.*/
-  header?: string[]
+  labels?: string[]
 
   /** Specifies the CSS class. */
   className?: string;
@@ -25,11 +25,12 @@ export class TableView extends React.Component<Properties> {
 
   public render(): JSX.Element {
     const header = [];
-    for(let i = 0; i < this.props.header.length; ++i) {
+    for(let i = 0; i < this.props.labels.length; ++i) {
       header.push(
         <th style={this.props.style.th}
-            className={this.props.className}>
-          {this.props.header[i]}
+            className={this.props.className}
+            key={this.props.labels[i]}>
+          {this.props.labels[i]}
         </th>);
     }
     const tableRows = [];
