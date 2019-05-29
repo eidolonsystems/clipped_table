@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { ArrayTableModel } from './array_table_model';
 import { TableView } from './table_view';
-import { withRouter } from 'react-router';
 
 const model = new ArrayTableModel();
 for(let row = 0; row < 500; ++row) {
@@ -15,24 +14,21 @@ for(let row = 0; row < 500; ++row) {
 
 const header = ['one', 'two', 'three', 'four', 'five'];
 
-const someStyle = {
+const style = {
   table: {
     fontFamily: 'Arial, Helvetica, sans-serif',
     fontSize: '20px',
     borderCollapse: 'collapse',
     boxSizing: 'border-box',
-    border: '1px solid #4b23a0'
+    border: '2px solid #4b23a0'
   },
   td: {
-    border: '1px solid #4b23a0' ,
+    border: '1px dashed #4b23a0',
     color: '#4b23a0',
     padding: '10px'
-  },
-  th: {
-    color: '#4b23a0',
-    backgroundColor: '#d4cee0'
   }
 };
 
-ReactDOM.render(<TableView model={model} header={header} style={someStyle}/>,
+ReactDOM.render(
+  <TableView model={model} header={header} style={style} className={'foobar'}/>,
   document.getElementById('main'));
