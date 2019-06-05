@@ -18,6 +18,8 @@ export interface TableInterface {
    * @return The width in pixels of the column at the specified index.
    */
   getColumnWidth: (index: number) => number;
+
+  onResize: (columnIndex: number, difference: number) => void
 }
 
 /** Provides the functionality needed to resize a table's columns. */
@@ -25,15 +27,12 @@ export class ColumnResizer {
 
   /** Constructs a ColumnResizer.
    * @param table - The interface to the table being resized.
-   * @param onResize - Indicates a change to a column's width.
    */
-  constructor(
-      table: TableInterface, 
-      onResize: (columnIndex: number, difference: number) => void) {
-    this.s0();
+
+  constructor(table: TableInterface) {
     this.table = table;
     this.currentLabel = -1;
-    this.resize = onResize;
+    this.s0();
   }
 
   /** Handles moving the mouse over the table's header region.
