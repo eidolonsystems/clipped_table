@@ -1,0 +1,50 @@
+digraph ColumnResizing{
+	rankdir=LR;
+	node [shape = circle, fontsize = 10];
+
+	s0 [label="s0: rest state" color = green, fontcolor = green,];
+	s1 [label="s1: evaluate the click"];
+	s2 [label="s2: mouse is down, \n resizing is possible"];
+	s3 [label="s3: resizing"];
+	
+
+	s0 -> s1 [label = "E0"];
+	
+	s1 -> s0 [label = "C0"];
+	s1 -> s2 [label = "Not C0"];
+	
+	s2 -> s3 [label = "E2"];
+	s2 -> s0 [label = "E1"];
+	
+	s3 -> s2 [label = "e"];
+	
+	{ rank=same; s2, s3 }
+}
+
+/** 
+Parameters:
+currentLabel - int or string
+startingPoint - coordinate
+
+s0: Rest state
+
+S1: Evaluate if 
+
+S2: Resizing can happen
+- starting point is set
+
+S3: Resizing
+- get the end point
+- calculate distsance
+- update the column size related to currentLabel
+
+S5: Determine which cursor to show - Transition state
+
+  
+C0 - Mouse is inside resize zone
+
+E0 - Mouse Down
+E1 - Mouse Up
+E2 - Mouse Move
+
+*/
