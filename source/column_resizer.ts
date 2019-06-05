@@ -10,7 +10,8 @@ export interface TableInterface {
   /** Returns the coordiinates of the top left corner 
    * and bottom right corner. 
    */
-  corners: [[number, number],[number, number]];
+  corners: 
+    {topLeft: {x: number, y: number}, bottomLeft: {x: number, y: number}};
 
   /** Returns the width of a column.
    * @param index - The index of the column.
@@ -30,24 +31,17 @@ export class ColumnResizer {
       table: TableInterface, 
       onResize: (columnIndex: number, difference: number) => void) {
     this.s0();
-    this.currentLabel = 0;
+    this.table = table;
+    this.currentLabel = -1;
+    this.resize = onResize;
   }
 
   /** Handles moving the mouse over the table's header region.
    * @param event - The event describing the mouse move.
    */
   public onMouseMove(event: MouseEvent) {
-    if(this.state === 0) {
-      return this.s1(event);
-    }
-    if(this.state === 1) {
-      return this.s1(event);
-    }
     if(this.state === 2) {
-      return this.s1(event);
-    }
-    if(this.state === 3) {
-      return this.s4(event);
+      return this.s3(event);
     }
   }
 
@@ -55,8 +49,8 @@ export class ColumnResizer {
    * @param event - The event describing the button press.
    */
   public onMouseDown(event: MouseEvent) {
-    if(this.state === 2) {
-      return this.s3(event);
+    if(this.state === 0) {
+      return this.s2(event);
     }
   }
 
@@ -64,8 +58,8 @@ export class ColumnResizer {
    * @param event - The event describing the button release.
    */
   public onMouseUp(event: MouseEvent) {
-    if(this.state === 3) {
-      return this.s1(event);
+    if(this.state === 2) {
+      return this.s0();
     }
   }
 
@@ -75,29 +69,53 @@ export class ColumnResizer {
 
   private s1(event: MouseEvent) {
     this.state = 1;
+    const currentCoor = {x: event.clientX, y: event.clientY};
+    if(this.getLabel(currentCoor) > -1) {
+      this.s2(event);
+    } else {
+      this.s0();
+    }
   }
 
   private s2(event: MouseEvent) {
     this.state = 2;
-    //how to get and set the label?????
   }
 
   private s3(event: MouseEvent) {
-    this.state = 4;
-    const currentCoor = [event.clientX, event.clientY];
-  }
-
-  private s4(event: MouseEvent) {
-    this.state = 4;
+    this.state = 3;
     const movement = event.movementX;
     this.resize(this.currentLabel, movement);
+    this.s3(event);
+  }
+
+
+  private getLabel(point: {x: number, y: number}) {
+    let label = -1;
+    if(this.table.corners.topLeft.y <= point.y
+        && this.table.corners.bottomLeft.y >= point.y
+        && this.table.corners.topLeft.x <= point.x
+        && this.table.corners.bottomLeft.x  >= point.x) {
+      let i = 0;
+      let edge = this.table.corners.topLeft.x + this.table.getColumnWidth(i);
+      while(point.x <= edge) {
+        const innerEdge = edge - this.table.activeWidth;
+        if(innerEdge <= point.x) {
+          label = i;
+        } else {
+          ++i;
+          edge = edge + this.table.getColumnWidth(i);
+        }
+      }
+      this.currentLabel = label;
+      return this.currentLabel;
+    } else {
+      this.currentLabel = -1;
+      return this.currentLabel;
+    }
   }
 
   private table: TableInterface;
   private resize: (columnIndex: number, difference: number) => void;
-
   private state: number;
   private currentLabel: number;
-  private startPoint: [number, number];
-
 }
