@@ -4,8 +4,7 @@ export interface TableInterface {
   /** Returns the number of columns. */
   columnCount: number;
 
-  /** Returns the width of the active region. 
-   */
+  /** Returns the width of the active region. */
   activeWidth: number;
 
   /** Returns the coordiinates of the top left corner 
@@ -20,7 +19,7 @@ export interface TableInterface {
    */
   getColumnWidth: (index: number) => number;
 
-    /** Returns the width of a column.
+  /** Returns the width of a column.
    * @param index - The index of the column.
    * @difference The number of pixels to grow or increase the width by.
    */
@@ -40,7 +39,7 @@ export class ColumnResizer {
     this.s0();
   }
 
-  /** Handles moving the mouse moving.
+  /** Handles the cursor moving.
    * @param event - The event describing the mouse move.
    */
   public onMouseMove(event: MouseEvent) {
@@ -92,13 +91,12 @@ export class ColumnResizer {
     this.s3(event);
   }
 
-
   private getLabel(point: {x: number, y: number}) {
     let label = -1;
-    if(this.table.corners.topLeft.y <= point.y
-        && this.table.corners.bottomLeft.y >= point.y
-        && this.table.corners.topLeft.x <= point.x
-        && this.table.corners.bottomLeft.x  >= point.x) {
+    if(this.table.corners.topLeft.y <= point.y &&
+        this.table.corners.bottomLeft.y >= point.y &&
+        this.table.corners.topLeft.x <= point.x &&
+        this.table.corners.bottomLeft.x >= point.x) {
       let i = 0;
       let edge = this.table.corners.topLeft.x + this.table.getColumnWidth(i);
       while(point.x <= edge) {
