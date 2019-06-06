@@ -21,7 +21,7 @@ export interface TableInterface {
 
   /** Resizes the column.
    * @param index - The index of the column.
-   * @difference The number of pixels to grow or increase the width by.
+   * @param difference The number of pixels to grow or increase the width by.
    */
   onResize: (columnIndex: number, difference: number) => void;
 }
