@@ -19,7 +19,7 @@ export interface TableInterface {
    */
   getColumnWidth: (index: number) => number;
 
-  /** Returns the width of a column.
+  /** Resizes the column.
    * @param index - The index of the column.
    * @difference The number of pixels to grow or increase the width by.
    */
