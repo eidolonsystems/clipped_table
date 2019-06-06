@@ -40,7 +40,7 @@ export class ColumnResizer {
     this.s0();
   }
 
-  /** Handles moving the mouse over the table's header region.
+  /** Handles moving the mouse moving.
    * @param event - The event describing the mouse move.
    */
   public onMouseMove(event: MouseEvent) {
