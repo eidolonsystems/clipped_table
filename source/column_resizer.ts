@@ -4,7 +4,8 @@ export interface TableInterface {
   /** Returns the number of columns. */
   columnCount: number;
 
-  /** Returns the width of the mouse hover zone. */
+  /** Returns the width of the active region. 
+   */
   activeWidth: number;
 
   /** Returns the coordiinates of the top left corner 
@@ -19,7 +20,11 @@ export interface TableInterface {
    */
   getColumnWidth: (index: number) => number;
 
-  onResize: (columnIndex: number, difference: number) => void
+    /** Returns the width of a column.
+   * @param index - The index of the column.
+   * @difference The number of pixels to grow or increase the width by.
+   */
+  onResize: (columnIndex: number, difference: number) => void;
 }
 
 /** Provides the functionality needed to resize a table's columns. */
@@ -31,7 +36,7 @@ export class ColumnResizer {
 
   constructor(table: TableInterface) {
     this.table = table;
-    this.currentLabel = -1;
+    this.currentIndex = -1;
     this.s0();
   }
 
@@ -49,7 +54,7 @@ export class ColumnResizer {
    */
   public onMouseDown(event: MouseEvent) {
     if(this.state === 0) {
-      return this.s2(event);
+      return this.s1(event);
     }
   }
 
@@ -70,20 +75,20 @@ export class ColumnResizer {
     this.state = 1;
     const currentCoor = {x: event.clientX, y: event.clientY};
     if(this.getLabel(currentCoor) > -1) {
-      this.s2(event);
+      this.s2();
     } else {
       this.s0();
     }
   }
 
-  private s2(event: MouseEvent) {
+  private s2() {
     this.state = 2;
   }
 
   private s3(event: MouseEvent) {
     this.state = 3;
     const movement = event.movementX;
-    this.resize(this.currentLabel, movement);
+    this.table.onResize(this.currentIndex, movement);
     this.s3(event);
   }
 
@@ -105,16 +110,15 @@ export class ColumnResizer {
           edge = edge + this.table.getColumnWidth(i);
         }
       }
-      this.currentLabel = label;
-      return this.currentLabel;
+      this.currentIndex = label;
+      return this.currentIndex;
     } else {
-      this.currentLabel = -1;
-      return this.currentLabel;
+      this.currentIndex = -1;
+      return this.currentIndex;
     }
   }
 
   private table: TableInterface;
-  private resize: (columnIndex: number, difference: number) => void;
   private state: number;
-  private currentLabel: number;
+  private currentIndex: number;
 }

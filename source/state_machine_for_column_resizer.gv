@@ -21,28 +21,28 @@ digraph ColumnResizing{
 	{ rank=same; s2, s3 }
 }
 
-/** 
+/**
+
 Parameters:
-currentLabel - int or string
-startingPoint - coordinate
+currentIndex (number) - The index of the column that will be resized
 
-s0: Rest state
+States:
+s0: Staring state.
 
-S1: Evaluate if 
+S1: Evaluate if the cursor is in the active region.
+-set currentIndex to -1 if it isn't in the active region, 
+- otherwise set it to the appropriate index
 
 S2: Resizing can happen
-- starting point is set
+- Wait for the mouse to move so a resize can happen
+
 
 S3: Resizing
-- get the end point
-- calculate distsance
-- update the column size related to currentLabel
+- get the distance the mouse was moved on the x-axis
+- resize the column whose index is at currentIndex
 
-S5: Determine which cursor to show - Transition state
 
-  
 C0 - Mouse is inside resize zone
-
 E0 - Mouse Down
 E1 - Mouse Up
 E2 - Mouse Move
