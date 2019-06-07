@@ -10,8 +10,16 @@ export interface TableInterface {
   /** Returns the coordiinates of the top left corner 
    * and bottom right corner. 
    */
-  corners: 
-    {topLeft: {x: number, y: number}, bottomRight: {x: number, y: number}};
+  corners: {
+    topLeft: {
+      x: number 
+      y: number
+    }, 
+    bottomRight: {
+      x: number 
+      y: number
+    }
+  };
 
   /** Returns the width of a column.
    * @param index - The index of the column.
@@ -74,9 +82,9 @@ export class ColumnResizer {
     this.state = 1;
     const currentCoor = {x: event.clientX, y: event.clientY};
     if(this.getLabel(currentCoor) > -1) {
-      this.s2();
+      return this.s2();
     } else {
-      this.s0();
+      return this.s0();
     }
   }
 
@@ -86,9 +94,8 @@ export class ColumnResizer {
 
   private s3(event: MouseEvent) {
     this.state = 3;
-    const movement = event.movementX;
-    this.table.onResize(this.currentIndex, movement);
-    this.s2();
+    this.table.onResize(this.currentIndex, event.movementX);
+    return this.s2();
   }
 
   private getLabel(point: {x: number, y: number}) {
