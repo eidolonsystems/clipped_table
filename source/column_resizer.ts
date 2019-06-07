@@ -99,19 +99,16 @@ export class ColumnResizer {
         this.table.corners.bottomRight.x >= point.x) {
       let edge = this.table.corners.topLeft.x;
       for(let i = 0; i < this.table.columnCount; ++i) {
-        edge = edge + this.table.getColumnWidth(i);
+        edge += this.table.getColumnWidth(i);
         const innerEdge = edge - this.table.activeWidth;
         if(innerEdge <= point.x && point.x <= edge ) {
           label = i;
           break;
         }
       }
-      this.currentIndex = label;
-      return this.currentIndex;
-    } else {
-      this.currentIndex = -1;
-      return this.currentIndex;
     }
+    this.currentIndex = label;
+    return this.currentIndex;
   }
 
   private table: TableInterface;

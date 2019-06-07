@@ -2,7 +2,6 @@ import { Expect, Test } from 'alsatian';
 import { ColumnResizer, TableInterface } from '../source';
 
 class FauxTableInterface implements TableInterface {
-
   constructor() {
     this._columnCount = 3;
     this._activeWidth = 20;
@@ -51,7 +50,6 @@ class FauxTableInterface implements TableInterface {
   private _corners: 
     {topLeft: {x: number, y: number}, bottomRight: {x: number, y: number}};
   private _widths: number[];
-
 }
 
 class MouseEvent {
@@ -78,12 +76,11 @@ class MouseEvent {
   private _movementX: number;
 }
 
-
 /** Tests the ColumnResizer. */
 export class ColumnResizeTester {
 
   /** Tests what happens when a mousedown happens in the resize region
-   *  and moved in a positive direction.
+   * and moved in a positive direction.
    */
   @Test()
   public testPerfectCaseIncrease(): void {
@@ -102,7 +99,7 @@ export class ColumnResizeTester {
   }
   
   /** Tests what happens when a mousedown happens in the resize region
-   *  and moved in a negative direction.
+   * and moved in a negative direction.
    */
   @Test()
     public testPerfectCaseDecrease(): void {
@@ -120,9 +117,25 @@ export class ColumnResizeTester {
       Expect(table.corners.bottomRight.x).toEqual(680);
   }
 
+  /** Tests what happens when a mousedown happens in the resize region
+   * and does not move.
+   */
+  @Test()
+    public testPerfectCaseNoMove(): void {
+      const table = new FauxTableInterface();
+      const resizer = new ColumnResizer(table);
+      let event = new MouseEvent(190, 50, 0) as any;
+      resizer.onMouseDown(event);
+      event = new MouseEvent(190, 70, 0) as any;
+      resizer.onMouseUp(event);
+      Expect(table.getColumnWidth(0)).toEqual(200);
+      Expect(table.getColumnWidth(1)).toEqual(300);
+      Expect(table.getColumnWidth(2)).toEqual(200);
+      Expect(table.corners.bottomRight.x).toEqual(700);
+  }
+
   /** Tests what happens when a mousedown happens in the resize region and
-   * the cursor is moved in a postive direction and moved back to where it 
-   * started.
+   * the cursor is moved away and then moved back to where it started.
    */
   @Test()
     public testMovedBackInPlace(): void {
@@ -193,7 +206,7 @@ export class ColumnResizeTester {
   }
 
   /** Tests what happens when a mousemove happens if a mousedown is called 
-   * outside the resize region. 
+   * outside the resize region and moved into resize region. 
    */
   @Test()
   public mouseClickedOutsideAndMoved(): void {
@@ -224,5 +237,28 @@ export class ColumnResizeTester {
     Expect(table.getColumnWidth(1)).toEqual(300);
     Expect(table.getColumnWidth(2)).toEqual(200);
     Expect(table.corners.bottomRight.x).toEqual(700);
+  }
+
+  /** Tests what happens when two different columns are resized */
+  @Test()
+  public testTwoResizes(): void {
+    const table = new FauxTableInterface();
+    const resizer = new ColumnResizer(table);
+    let event = new MouseEvent(492, 20, 0) as any;
+    resizer.onMouseDown(event);
+    event = new MouseEvent(482, 50, -10) as any;
+    resizer.onMouseMove(event);
+    event = new MouseEvent(482, 50, 0) as any;
+    resizer.onMouseUp(event);
+    event = new MouseEvent(680, 20, 0) as any;
+    resizer.onMouseDown(event);
+    event = new MouseEvent(710, 50, 30) as any;
+    resizer.onMouseMove(event);
+    event = new MouseEvent(710, 50, 0) as any;
+    resizer.onMouseUp(event);
+    Expect(table.getColumnWidth(0)).toEqual(200);
+    Expect(table.getColumnWidth(1)).toEqual(290);
+    Expect(table.getColumnWidth(2)).toEqual(230);
+    Expect(table.corners.bottomRight.x).toEqual(720);
   }
 }
