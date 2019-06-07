@@ -11,7 +11,7 @@ export interface TableInterface {
    * and bottom right corner. 
    */
   corners: 
-    {topLeft: {x: number, y: number}, bottomLeft: {x: number, y: number}};
+    {topLeft: {x: number, y: number}, bottomRight: {x: number, y: number}};
 
   /** Returns the width of a column.
    * @param index - The index of the column.
@@ -88,24 +88,22 @@ export class ColumnResizer {
     this.state = 3;
     const movement = event.movementX;
     this.table.onResize(this.currentIndex, movement);
-    this.s3(event);
+    this.s2();
   }
 
   private getLabel(point: {x: number, y: number}) {
     let label = -1;
     if(this.table.corners.topLeft.y <= point.y &&
-        this.table.corners.bottomLeft.y >= point.y &&
+        this.table.corners.bottomRight.y >= point.y &&
         this.table.corners.topLeft.x <= point.x &&
-        this.table.corners.bottomLeft.x >= point.x) {
-      let i = 0;
-      let edge = this.table.corners.topLeft.x + this.table.getColumnWidth(i);
-      while(point.x <= edge) {
+        this.table.corners.bottomRight.x >= point.x) {
+      let edge = this.table.corners.topLeft.x;
+      for(let i = 0; i < this.table.columnCount; ++i) {
+        edge = edge + this.table.getColumnWidth(i);
         const innerEdge = edge - this.table.activeWidth;
-        if(innerEdge <= point.x) {
+        if(innerEdge <= point.x && point.x <= edge ) {
           label = i;
-        } else {
-          ++i;
-          edge = edge + this.table.getColumnWidth(i);
+          break;
         }
       }
       this.currentIndex = label;
