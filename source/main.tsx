@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { ArrayTableModel } from './array_table_model';
 import { TableView } from './table_view';
+import { ColumnResizer, TableInterface } from './column_resizer';
 
 const model = new ArrayTableModel();
 for(let row = 0; row < 500; ++row) {
@@ -29,6 +30,10 @@ const someStyle = {
   }
 };
 
-ReactDOM.render(
-  <TableView model={model} labels={header} style={someStyle}/>,
-  document.getElementById('main'));
+const table = new TableView({model: model, labels: header, style: someStyle, className: null});
+const resizer = new ColumnResizer(table.getInterface());
+
+
+ReactDOM.render( table.render(), document.getElementById('main'));
+document.getElementById('main').addEventListener('mousedown', resizer.onMouseDown);
+document.getElementById('main').addEventListener('mouseup', resizer.onMouseUp);

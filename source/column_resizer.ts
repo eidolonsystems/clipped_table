@@ -45,6 +45,9 @@ export class ColumnResizer {
     this.table = table;
     this.currentIndex = -1;
     this.s0();
+    this.onMouseDown = this.onMouseDown.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+    this.onMouseMove = this.onMouseMove.bind(this);
   }
 
   /** Handles the cursor moving.
@@ -60,9 +63,12 @@ export class ColumnResizer {
    * @param event - The event describing the button press.
    */
   public onMouseDown(event: MouseEvent) {
+    console.log('Mouse down!');
+    console.log('state iz', this.state);
     if(this.state === 0) {
       return this.s1(event);
     }
+    console.log('All done mouse down!');
   }
 
   /** Handles releasing a mouse button.
@@ -75,10 +81,12 @@ export class ColumnResizer {
   }
 
   private s0() {
-    this.state = 0;  
+    this.state = 0;
+    console.log('State 0', this.state);  
   }
 
   private s1(event: MouseEvent) {
+    console.log('State 1', this.state);  
     this.state = 1;
     const currentCoor = {x: event.clientX, y: event.clientY};
     if(this.getLabel(currentCoor) > -1) {
@@ -86,19 +94,23 @@ export class ColumnResizer {
     } else {
       return this.s0();
     }
+
   }
 
   private s2() {
+    console.log('State 2');  
     this.state = 2;
   }
 
   private s3(event: MouseEvent) {
+    console.log('State 3'); 
     this.state = 3;
     this.table.onResize(this.currentIndex, event.movementX);
     return this.s2();
   }
 
   private getLabel(point: {x: number, y: number}) {
+    console.log('Getting label!');
     let label = -1;
     if(this.table.corners.topLeft.y <= point.y &&
         this.table.corners.bottomRight.y >= point.y &&
