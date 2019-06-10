@@ -30,10 +30,13 @@ const someStyle = {
   }
 };
 
-const table = new TableView({model: model, labels: header, style: someStyle, className: null});
-const resizer = new ColumnResizer(table.getInterface());
-
-
-ReactDOM.render( table.render(), document.getElementById('main'));
+//const table = new TableView({model: model, labels: header, style: someStyle, className: null});
+//ReactDOM.render( table.render(), document.getElementById('main'));
+let thing: TableView;
+ReactDOM.render(
+  <TableView model={model} labels={header} style={someStyle} ref={(view) => thing = view}/>,
+  document.getElementById('main'));
+const resizer = new ColumnResizer(thing.getInterface());
 document.getElementById('main').addEventListener('mousedown', resizer.onMouseDown);
 document.getElementById('main').addEventListener('mouseup', resizer.onMouseUp);
+document.getElementById('main').addEventListener('mousemove', resizer.onMouseMove);

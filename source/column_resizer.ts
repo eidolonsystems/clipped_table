@@ -65,6 +65,7 @@ export class ColumnResizer {
   public onMouseDown(event: MouseEvent) {
     console.log('Mouse down!');
     console.log('state iz', this.state);
+    console.log('x: ' ,event.clientX);
     if(this.state === 0) {
       return this.s1(event);
     }
@@ -112,6 +113,7 @@ export class ColumnResizer {
   private getLabel(point: {x: number, y: number}) {
     console.log('Getting label!');
     let label = -1;
+    console.log('corners are', this.table.corners);
     if(this.table.corners.topLeft.y <= point.y &&
         this.table.corners.bottomRight.y >= point.y &&
         this.table.corners.topLeft.x <= point.x &&

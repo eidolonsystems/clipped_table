@@ -17,8 +17,12 @@ interface Properties {
   style?: any;
 }
 
+interface State {
+  colWidth: number[];
+}
+
 /** Renders a TableModel to HTML. */
-export class TableView extends React.Component<Properties> implements 
+export class TableView extends React.Component<Properties, State> implements 
     TableInterface{
   public static readonly defaultProps = {
     header: [] as string[],
@@ -27,18 +31,25 @@ export class TableView extends React.Component<Properties> implements
 
   public constructor(props: Properties) {
     super(props);
+    this.state = {
+      colWidth: []
+    }
     this._header_refs = [];
-    this._widths = [];
     for(let i = 0; i < this.props.labels.length; ++i) {
       this._header_refs[i] = null;
+      this.state.colWidth[i] = 10;
     }
+    this.onResize = this.onResize.bind(this);
+    this.getColumnWidth = this.getColumnWidth.bind(this);
+    console.log(this.state.colWidth);
   }
 
   public render(): JSX.Element {
+    console.log('RENDER!');
     const header = [];
     for(let i = 0; i < this.props.labels.length; ++i) {
       header.push(
-        <th style={{...this.props.style.th}}
+        <th style={{width: this.state.colWidth[i]}}
             className={this.props.className}
             ref={(label) => this._header_refs[i] = label}
             key={this.props.labels[i]}>
@@ -68,7 +79,7 @@ export class TableView extends React.Component<Properties> implements
           className={this.props.className}>
         <thead style={this.props.style.thead}
             className={this.props.className}
-            ref={(head) => this._header = head}>
+            ref={(header) => {this._header = header;}}>
           <tr style={this.props.style.tr}
               className={this.props.className}>
             {header}
@@ -101,6 +112,7 @@ export class TableView extends React.Component<Properties> implements
   }
 
   public get corners() {
+    console.log('reference', this._header);
     if(this._header) {
       const boundingClient = this._header.getBoundingClientRect();
       this._corners = {topLeft: {x:  boundingClient.left, y: boundingClient.top}, 
@@ -117,25 +129,30 @@ export class TableView extends React.Component<Properties> implements
   }
 
 public onResize(columnIndex: number, difference: number) {
+    console.log('RESIZE!');
+    console.log('difference!', difference);
     if(columnIndex >= this.props.model.columnCount) {
       throw RangeError();
     }
     if(difference === 0) {
       return;
     }
-    const changedWidth = this._widths[columnIndex] + difference;
+    const changedWidth = this.state.colWidth[columnIndex] + difference;
     if(changedWidth < this.minWidth) {
-      this._widths[columnIndex] = this.minWidth;
+      this.state.colWidth[columnIndex] = this.minWidth;
     } else {
-      this._widths[columnIndex] = changedWidth;
+      this.state.colWidth[columnIndex] = changedWidth;
     }
     this._corners.bottomRight.x = 0;
     for(let i = 0; i < this.props.model.columnCount; ++i) {
-      this._corners.bottomRight.x += this._widths[i];
+      this._corners.bottomRight.x += this.state.colWidth[i];
     }
+    this.setState({colWidth: this.state.colWidth});
+    console.log(this.state.colWidth);
+    console.log('WHY NO RERENDER');
   } 
 
-  private  _activeWidth = 20;
+  private  _activeWidth = 50;
   private  minWidth = 20;
   private _corners: {
     topLeft: {
@@ -149,5 +166,4 @@ public onResize(columnIndex: number, difference: number) {
   };
   private _header_refs: HTMLHeadElement[];
   private _header: HTMLHeadElement;
-  private _widths: number[];
 }
