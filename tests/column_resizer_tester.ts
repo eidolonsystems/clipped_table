@@ -88,7 +88,7 @@ class MouseEvent {
 export class ColumnResizeTester {
 
   /** Tests what happens when a mousedown happens in the resize region
-   * and moved in a positive direction.
+   *  and moved in a positive direction.
    */
   @Test()
   public testPerfectCaseIncrease(): void {
@@ -107,7 +107,7 @@ export class ColumnResizeTester {
   }
 
   /** Tests what happens when a mousedown happens in the resize region
-   * and moved in a negative direction.
+   *  and moved in a negative direction.
    */
   @Test()
   public testPerfectCaseDecrease(): void {
@@ -126,7 +126,7 @@ export class ColumnResizeTester {
   }
 
   /** Tests what happens when a mousedown happens in the resize region
-   * and does not move.
+   *  and does not move.
    */
   @Test()
   public testPerfectCaseNoMove(): void {
@@ -143,7 +143,7 @@ export class ColumnResizeTester {
   }
 
   /** Tests what happens when a mousedown happens in the resize region and
-   * the cursor is moved away and then moved back to where it started.
+   *  the cursor is moved away and then moved back to where it started.
    */
   @Test()
   public testMovedBackInPlace(): void {
@@ -165,7 +165,7 @@ export class ColumnResizeTester {
   }
 
   /** Tests a mousedown followed by a mousemove that decreases the column
-   * width and then repeated.
+   *  width and then repeated.
    */
   @Test()
   public testTwoClicksTwoGrows(): void {
@@ -190,7 +190,7 @@ export class ColumnResizeTester {
   }
 
   /** Tests a mousedown followed by a mousemove that increases the column width,
-   * and then repeated.
+   *  and then repeated.
    */
   @Test()
   public testTwoClicksTwoShrinks(): void {
@@ -215,7 +215,7 @@ export class ColumnResizeTester {
   }
 
   /** Tests what happens when a mousemove happens if a mousedown is called
-   * outside the resize region and moved into resize region.
+   *  outside the resize region and moved into resize region.
    */
   @Test()
   public mouseClickedOutsideAndMoved(): void {
@@ -272,7 +272,7 @@ export class ColumnResizeTester {
   }
 
   /** Tests what happens when a mousedown happens in the resize region
-   * and moved to the left by over 100 pixels.
+   *  and moved to the left by over 100 pixels.
    */
   @Test()
   public testBigResize(): void {

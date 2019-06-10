@@ -7,8 +7,8 @@ export interface TableInterface {
   /** Returns the width of the active region. */
   activeWidth: number;
 
-  /** Returns the coordiinates of the top left corner 
-   * and bottom right corner. 
+  /** Returns the coordinates of the top left corner
+   *  and bottom right corner.
    */
   corners: {
     topLeft: {
