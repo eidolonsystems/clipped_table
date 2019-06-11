@@ -111,7 +111,7 @@ export class TableView extends React.Component<Properties> implements
   }
 
   public getColumnWidth(index: number) {
-    return this._header_refs[index].clientWidth;
+    return this._header_refs[index].scrollWidth;
   }
 
   public onResize(columnIndex: number, difference: number) {
