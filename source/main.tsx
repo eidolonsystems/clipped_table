@@ -36,7 +36,3 @@ let thing: TableView;
 ReactDOM.render(
   <TableView model={model} labels={header} style={someStyle} ref={(view) => thing = view}/>,
   document.getElementById('main'));
-const resizer = new ColumnResizer(thing.getInterface());
-document.getElementById('main').addEventListener('mousedown', resizer.onMouseDown);
-document.getElementById('main').addEventListener('mouseup', resizer.onMouseUp);
-document.getElementById('main').addEventListener('mousemove', resizer.onMouseMove);

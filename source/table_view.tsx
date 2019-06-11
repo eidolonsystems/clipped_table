@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TableModel } from './table_model';
-import {TableInterface } from './column_resizer';
+import {TableInterface, ColumnResizer } from './column_resizer';
 
 interface Properties {
 
@@ -17,31 +17,35 @@ interface Properties {
   style?: any;
 }
 
-interface State {
-  colWidth: number[];
-}
-
 /** Renders a TableModel to HTML. */
-export class TableView extends React.Component<Properties, State> implements 
+export class TableView extends React.Component<Properties> implements 
     TableInterface{
   public static readonly defaultProps = {
     header: [] as string[],
     style: {},
   };
 
-  public constructor(props: Properties) {
+  constructor(props: Properties) {
     super(props);
-    this.state = {
-      colWidth: []
-    }
+    this._column_resizer = new ColumnResizer(this);
+    addEventListener
     this._header_refs = [];
     for(let i = 0; i < this.props.labels.length; ++i) {
       this._header_refs[i] = null;
-      this.state.colWidth[i] = 10;
     }
-    this.onResize = this.onResize.bind(this);
-    this.getColumnWidth = this.getColumnWidth.bind(this);
-    console.log(this.state.colWidth);
+
+  }
+
+  public componentDidMount() {
+    window.addEventListener('mousedown', this._column_resizer.onMouseDown);
+    window.addEventListener('mouseup', this._column_resizer.onMouseUp);
+    window.addEventListener('mousemove', this._column_resizer.onMouseMove);
+  }
+
+  public componentWillUnmount() {
+    window.removeEventListener('mousedown', this._column_resizer.onMouseDown);
+    window.removeEventListener('mouseup', this._column_resizer.onMouseUp);
+    window.removeEventListener('mousemove', this._column_resizer.onMouseMove);
   }
 
   public render(): JSX.Element {
@@ -49,7 +53,7 @@ export class TableView extends React.Component<Properties, State> implements
     const header = [];
     for(let i = 0; i < this.props.labels.length; ++i) {
       header.push(
-        <th style={{width: this.state.colWidth[i]}}
+        <th style={this.props.style.th}
             className={this.props.className}
             ref={(label) => this._header_refs[i] = label}
             key={this.props.labels[i]}>
@@ -92,78 +96,37 @@ export class TableView extends React.Component<Properties, State> implements
       </table>);
   }
 
-  public getInterface() {
-    let newThing = {
-      columnCount: this.columnCount,
-      activeWidth: this.activeWidth,
-      corners: this.corners,
-      getColumnWidth: this.getColumnWidth,
-      onResize: this.onResize
-    } as TableInterface;
-    return newThing;
-  }
-
   public get columnCount() {
     return this.props.model.columnCount;
   }
 
   public get activeWidth() {
-    return this._activeWidth;
+    return 50;
   }
 
   public get corners() {
-    console.log('reference', this._header);
-    if(this._header) {
-      const boundingClient = this._header.getBoundingClientRect();
-      this._corners = {topLeft: {x:  boundingClient.left, y: boundingClient.top}, 
-        bottomRight: {x: boundingClient.right,y: boundingClient.bottom}};
-    } else {
-      this._corners = {topLeft: {x:  0, y: 0}, 
-        bottomRight: {x: 0, y: 0}};
-    }
-    return this._corners;
+    const boundingClient = this._header.getBoundingClientRect();
+    return {topLeft: {x:  boundingClient.left, y: boundingClient.top}, 
+      bottomRight: {x: boundingClient.right,y: boundingClient.bottom}};
   }
 
   public getColumnWidth(index: number) {
-    return this._header_refs[index].offsetWidth;
+    return this._header_refs[index].clientWidth;
   }
 
-public onResize(columnIndex: number, difference: number) {
+  public onResize(columnIndex: number, difference: number) {
     console.log('RESIZE!');
     console.log('difference!', difference);
-    if(columnIndex >= this.props.model.columnCount) {
-      throw RangeError();
-    }
     if(difference === 0) {
       return;
     }
-    const changedWidth = this.state.colWidth[columnIndex] + difference;
-    if(changedWidth < this.minWidth) {
-      this.state.colWidth[columnIndex] = this.minWidth;
-    } else {
-      this.state.colWidth[columnIndex] = changedWidth;
-    }
-    this._corners.bottomRight.x = 0;
-    for(let i = 0; i < this.props.model.columnCount; ++i) {
-      this._corners.bottomRight.x += this.state.colWidth[i];
-    }
-    this.setState({colWidth: this.state.colWidth});
-    console.log(this.state.colWidth);
-    console.log('WHY NO RERENDER');
+    console.log('width' + this.getColumnWidth(columnIndex));
+    this._header_refs[columnIndex].style.width = 
+      `${this.getColumnWidth(columnIndex) + difference}px`;
+     console.log('width' + this.getColumnWidth(columnIndex));
   } 
 
-  private  _activeWidth = 50;
-  private  minWidth = 20;
-  private _corners: {
-    topLeft: {
-      x: number
-      y: number
-    },
-    bottomRight: {
-      x: number
-      y: number
-    }
-  };
   private _header_refs: HTMLHeadElement[];
   private _header: HTMLHeadElement;
+  private _column_resizer: ColumnResizer;
 }

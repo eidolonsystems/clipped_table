@@ -289,4 +289,5 @@ export class ColumnResizeTester {
     Expect(table.getColumnWidth(2)).toEqual(200);
     Expect(table.corners.bottomRight.x).toEqual(1100);
   }
+
 }
