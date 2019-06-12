@@ -1,11 +1,46 @@
 import { Expect, Test } from 'alsatian';
-import { ColumnResizer, TableInterface } from '../source';
+import { ColumnResizer, TableInterface, Rectangle } from '../source';
 
 class MockTableInterface implements TableInterface {
   constructor() {
     this._columnCount = 3;
     this._activeWidth = 20;
-    this._widths = [200, 300, 200];
+    //this._widths = [200, 300, 200];
+    this._widths = [
+      {
+        x: 0,
+        y: 0,
+        width: 200,
+        height: 100,
+        top: 0,
+        left: 0,
+        bottom: 100,
+        right: 200
+      },
+      {
+        x: 201,
+        y: 0,
+        width: 300,
+        height: 100,
+        top: 0,
+        left: 201,
+        bottom: 100,
+        right: 500
+      },
+      {
+        x: 501,
+        y: 0,
+        width: 200,
+        height: 100,
+        top: 0,
+        left: 501,
+        bottom: 100,
+        right: 700
+      }];
+
+
+
+
     this._corners = {topLeft: {x: 0,y: 0}, bottomRight: {x: 700,y: 100}};
   }
 
@@ -57,7 +92,7 @@ class MockTableInterface implements TableInterface {
       y: number
     }
   };
-  private _widths: number[];
+  private _widths: Rectangle[];
 }
 
 class MouseEvent {

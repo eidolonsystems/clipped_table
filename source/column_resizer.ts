@@ -1,3 +1,16 @@
+
+export interface Rectangle {
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  top: number,
+  left: number,
+  bottom: number,
+  right: number
+}
+
+
 /** Specifies the members needed on a table class to resize its columns. */
 export interface TableInterface {
 
@@ -7,31 +20,17 @@ export interface TableInterface {
   /** Returns the width of the active region. */
   activeWidth: number;
 
-  /** Returns the coordinates of the top left corner
-   *  and bottom right corner.
-   */
-  corners: {
-    topLeft: {
-      x: number 
-      y: number
-    }, 
-    bottomRight: {
-      x: number 
-      y: number
-    }
-  };
-
   /** Returns the width of a column.
    * @param index - The index of the column.
    * @return The width in pixels of the column at the specified index.
    */
-  getColumnWidth: (index: number) => number;
+  getColumnRect: (index: number) => Rectangle;
 
   /** Resizes the column.
    * @param index - The index of the column.
-   * @param difference The number of pixels to grow or increase the width by.
+   * @param width - The width of the column in pixels.
    */
-  onResize: (columnIndex: number, difference: number) => void;
+  onResize: (columnIndex: number, width: number) => void;
 }
 
 /** Provides the functionality needed to resize a table's columns. */
@@ -83,11 +82,9 @@ export class ColumnResizer {
 
   private s0() {
     this.state = 0;
-    console.log('State 0', this.state);  
   }
 
-  private s1(event: MouseEvent) {
-    console.log('State 1', this.state);  
+  private s1(event: MouseEvent) {  
     this.state = 1;
     const currentCoor = {x: event.clientX, y: event.clientY};
     if(this.getLabel(currentCoor) > -1) {
@@ -99,12 +96,10 @@ export class ColumnResizer {
   }
 
   private s2() {
-    console.log('State 2');  
     this.state = 2;
   }
 
   private s3(event: MouseEvent) {
-    console.log('State 3'); 
     this.state = 3;
     this.table.onResize(this.currentIndex, event.movementX);
     return this.s2();
@@ -113,19 +108,13 @@ export class ColumnResizer {
   private getLabel(point: {x: number, y: number}) {
     console.log('Getting label!');
     let label = -1;
-    console.log('corners are', this.table.corners);
-    if(this.table.corners.topLeft.y <= point.y &&
-        this.table.corners.bottomRight.y >= point.y &&
-        this.table.corners.topLeft.x <= point.x &&
-        this.table.corners.bottomRight.x >= point.x) {
-      let edge = this.table.corners.topLeft.x;
-      for(let i = 0; i < this.table.columnCount; ++i) {
-        edge += this.table.getColumnWidth(i);
-        const innerEdge = edge - this.table.activeWidth;
-        if(innerEdge <= point.x && point.x <= edge ) {
-          label = i;
-          break;
-        }
+    for(let i = 0; i < this.table.columnCount; ++i) {
+      let rectangle = this.table.getColumnRect(i);
+      let edge = rectangle.right;
+      const innerEdge = edge - this.table.activeWidth;
+      if(innerEdge <= point.x && point.x <= edge ) {
+        label = i;
+        break;
       }
     }
     this.currentIndex = label;

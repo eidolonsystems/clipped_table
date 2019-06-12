@@ -37,15 +37,15 @@ export class TableView extends React.Component<Properties> implements
   }
 
   public componentDidMount() {
-    window.addEventListener('mousedown', this._column_resizer.onMouseDown);
-    window.addEventListener('mouseup', this._column_resizer.onMouseUp);
-    window.addEventListener('mousemove', this._column_resizer.onMouseMove);
+    document.addEventListener('mousedown', this._column_resizer.onMouseDown);
+    document.addEventListener('mouseup', this._column_resizer.onMouseUp);
+    document.addEventListener('mousemove', this._column_resizer.onMouseMove);
   }
 
   public componentWillUnmount() {
-    window.removeEventListener('mousedown', this._column_resizer.onMouseDown);
-    window.removeEventListener('mouseup', this._column_resizer.onMouseUp);
-    window.removeEventListener('mousemove', this._column_resizer.onMouseMove);
+    document.removeEventListener('mousedown', this._column_resizer.onMouseDown);
+    document.removeEventListener('mouseup', this._column_resizer.onMouseUp);
+    document.removeEventListener('mousemove', this._column_resizer.onMouseMove);
   }
 
   public render(): JSX.Element {
@@ -111,19 +111,21 @@ export class TableView extends React.Component<Properties> implements
   }
 
   public getColumnWidth(index: number) {
-    return this._header_refs[index].scrollWidth;
+    return this._header_refs[index].getBoundingClientRect().width;
   }
 
   public onResize(columnIndex: number, difference: number) {
-    console.log('RESIZE!');
     console.log('difference!', difference);
     if(difference === 0) {
       return;
     }
-    console.log('width' + this.getColumnWidth(columnIndex));
+    const oldwidth = this.getColumnWidth(columnIndex);
+    console.log('og width ' + this.getColumnWidth(columnIndex));
     this._header_refs[columnIndex].style.width = 
       `${this.getColumnWidth(columnIndex) + difference}px`;
-     console.log('width' + this.getColumnWidth(columnIndex));
+    const newwidth = this.getColumnWidth(columnIndex);
+    console.log('new width ' + this.getColumnWidth(columnIndex));
+    console.log(`the difference: ${newwidth-oldwidth}`);
   } 
 
   private _header_refs: HTMLHeadElement[];

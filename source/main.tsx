@@ -5,15 +5,15 @@ import { TableView } from './table_view';
 import { ColumnResizer, TableInterface } from './column_resizer';
 
 const model = new ArrayTableModel();
-for(let row = 0; row < 500; ++row) {
+for(let row = 0; row < 100; ++row) {
   const r = [];
-  for(let column = 0; column < 5; ++column) {
+  for(let column = 0; column < 3; ++column) {
     r.push(Math.floor(Math.random() * 1000000));
   }
   model.addRow(r);
 }
 
-const header = ['one', 'two', 'three', 'four', 'five'];
+const header = ['one', 'two', 'three'];
 
 const someStyle = {
   table: {
@@ -21,12 +21,15 @@ const someStyle = {
     fontSize: '20px',
     borderCollapse: 'collapse',
     boxSizing: 'border-box',
-    border: '2px solid #4b23a0'
+    border: '1px solid #4b23a0'
+  },
+  th: {
+    border: '1px dashed #4b23a0',
+    color: '#4b23a0'
   },
   td: {
     border: '1px dashed #4b23a0',
-    color: '#4b23a0',
-    padding: '10px'
+    color: '#4b23a0'
   }
 };
 
