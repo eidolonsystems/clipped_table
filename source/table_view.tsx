@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TableModel } from './table_model';
-import {TableInterface, ColumnResizer } from './column_resizer';
+import { ColumnResizer, Rectangle, TableInterface } from './column_resizer';
 
 interface Properties {
 
@@ -19,7 +19,6 @@ interface Properties {
 
 
 /** Renders a TableModel to HTML. */
-/*
 export class TableView extends React.Component<Properties> implements 
     TableInterface{
   public static readonly defaultProps = {
@@ -35,7 +34,8 @@ export class TableView extends React.Component<Properties> implements
     for(let i = 0; i < this.props.labels.length; ++i) {
       this._header_refs[i] = null;
     }
-
+  this.onResize = this.onResize.bind(this);
+  this.getColumnRect = this.getColumnRect.bind(this);
   }
 
   public componentDidMount() {
@@ -84,8 +84,7 @@ export class TableView extends React.Component<Properties> implements
       <table style={this.props.style.table}
           className={this.props.className}>
         <thead style={this.props.style.thead}
-            className={this.props.className}
-            ref={(header) => {this._header = header;}}>
+            className={this.props.className}>
           <tr style={this.props.style.tr}
               className={this.props.className}>
             {header}
@@ -106,32 +105,23 @@ export class TableView extends React.Component<Properties> implements
     return 50;
   }
 
-  public get corners() {
-    const boundingClient = this._header.getBoundingClientRect();
-    return {topLeft: {x:  boundingClient.left, y: boundingClient.top}, 
-      bottomRight: {x: boundingClient.right,y: boundingClient.bottom}};
+  public getColumnRect(index: number): Rectangle {
+    return ({  
+      x: this._header_refs[index].getBoundingClientRect().left,
+      y: this._header_refs[index].getBoundingClientRect().top,
+      width: this._header_refs[index].getBoundingClientRect().width,
+      height: this._header_refs[index].getBoundingClientRect().height,
+      top: this._header_refs[index].getBoundingClientRect().top,
+      left: this._header_refs[index].getBoundingClientRect().left,
+      bottom: this._header_refs[index].getBoundingClientRect().bottom,
+      right: this._header_refs[index].getBoundingClientRect().right
+    } as Rectangle);
   }
 
-  public getColumnWidth(index: number) {
-    return this._header_refs[index].getBoundingClientRect().width;
-  }
-
-  public onResize(columnIndex: number, difference: number) {
-    console.log('difference!', difference);
-    if(difference === 0) {
-      return;
-    }
-    const oldwidth = this.getColumnWidth(columnIndex);
-    console.log('og width ' + this.getColumnWidth(columnIndex));
-    this._header_refs[columnIndex].style.width = 
-      `${this.getColumnWidth(columnIndex) + difference}px`;
-    const newwidth = this.getColumnWidth(columnIndex);
-    console.log('new width ' + this.getColumnWidth(columnIndex));
-    console.log(`the difference: ${newwidth-oldwidth}`);
+  public onResize(columnIndex: number, width: number) {
+    this._header_refs[columnIndex].style.width = `${width}px`;
   } 
 
   private _header_refs: HTMLHeadElement[];
-  private _header: HTMLHeadElement;
   private _column_resizer: ColumnResizer;
 }
-*/

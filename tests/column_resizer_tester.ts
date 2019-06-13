@@ -1,11 +1,12 @@
 import { Expect, Test } from 'alsatian';
-import { ColumnResizer, TableInterface, Rectangle } from '../source';
+import { ColumnResizer, TableInterface, Rectangle, TableModel } from '../source';
 
 class MockTableInterface implements TableInterface {
   constructor() {
     this._columnCount = 3;
     this._activeWidth = 20;
-    this._columnRects = [
+    this._columnRects = [] as Rectangle[];
+    this._columnRects[0] =
       {
         x: 1,
         y: 1,
@@ -15,8 +16,8 @@ class MockTableInterface implements TableInterface {
         left: 0,
         bottom: 100,
         right: 200
-      },
-      {
+      } as Rectangle;
+      this._columnRects[1] = {
         x: 201,
         y: 1,
         width: 300,
@@ -25,8 +26,8 @@ class MockTableInterface implements TableInterface {
         left: 201,
         bottom: 100,
         right: 500
-      },
-      {
+      } as Rectangle;
+      this._columnRects[2] ={
         x: 501,
         y: 1,
         width: 200,
@@ -35,7 +36,9 @@ class MockTableInterface implements TableInterface {
         left: 501,
         bottom: 100,
         right: 700
-      }];
+      } as Rectangle;
+      this.onResize = this.onResize.bind(this);
+      this.getColumnRect = this.getColumnRect.bind(this);
   }
 
   public get columnCount() {
@@ -46,7 +49,7 @@ class MockTableInterface implements TableInterface {
     return this._activeWidth;
   }
 
-  public getColumnRect(index: number) {
+  public getColumnRect(index: number): Rectangle {
     return this._columnRects[index];
   }
 
@@ -54,14 +57,17 @@ class MockTableInterface implements TableInterface {
     if(columnIndex >= this._columnCount) {
       throw RangeError();
     }
-    this._columnRects[columnIndex].width = width;
-    this._columnRects[columnIndex].right =
-      this._columnRects[columnIndex].left + this._columnRects[columnIndex].width;
-    for(let i = columnIndex + 1; i < this.columnCount; ++i) {
-      this._columnRects[i].x = this._columnRects[i].right + 1;
-      this._columnRects[i].left = this._columnRects[i].x;  
-      this._columnRects[i].right = 
-        this._columnRects[i].left +  this._columnRects[i].width;
+    this.getColumnRect(columnIndex).width = width;
+    this.getColumnRect(columnIndex).right =
+      this.getColumnRect(columnIndex).left + this.getColumnRect(columnIndex).width;
+    if(columnIndex < this._columnCount - 1) {
+      for(let i = columnIndex + 1; i < this.columnCount; ++i) {
+        this.getColumnRect(i).x = this.getColumnRect(i-1).right + 1;
+        this.getColumnRect(i).left = this.getColumnRect(i).x;  
+        this.getColumnRect(i).right = 
+          this.getColumnRect(i).left + 
+          this.getColumnRect(i).width;
+      }
     }
   }
 

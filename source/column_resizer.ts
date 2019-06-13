@@ -22,7 +22,7 @@ export interface TableInterface {
 
   /** Returns the width of a column.
    * @param index - The index of the column.
-   * @return The width in pixels of the column at the specified index.
+   * @return The rectange denoting all the corners of the element.
    */
   getColumnRect: (index: number) => Rectangle;
 
@@ -97,10 +97,10 @@ export class ColumnResizer {
 
   private s3(event: MouseEvent) {
     this.state = 3;
-    
+    console.log(this.table.getColumnRect(this.currentIndex));
     this.table.onResize(
       this.currentIndex, 
-      this.table.getColumnRect(this.currentIndex).width + event.movementX);
+      Math.abs(event.clientX - this.table.getColumnRect(this.currentIndex).left));
     return this.s2();
   }
 
