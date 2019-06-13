@@ -39,15 +39,15 @@ export class TableView extends React.Component<Properties> implements
   }
 
   public componentDidMount() {
-    document.addEventListener('mousedown', this._column_resizer.onMouseDown);
-    document.addEventListener('mouseup', this._column_resizer.onMouseUp);
-    document.addEventListener('mousemove', this._column_resizer.onMouseMove);
+    document.addEventListener('pointerdown', this._column_resizer.onMouseDown);
+    document.addEventListener('pointerup', this._column_resizer.onMouseUp);
+    document.addEventListener('pointermove', this._column_resizer.onMouseMove);
   }
 
   public componentWillUnmount() {
-    document.removeEventListener('mousedown', this._column_resizer.onMouseDown);
-    document.removeEventListener('mouseup', this._column_resizer.onMouseUp);
-    document.removeEventListener('mousemove', this._column_resizer.onMouseMove);
+    document.removeEventListener('pointerdown', this._column_resizer.onMouseDown);
+    document.removeEventListener('pointerup', this._column_resizer.onMouseUp);
+    document.removeEventListener('pointermove', this._column_resizer.onMouseMove);
   }
 
   public render(): JSX.Element {

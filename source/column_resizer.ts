@@ -52,7 +52,7 @@ export class ColumnResizer {
   /** Handles the cursor moving.
    * @param event - The event describing the mouse move.
    */
-  public onMouseMove(event: MouseEvent) {
+  public onMouseMove(event: PointerEvent) {
     if(this.state === 2) {
       return this.s3(event);
     }
@@ -61,7 +61,7 @@ export class ColumnResizer {
   /** Handles pressing down a mouse button.
    * @param event - The event describing the button press.
    */
-  public onMouseDown(event: MouseEvent) {
+  public onMouseDown(event: PointerEvent) {
     if(this.state === 0) {
       return this.s1(event);
     }
@@ -70,7 +70,7 @@ export class ColumnResizer {
   /** Handles releasing a mouse button.
    * @param event - The event describing the button release.
    */
-  public onMouseUp(event: MouseEvent) {
+  public onMouseUp(event: PointerEvent) {
     if(this.state === 2) {
       return this.s0();
     }
@@ -80,7 +80,7 @@ export class ColumnResizer {
     this.state = 0;
   }
 
-  private s1(event: MouseEvent) {  
+  private s1(event: PointerEvent) {  
     this.state = 1;
     const currentCoor = {x: event.clientX, y: event.clientY};
     if(this.getLabel(currentCoor) > -1) {
@@ -95,9 +95,12 @@ export class ColumnResizer {
     this.state = 2;
   }
 
-  private s3(event: MouseEvent) {
+  private s3(event: PointerEvent) {
     this.state = 3;
     console.log(this.table.getColumnRect(this.currentIndex));
+    if(event.clientX < this.table.getColumnRect(this.currentIndex).x) {
+      return this.s2();
+    }
     this.table.onResize(
       this.currentIndex, 
       Math.abs(event.clientX - this.table.getColumnRect(this.currentIndex).left));
