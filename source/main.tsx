@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { ArrayTableModel } from './array_table_model';
-import { TableView } from './table_view';
+//import { TableView } from './table_view';
 import { ColumnResizer, TableInterface } from './column_resizer';
 
 const model = new ArrayTableModel();
@@ -35,7 +35,7 @@ const someStyle = {
 
 //const table = new TableView({model: model, labels: header, style: someStyle, className: null});
 //ReactDOM.render( table.render(), document.getElementById('main'));
-let thing: TableView;
-ReactDOM.render(
-  <TableView model={model} labels={header} style={someStyle} ref={(view) => thing = view}/>,
-  document.getElementById('main'));
+//let thing: TableView;
+//ReactDOM.render(
+//  <TableView model={model} labels={header} style={someStyle} ref={(view) => thing = view}/>,
+//  document.getElementById('main'));

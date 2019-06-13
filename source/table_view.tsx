@@ -17,7 +17,9 @@ interface Properties {
   style?: any;
 }
 
+
 /** Renders a TableModel to HTML. */
+/*
 export class TableView extends React.Component<Properties> implements 
     TableInterface{
   public static readonly defaultProps = {
@@ -132,3 +134,4 @@ export class TableView extends React.Component<Properties> implements
   private _header: HTMLHeadElement;
   private _column_resizer: ColumnResizer;
 }
+*/

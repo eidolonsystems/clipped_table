@@ -62,13 +62,9 @@ export class ColumnResizer {
    * @param event - The event describing the button press.
    */
   public onMouseDown(event: MouseEvent) {
-    console.log('Mouse down!');
-    console.log('state iz', this.state);
-    console.log('x: ' ,event.clientX);
     if(this.state === 0) {
       return this.s1(event);
     }
-    console.log('All done mouse down!');
   }
 
   /** Handles releasing a mouse button.
@@ -101,12 +97,14 @@ export class ColumnResizer {
 
   private s3(event: MouseEvent) {
     this.state = 3;
-    this.table.onResize(this.currentIndex, event.movementX);
+    
+    this.table.onResize(
+      this.currentIndex, 
+      this.table.getColumnRect(this.currentIndex).width + event.movementX);
     return this.s2();
   }
 
   private getLabel(point: {x: number, y: number}) {
-    console.log('Getting label!');
     let label = -1;
     for(let i = 0; i < this.table.columnCount; ++i) {
       let rectangle = this.table.getColumnRect(i);
