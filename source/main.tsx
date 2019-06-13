@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { ArrayTableModel } from './array_table_model';
 import { TableView } from './table_view';
-import { ColumnResizer, TableInterface } from './column_resizer';
 
 const model = new ArrayTableModel();
 for(let row = 0; row < 100; ++row) {
@@ -32,8 +31,7 @@ const someStyle = {
     color: '#4b23a0'
   }
 };
-//const table = new TableView({model: model, labels: header, style: someStyle, className: null});
-//ReactDOM.render( table.render(), document.getElementById('main'));
+
 ReactDOM.render(
   <TableView model={model} labels={header} style={someStyle}/>,
   document.getElementById('main'));
