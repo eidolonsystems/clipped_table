@@ -1,3 +1,4 @@
+import { css, StyleSheet } from 'aphrodite/no-important';
 import * as React from 'react';
 import { TableModel } from './table_model';
 import { ColumnResizer, Rectangle, TableInterface } from './column_resizer';
@@ -54,9 +55,16 @@ export class TableView extends React.Component<Properties> implements
     console.log('RENDER!');
     const header = [];
     for(let i = 0; i < this.props.labels.length; ++i) {
+      const beforeStyle = (() => {
+        if(i === 0) {
+          return null;
+        } else {
+          return TableView.BEFORE.foo;
+        }
+      })();
       header.push(
         <th style={this.props.style.th}
-            className={this.props.className}
+            className={`${css(beforeStyle, TableView.AFTER.foo)} ${this.props.className}`}
             ref={(label) => this._header_refs[i] = label}
             key={this.props.labels[i]}>
           {this.props.labels[i]}
@@ -128,4 +136,34 @@ export class TableView extends React.Component<Properties> implements
 
   private _header_refs: HTMLHeadElement[];
   private _column_resizer: ColumnResizer;
+  private static BEFORE = StyleSheet.create({
+    foo: {
+    position: 'relative',
+    '::before': {
+        cursor: 'col-resize',
+        display: 'block',
+        content: "''",
+        height: '100%',
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        width: '20px'
+      }
+    }
+  });
+  private static AFTER = StyleSheet.create({
+    foo: {
+    position: 'relative',
+    '::after': {
+        cursor: 'col-resize',
+        display: 'block',
+        content: "''",
+        height: '100%',
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        width: '20px'
+      }
+    }
+  });
 }
