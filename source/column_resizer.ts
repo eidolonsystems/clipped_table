@@ -110,12 +110,23 @@ export class ColumnResizer {
   private getLabel(point: {x: number, y: number}) {
     let label = -1;
     for(let i = 0; i < this.table.columnCount; ++i) {
-      let rectangle = this.table.getColumnRect(i);
-      let edge = rectangle.right;
-      const innerEdge = edge - this.table.activeWidth;
-      if(innerEdge <= point.x && point.x <= edge ) {
+      const leftRectangle = this.table.getColumnRect(i);
+      const rightEdge = leftRectangle.right;
+      const innerRightEdge = rightEdge - this.table.activeWidth;
+      if(innerRightEdge <= point.x && point.x <= rightEdge ) {
         label = i;
         break;
+      }
+      if(i > 0 && i < this.table.columnCount - 1) {
+        console.log('IZ HERE');
+        const rightRectangle = this.table.getColumnRect(i+1);
+        const leftEdge = rightRectangle.right;
+        const innerLeftEdge = leftEdge + this.table.activeWidth;
+        if(innerLeftEdge >= point.x && point.x >= leftEdge ) {
+          console.log('HAAAAAI');
+          label = i;
+          break;
+        }
       }
     }
     this.currentIndex = label;
