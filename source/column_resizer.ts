@@ -113,16 +113,17 @@ export class ColumnResizer {
       const leftRectangle = this.table.getColumnRect(i);
       const rightEdge = leftRectangle.right;
       const innerRightEdge = rightEdge - this.table.activeWidth;
+      console.log('point!!!', point.x);
+      console.log('left edges: ', innerRightEdge, rightEdge);
       if(innerRightEdge <= point.x && point.x <= rightEdge ) {
         label = i;
         break;
       }
-      if(i > 0 && i < this.table.columnCount - 1) {
+      if(i < this.table.columnCount-1) {
         console.log('IZ HERE');
-        const rightRectangle = this.table.getColumnRect(i+1);
-        const leftEdge = rightRectangle.right;
-        const innerLeftEdge = leftEdge + this.table.activeWidth;
-        if(innerLeftEdge >= point.x && point.x >= leftEdge ) {
+        const innerLeftEdge = rightEdge + this.table.activeWidth;
+        console.log('edge in the other', innerLeftEdge);
+        if(rightEdge <= point.x && point.x <= innerLeftEdge ) {
           console.log('HAAAAAI');
           label = i;
           break;

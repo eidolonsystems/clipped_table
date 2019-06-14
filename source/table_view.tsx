@@ -81,6 +81,7 @@ export class TableView extends React.Component<Properties> implements
         </tr>);
     }
     return(
+      <div style={{overflowX: 'scroll'}}>
       <table style={this.props.style.table}
           className={this.props.className}>
         <thead style={this.props.style.thead}
@@ -94,7 +95,8 @@ export class TableView extends React.Component<Properties> implements
             className={this.props.className}>
           {tableRows}
         </tbody>
-      </table>);
+      </table>
+      </div>);
   }
 
   public get columnCount() {
@@ -102,7 +104,7 @@ export class TableView extends React.Component<Properties> implements
   }
 
   public get activeWidth() {
-    return 50;
+    return 20;
   }
 
   public getColumnRect(index: number): Rectangle {
@@ -120,6 +122,8 @@ export class TableView extends React.Component<Properties> implements
 
   public onResize(columnIndex: number, width: number) {
     this._header_refs[columnIndex].style.width = `${width}px`;
+    this._header_refs[columnIndex].style.minWidth = `${width}px`;
+    this._header_refs[columnIndex].style.maxWidth = `${width}px`;
   } 
 
   private _header_refs: HTMLHeadElement[];
