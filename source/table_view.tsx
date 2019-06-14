@@ -16,6 +16,9 @@ interface Properties {
 
   /** The CSS style to apply. */
   style?: any;
+
+  /** The CSS style to apply. */
+  activeWidth?: any;
 }
 
 
@@ -25,6 +28,7 @@ export class TableView extends React.Component<Properties> implements
   public static readonly defaultProps = {
     header: [] as string[],
     style: {},
+    activeWidth: 20
   };
 
   constructor(props: Properties) {
@@ -35,6 +39,39 @@ export class TableView extends React.Component<Properties> implements
     for(let i = 0; i < this.props.labels.length; ++i) {
       this._header_refs[i] = null;
     }
+    this.BEFORE = StyleSheet.create({
+    header: {
+      position: 'relative',
+      //borderBox: 'border-box',
+      '::before': {
+          cursor: 'col-resize',
+          //boxSizing: 'border-box',
+          display: 'block',
+          content: "''",
+          height: '100%',
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          width: `${this.props.activeWidth*2}px`
+        }
+      }
+  });
+    this.AFTER = StyleSheet.create({
+    header: {
+      position: 'relative',
+      //borderBox: 'border-box',
+      '::after': {
+          cursor: 'col-resize',
+          display: 'block',
+          content: "''",
+          height: '100%',
+          position: 'absolute',
+          right: 0,
+          top: 0,
+          width: `${this.props.activeWidth*2}px`
+        }
+    }
+  });
   this.onResize = this.onResize.bind(this);
   this.getColumnRect = this.getColumnRect.bind(this);
   }
@@ -59,12 +96,12 @@ export class TableView extends React.Component<Properties> implements
         if(i === 0) {
           return null;
         } else {
-          return TableView.BEFORE.foo;
+          return this.BEFORE.header;
         }
       })();
       header.push(
         <th style={this.props.style.th}
-            className={`${css(beforeStyle, TableView.AFTER.foo)} ${this.props.className}`}
+            className={`${css(beforeStyle, this.AFTER.header)} ${this.props.className}`}
             ref={(label) => this._header_refs[i] = label}
             key={this.props.labels[i]}>
           {this.props.labels[i]}
@@ -112,7 +149,7 @@ export class TableView extends React.Component<Properties> implements
   }
 
   public get activeWidth() {
-    return 20;
+    return this.props.activeWidth;
   }
 
   public getColumnRect(index: number): Rectangle {
@@ -136,34 +173,6 @@ export class TableView extends React.Component<Properties> implements
 
   private _header_refs: HTMLHeadElement[];
   private _column_resizer: ColumnResizer;
-  private static BEFORE = StyleSheet.create({
-    foo: {
-    position: 'relative',
-    '::before': {
-        cursor: 'col-resize',
-        display: 'block',
-        content: "''",
-        height: '100%',
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        width: '20px'
-      }
-    }
-  });
-  private static AFTER = StyleSheet.create({
-    foo: {
-    position: 'relative',
-    '::after': {
-        cursor: 'col-resize',
-        display: 'block',
-        content: "''",
-        height: '100%',
-        position: 'absolute',
-        right: 0,
-        top: 0,
-        width: '20px'
-      }
-    }
-  });
+  private BEFORE = StyleSheet.create({header:{}});
+  private AFTER = StyleSheet.create({header:{}});
 }

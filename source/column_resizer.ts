@@ -31,6 +31,9 @@ export interface TableInterface {
    * @param width - The width of the column in pixels.
    */
   onResize: (columnIndex: number, width: number) => void;
+
+  showCursor:() => void;
+  hidecursor: () => void;
 }
 
 /** Provides the functionality needed to resize a table's columns. */

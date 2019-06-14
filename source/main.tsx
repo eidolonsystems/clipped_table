@@ -19,19 +19,21 @@ const someStyle = {
     fontFamily: 'Arial, Helvetica, sans-serif',
     fontSize: '20px',
     borderCollapse: 'collapse',
-    boxSizing: 'border-box',
-    border: '1px solid #4b23a0'
+    border: '20px solid #000000'
+    
   },
   th: {
-    border: '1px dashed #4b23a0',
-    color: '#4b23a0'
+    border: '20px solid #000000',
+    color: '#4b23a0',
+    //backgroundColor: '#c1d9ff',
+    margin: '20px'
   },
   td: {
-    border: '1px dashed #4b23a0',
+    border: '20px solid #000000',
     color: '#4b23a0'
   }
 };
 
 ReactDOM.render(
-  <TableView model={model} labels={header} style={someStyle}/>,
+  <TableView model={model} labels={header} style={someStyle} activeWidth={10}/>,
   document.getElementById('main'));
