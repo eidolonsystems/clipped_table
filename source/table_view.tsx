@@ -33,50 +33,17 @@ export class TableView extends React.Component<Properties> implements
 
   constructor(props: Properties) {
     super(props);
-    this._column_resizer = new ColumnResizer(this);
     addEventListener
     this._header_refs = [];
     for(let i = 0; i < this.props.labels.length; ++i) {
       this._header_refs[i] = null;
     }
-    this.BEFORE = StyleSheet.create({
-    header: {
-      position: 'relative',
-      //borderBox: 'border-box',
-      '::before': {
-          cursor: 'col-resize',
-          //boxSizing: 'border-box',
-          display: 'block',
-          content: "''",
-          height: '100%',
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          width: `${this.props.activeWidth*2}px`
-        }
-      }
-  });
-    this.AFTER = StyleSheet.create({
-    header: {
-      position: 'relative',
-      //borderBox: 'border-box',
-      '::after': {
-          cursor: 'col-resize',
-          display: 'block',
-          content: "''",
-          height: '100%',
-          position: 'absolute',
-          right: 0,
-          top: 0,
-          width: `${this.props.activeWidth*2}px`
-        }
-    }
-  });
   this.onResize = this.onResize.bind(this);
   this.getColumnRect = this.getColumnRect.bind(this);
   }
 
   public componentDidMount() {
+    this._column_resizer = new ColumnResizer(this);
     document.addEventListener('pointerdown', this._column_resizer.onMouseDown);
     document.addEventListener('pointerup', this._column_resizer.onMouseUp);
     document.addEventListener('pointermove', this._column_resizer.onMouseMove);
@@ -92,16 +59,9 @@ export class TableView extends React.Component<Properties> implements
     console.log('RENDER!');
     const header = [];
     for(let i = 0; i < this.props.labels.length; ++i) {
-      const beforeStyle = (() => {
-        if(i === 0) {
-          return null;
-        } else {
-          return this.BEFORE.header;
-        }
-      })();
       header.push(
         <th style={this.props.style.th}
-            className={`${css(beforeStyle, this.AFTER.header)} ${this.props.className}`}
+            className={this.props.className}
             ref={(label) => this._header_refs[i] = label}
             key={this.props.labels[i]}>
           {this.props.labels[i]}
@@ -132,6 +92,7 @@ export class TableView extends React.Component<Properties> implements
         <thead style={this.props.style.thead}
             className={this.props.className}>
           <tr style={this.props.style.tr}
+              ref={(row) => this._header_row_ref = row}
               className={this.props.className}>
             {header}
           </tr>
@@ -169,10 +130,17 @@ export class TableView extends React.Component<Properties> implements
     this._header_refs[columnIndex].style.width = `${width}px`;
     this._header_refs[columnIndex].style.minWidth = `${width}px`;
     this._header_refs[columnIndex].style.maxWidth = `${width}px`;
+  }
+
+  public showCursor() {
+    this._header_row_ref.style.cursor = 'col-resize';
+  }
+
+  public hideCursor() {
+    this._header_row_ref.style.cursor = 'auto';
   } 
 
   private _header_refs: HTMLHeadElement[];
+  private _header_row_ref: HTMLTableRowElement;
   private _column_resizer: ColumnResizer;
-  private BEFORE = StyleSheet.create({header:{}});
-  private AFTER = StyleSheet.create({header:{}});
 }

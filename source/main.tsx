@@ -6,13 +6,13 @@ import { TableView } from './table_view';
 const model = new ArrayTableModel();
 for(let row = 0; row < 100; ++row) {
   const r = [];
-  for(let column = 0; column < 3; ++column) {
+  for(let column = 0; column < 1; ++column) {
     r.push(Math.floor(Math.random() * 1000000));
   }
   model.addRow(r);
 }
 
-const header = ['one', 'two', 'three'];
+const header = ['one'];
 
 const someStyle = {
   table: {
@@ -35,5 +35,5 @@ const someStyle = {
 };
 
 ReactDOM.render(
-  <TableView model={model} labels={header} style={someStyle} activeWidth={10}/>,
+  <TableView model={model} labels={header} style={someStyle} activeWidth={20}/>,
   document.getElementById('main'));

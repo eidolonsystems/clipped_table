@@ -71,6 +71,14 @@ class MockTableInterface implements TableInterface {
     }
   }
 
+  public showCursor() {
+    return;
+  }
+
+  public hideCursor() {
+    return;
+  }
+
   private _columnCount: number;
   private _activeWidth: number;
   private _columnRects: Rectangle[];

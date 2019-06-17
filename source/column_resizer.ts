@@ -32,8 +32,10 @@ export interface TableInterface {
    */
   onResize: (columnIndex: number, width: number) => void;
 
+  /** */
   showCursor:() => void;
-  hidecursor: () => void;
+
+  hideCursor: () => void;
 }
 
 /** Provides the functionality needed to resize a table's columns. */
@@ -46,6 +48,7 @@ export class ColumnResizer {
   constructor(table: TableInterface) {
     this.table = table;
     this.currentIndex = -1;
+    this.cursorIndex = 0;
     this.s0();
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
@@ -56,8 +59,13 @@ export class ColumnResizer {
    * @param event - The event describing the mouse move.
    */
   public onMouseMove(event: PointerEvent) {
-    if(this.state === 2) {
-      return this.s3(event);
+    if(this.state === 0) {
+      return this.s1(event);
+    } else if (this.state === 2) {
+      return this.s1(event);
+    } else if (this.state === 3) {
+      console.log('BEEEEEP');
+      return this.s4(event);
     }
   }
 
@@ -65,8 +73,8 @@ export class ColumnResizer {
    * @param event - The event describing the button press.
    */
   public onMouseDown(event: PointerEvent) {
-    if(this.state === 0) {
-      return this.s1(event);
+    if(this.state === 2) {
+      return this.s3();
     }
   }
 
@@ -74,16 +82,19 @@ export class ColumnResizer {
    * @param event - The event describing the button release.
    */
   public onMouseUp(event: PointerEvent) {
-    if(this.state === 2) {
+    if(this.state === 3) {
       return this.s0();
     }
   }
 
   private s0() {
+    console.log('State 0');
     this.state = 0;
+    this.table.hideCursor();
   }
 
-  private s1(event: PointerEvent) {  
+  private s1(event: PointerEvent) { 
+    console.log('State 1'); 
     this.state = 1;
     const currentCoor = {x: event.clientX, y: event.clientY};
     if(this.getLabel(currentCoor) > -1) {
@@ -91,23 +102,31 @@ export class ColumnResizer {
     } else {
       return this.s0();
     }
-
   }
 
   private s2() {
+    console.log('State 2');
     this.state = 2;
+    this.cursorIndex = this.currentIndex;
+    this.table.showCursor();
   }
 
-  private s3(event: PointerEvent) {
+   private s3() {
+    console.log('State 3');
     this.state = 3;
+  }
+
+  private s4(event: PointerEvent) {
+    console.log('State 4');
+    this.state = 4;
     console.log(this.table.getColumnRect(this.currentIndex));
     if(event.clientX < this.table.getColumnRect(this.currentIndex).x) {
-      return this.s2();
+      return this.s3();
     }
     this.table.onResize(
       this.currentIndex, 
       Math.abs(event.clientX - this.table.getColumnRect(this.currentIndex).left));
-    return this.s2();
+    return this.s3();
   }
 
   private getLabel(point: {x: number, y: number}) {
@@ -140,4 +159,5 @@ export class ColumnResizer {
   private table: TableInterface;
   private state: number;
   private currentIndex: number;
+  private cursorIndex: number;
 }
