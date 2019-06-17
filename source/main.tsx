@@ -6,30 +6,33 @@ import { TableView } from './table_view';
 const model = new ArrayTableModel();
 for(let row = 0; row < 100; ++row) {
   const r = [];
-  for(let column = 0; column < 1; ++column) {
+  for(let column = 0; column < 4; ++column) {
     r.push(Math.floor(Math.random() * 1000000));
   }
   model.addRow(r);
 }
 
-const header = ['one'];
+const header = ['one', 'two', 'three', 'three'];
 
 const someStyle = {
   table: {
     fontFamily: 'Arial, Helvetica, sans-serif',
     fontSize: '20px',
     borderCollapse: 'collapse',
-    border: '20px solid #000000'
+    border: '5px solid #000000',
+    padding: 0
     
   },
   th: {
-    border: '20px solid #000000',
+    border: '2px solid #000000',
     color: '#4b23a0',
     //backgroundColor: '#c1d9ff',
+    padding: 0,
     margin: '20px'
   },
   td: {
-    border: '20px solid #000000',
+    border: '2px solid #000000',
+    padding: 0,
     color: '#4b23a0'
   }
 };

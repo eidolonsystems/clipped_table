@@ -8,8 +8,8 @@ class MockTableInterface implements TableInterface {
     this._columnRects = [] as Rectangle[];
     this._columnRects[0] =
       {
-        x: 1,
-        y: 1,
+        x: 0,
+        y: 0,
         width: 200,
         height: 100,
         top: 1,
@@ -18,22 +18,22 @@ class MockTableInterface implements TableInterface {
         right: 200
       } as Rectangle;
       this._columnRects[1] = {
-        x: 201,
-        y: 1,
+        x: 200,
+        y: 0,
         width: 300,
         height: 100,
         top: 1,
-        left: 201,
+        left: 200,
         bottom: 100,
         right: 500
       } as Rectangle;
       this._columnRects[2] ={
-        x: 501,
-        y: 1,
+        x: 500,
+        y: 0,
         width: 200,
         height: 100,
-        top: 1,
-        left: 501,
+        top: 0,
+        left: 500,
         bottom: 100,
         right: 700
       } as Rectangle;
@@ -60,9 +60,10 @@ class MockTableInterface implements TableInterface {
     this.getColumnRect(columnIndex).width = width;
     this.getColumnRect(columnIndex).right =
       this.getColumnRect(columnIndex).left + this.getColumnRect(columnIndex).width;
+
     if(columnIndex < this._columnCount - 1) {
       for(let i = columnIndex + 1; i < this.columnCount; ++i) {
-        this.getColumnRect(i).x = this.getColumnRect(i-1).right + 1;
+        this.getColumnRect(i).x = this.getColumnRect(i-1).right;
         this.getColumnRect(i).left = this.getColumnRect(i).x;  
         this.getColumnRect(i).right = 
           this.getColumnRect(i).left + 
@@ -88,7 +89,6 @@ class MouseEvent {
   constructor(cx: number, cy: number, mx: number) {
     this._clientX = cx;
     this._clientY = cy;
-    this._movementX = mx;
   }
 
   public get clientX() {
@@ -99,13 +99,8 @@ class MouseEvent {
     return this._clientY;
   }
 
-  public get movementX() {
-    return this._movementX;
-  }
-
   private _clientX: number;
   private _clientY: number;
-  private _movementX: number;
 }
 
 /** Tests the ColumnResizer. */
@@ -119,12 +114,13 @@ export class ColumnResizeTester {
     const table = new MockTableInterface();
     const resizer = new ColumnResizer(table);
     let event: any = new MouseEvent(185, 50, 0);
+    resizer.onMouseMove(event);
     resizer.onMouseDown(event);
     event = new MouseEvent(205, 50, 20);
     resizer.onMouseMove(event);
     event = new MouseEvent(205, 50, 0);
     resizer.onMouseUp(event);
-    Expect(table.getColumnRect(0).width).toEqual(220);
+    Expect(table.getColumnRect(0).width).toEqual(205);
     Expect(table.getColumnRect(1).width).toEqual(300);
     Expect(table.getColumnRect(2).width).toEqual(200);
   }
@@ -174,7 +170,7 @@ export class ColumnResizeTester {
     resizer.onMouseDown(event);
     event = new MouseEvent(165, 50, -20);
     resizer.onMouseMove(event);
-    Expect(table.getColumnRect(0)).toEqual(180);
+    Expect(table.getColumnRect(0).width).toEqual(180);
     event = new MouseEvent(185, 50, 20);
     resizer.onMouseMove(event);
     event = new MouseEvent(185, 50, 0);

@@ -64,7 +64,6 @@ export class ColumnResizer {
     } else if (this.state === 2) {
       return this.s1(event);
     } else if (this.state === 3) {
-      console.log('BEEEEEP');
       return this.s4(event);
     }
   }
@@ -88,13 +87,11 @@ export class ColumnResizer {
   }
 
   private s0() {
-    console.log('State 0');
     this.state = 0;
     this.table.hideCursor();
   }
 
   private s1(event: PointerEvent) { 
-    console.log('State 1'); 
     this.state = 1;
     const currentCoor = {x: event.clientX, y: event.clientY};
     if(this.getLabel(currentCoor) > -1) {
@@ -105,19 +102,16 @@ export class ColumnResizer {
   }
 
   private s2() {
-    console.log('State 2');
     this.state = 2;
     this.cursorIndex = this.currentIndex;
     this.table.showCursor();
   }
 
    private s3() {
-    console.log('State 3');
     this.state = 3;
   }
 
   private s4(event: PointerEvent) {
-    console.log('State 4');
     this.state = 4;
     console.log(this.table.getColumnRect(this.currentIndex));
     if(event.clientX < this.table.getColumnRect(this.currentIndex).x) {
@@ -135,8 +129,6 @@ export class ColumnResizer {
       const leftRectangle = this.table.getColumnRect(i);
       const rightEdge = leftRectangle.right;
       const innerRightEdge = rightEdge - this.table.activeWidth;
-      console.log('point!!!', point.x);
-      console.log('left edges: ', innerRightEdge, rightEdge);
       if(innerRightEdge <= point.x && point.x <= rightEdge ) {
         label = i;
         break;
