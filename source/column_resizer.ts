@@ -44,7 +44,6 @@ export class ColumnResizer {
   /** Constructs a ColumnResizer.
    * @param table - The interface to the table being resized.
    */
-
   constructor(table: TableInterface) {
     this.table = table;
     this.currentIndex = -1;

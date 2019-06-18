@@ -19,24 +19,20 @@ const someStyle = {
     fontFamily: 'Arial, Helvetica, sans-serif',
     fontSize: '20px',
     borderCollapse: 'collapse',
-    border: '5px solid #000000',
-    padding: 0
-    
+    border: '5px solid #000000'    
   },
   th: {
     border: '2px solid #000000',
     color: '#4b23a0',
-    //backgroundColor: '#c1d9ff',
-    padding: 0,
     margin: '20px'
   },
   td: {
     border: '2px solid #000000',
-    padding: 0,
+    padding: 10,
     color: '#4b23a0'
   }
 };
 
 ReactDOM.render(
-  <TableView model={model} labels={header} style={someStyle} activeWidth={20}/>,
+  <TableView model={model} labels={header} style={someStyle} activeWidth={30}/>,
   document.getElementById('main'));

@@ -37,12 +37,12 @@ export class TableView extends React.Component<Properties> implements
     for(let i = 0; i < this.props.labels.length; ++i) {
       this._header_refs[i] = null;
     }
-  this._column_resizer = new ColumnResizer(this);
   this.onResize = this.onResize.bind(this);
   this.getColumnRect = this.getColumnRect.bind(this);
   }
 
   public componentDidMount() {
+    this._column_resizer = new ColumnResizer(this);
     document.addEventListener('pointerdown', this._column_resizer.onMouseDown);
     document.addEventListener('pointerup', this._column_resizer.onMouseUp);
     document.addEventListener('pointermove', this._column_resizer.onMouseMove);
