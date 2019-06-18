@@ -51,9 +51,6 @@ export class ColumnResizer {
   constructor(table: TableInterface) {
     this.table = table;
     this.currentIndex = -1;
-    this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
     this.s0();
   }
 

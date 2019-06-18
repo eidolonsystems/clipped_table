@@ -105,6 +105,9 @@ export class ColumnResizeTester {
   public testPerfectCaseIncrease(): void {
     const table = new MockTableInterface();
     const resizer = new ColumnResizer(table);
+    Expect(table.getWidth(0)).toEqual(200);
+    Expect(table.getWidth(1)).toEqual(300);
+    Expect(table.getWidth(2)).toEqual(200);
     let event: any = new MouseEvent(185, 50);
     resizer.onMouseMove(event);
     resizer.onMouseDown(event);
