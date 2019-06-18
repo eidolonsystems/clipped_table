@@ -18,7 +18,7 @@ interface Properties {
   style?: any;
 
   /** The width of active area measured from the right edge. */
-  activeWidth?: any;
+  activeWidth?: number;
 }
 
 /** Renders a TableModel to HTML. */
@@ -36,8 +36,6 @@ export class TableView extends React.Component<Properties> implements
     for(let i = 0; i < this.props.labels.length; ++i) {
       this.headerRefs[i] = null;
     }
-    this.onResize = this.onResize.bind(this);
-    this.getColumnRect = this.getColumnRect.bind(this);
   }
 
   public componentDidMount() {
@@ -130,7 +128,7 @@ export class TableView extends React.Component<Properties> implements
     this.headerRowRef.style.cursor = 'col-resize';
   }
 
-  public hideResizeCursor() {
+  public restoreCursor() {
     this.headerRowRef.style.cursor = 'auto';
   } 
 

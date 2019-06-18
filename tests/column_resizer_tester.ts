@@ -1,6 +1,13 @@
 import { Expect, Test } from 'alsatian';
 import { ColumnResizer, TableInterface, Rectangle, TableModel } from '../source';
 
+export interface RectanglePlusWidth {
+  top: number,
+  left: number,
+  bottom: number,
+  right: number
+}
+
 class MockTableInterface implements TableInterface {
   constructor() {
     this._columnCount = 3;
@@ -8,28 +15,25 @@ class MockTableInterface implements TableInterface {
     this._columnRects = [] as Rectangle[];
     this._columnRects[0] =
       {
-        width: 200,
         top: 1,
         left: 0,
         bottom: 100,
         right: 200
       } as Rectangle;
       this._columnRects[1] = {
-        width: 300,
         top: 1,
         left: 200,
         bottom: 100,
         right: 500
       } as Rectangle;
       this._columnRects[2] ={
-        width: 200,
         top: 0,
         left: 500,
         bottom: 100,
         right: 700
       } as Rectangle;
-      this.onResize = this.onResize.bind(this);
-      this.getColumnRect = this.getColumnRect.bind(this);
+    this.onResize = this.onResize.bind(this);
+    this.getColumnRect = this.getColumnRect.bind(this);
   }
 
   public get columnCount() {
@@ -44,27 +48,29 @@ class MockTableInterface implements TableInterface {
     return this._columnRects[index];
   }
 
+  public getWidth(index: number): number {
+    return (this._columnRects[index].right - this._columnRects[index].left);
+  }
+
   public onResize(columnIndex: number, width: number) {
     if(columnIndex >= this._columnCount) {
       throw RangeError();
     }
-    this.getColumnRect(columnIndex).width = width;
+    const currentRect = this.getColumnRect(columnIndex);
+    const difference = width - (currentRect.right - currentRect.left);
     this.getColumnRect(columnIndex).right =
-      this.getColumnRect(columnIndex).left + 
-      this.getColumnRect(columnIndex).width;
+      this.getColumnRect(columnIndex).left + width;
     if(columnIndex < this._columnCount - 1) {
       for(let i = columnIndex + 1; i < this.columnCount; ++i) {
         this.getColumnRect(i).left = this.getColumnRect(i-1).right;
-        this.getColumnRect(i).right = 
-          this.getColumnRect(i).left + 
-          this.getColumnRect(i).width;
+        this.getColumnRect(i).right = this.getColumnRect(i).right + difference;
       }
     }
   }
 
   public showResizeCursor() {}
 
-  public hideResizeCursor() {}
+  public restoreCursor() {}
 
   private _columnCount: number;
   private _activeWidth: number;
@@ -106,9 +112,9 @@ export class ColumnResizeTester {
     resizer.onMouseMove(event);
     event = new MouseEvent(205, 50);
     resizer.onMouseUp(event);
-    Expect(table.getColumnRect(0).width).toEqual(205);
-    Expect(table.getColumnRect(1).width).toEqual(300);
-    Expect(table.getColumnRect(2).width).toEqual(200);
+    Expect(table.getWidth(0)).toEqual(205);
+    Expect(table.getWidth(1)).toEqual(300);
+    Expect(table.getWidth(2)).toEqual(200);
   }
 
   /** Tests what happens when a mousedown happens in the resize region
@@ -125,9 +131,9 @@ export class ColumnResizeTester {
     resizer.onMouseMove(event);
     event = new MouseEvent(165, 50);
     resizer.onMouseUp(event);
-    Expect(table.getColumnRect(0).width).toEqual(165);
-    Expect(table.getColumnRect(1).width).toEqual(300);
-    Expect(table.getColumnRect(2).width).toEqual(200);
+    Expect(table.getWidth(0)).toEqual(165);
+    Expect(table.getWidth(1)).toEqual(300);
+    Expect(table.getWidth(2)).toEqual(200);
   }
 
   /** Tests what happens when a mousedown happens in the resize region
@@ -141,9 +147,9 @@ export class ColumnResizeTester {
     resizer.onMouseDown(event);
     event = new MouseEvent(190, 70);
     resizer.onMouseUp(event);
-    Expect(table.getColumnRect(0).width).toEqual(200);
-    Expect(table.getColumnRect(1).width).toEqual(300);
-    Expect(table.getColumnRect(2).width).toEqual(200);
+    Expect(table.getWidth(0)).toEqual(200);
+    Expect(table.getWidth(1)).toEqual(300);
+    Expect(table.getWidth(2)).toEqual(200);
   }
 
   /** Tests what happens when a mousedown happens in the resize region and
@@ -158,14 +164,14 @@ export class ColumnResizeTester {
     resizer.onMouseDown(event);
     event = new MouseEvent(165, 50);
     resizer.onMouseMove(event);
-    Expect(table.getColumnRect(0).width).toEqual(165);
+    Expect(table.getWidth(0)).toEqual(165);
     event = new MouseEvent(200, 50);
     resizer.onMouseMove(event);
     event = new MouseEvent(200, 50);
     resizer.onMouseUp(event);
-    Expect(table.getColumnRect(0).width).toEqual(200);
-    Expect(table.getColumnRect(1).width).toEqual(300);
-    Expect(table.getColumnRect(2).width).toEqual(200);
+    Expect(table.getWidth(0)).toEqual(200);
+    Expect(table.getWidth(1)).toEqual(300);
+    Expect(table.getWidth(2)).toEqual(200);
   }
 
   /** Tests a mousedown followed by a mousemove that decreases the column
@@ -188,9 +194,9 @@ export class ColumnResizeTester {
     resizer.onMouseMove(event);
     event = new MouseEvent(225, 60);
     resizer.onMouseUp(event);
-    Expect(table.getColumnRect(0).width).toEqual(210);
-    Expect(table.getColumnRect(1).width).toEqual(300);
-    Expect(table.getColumnRect(2).width).toEqual(200);
+    Expect(table.getWidth(0)).toEqual(210);
+    Expect(table.getWidth(1)).toEqual(300);
+    Expect(table.getWidth(2)).toEqual(200);
   }
 
   /** Tests a mousedown followed by a mousemove that increases the column width,
@@ -213,9 +219,9 @@ export class ColumnResizeTester {
     resizer.onMouseMove(event);
     event = new MouseEvent(150, 60);
     resizer.onMouseUp(event);
-    Expect(table.getColumnRect(0).width).toEqual(170);
-    Expect(table.getColumnRect(1).width).toEqual(300);
-    Expect(table.getColumnRect(2).width).toEqual(200);
+    Expect(table.getWidth(0)).toEqual(170);
+    Expect(table.getWidth(1)).toEqual(300);
+    Expect(table.getWidth(2)).toEqual(200);
   }
 
   /** Tests what happens when a mousemove happens if a mousedown is called
@@ -232,9 +238,9 @@ export class ColumnResizeTester {
     resizer.onMouseMove(event);
     event = new MouseEvent(190, 50);
     resizer.onMouseUp(event);
-    Expect(table.getColumnRect(0).width).toEqual(200);
-    Expect(table.getColumnRect(1).width).toEqual(300);
-    Expect(table.getColumnRect(2).width).toEqual(200);
+    Expect(table.getWidth(0)).toEqual(200);
+    Expect(table.getWidth(1)).toEqual(300);
+    Expect(table.getWidth(2)).toEqual(200);
   }
 
   /** Tests what happens when the mouse is moved without mousedown events. */
@@ -246,9 +252,9 @@ export class ColumnResizeTester {
     resizer.onMouseMove(event);
     event = new MouseEvent(190, 50);
     resizer.onMouseMove(event);
-    Expect(table.getColumnRect(0).width).toEqual(200);
-    Expect(table.getColumnRect(1).width).toEqual(300);
-    Expect(table.getColumnRect(2).width).toEqual(200);
+    Expect(table.getWidth(0)).toEqual(200);
+    Expect(table.getWidth(1)).toEqual(300);
+    Expect(table.getWidth(2)).toEqual(200);
   }
 
   /** Tests what happens when two different columns are resized */
@@ -269,9 +275,9 @@ export class ColumnResizeTester {
     event = new MouseEvent(710, 50);
     resizer.onMouseMove(event);
     resizer.onMouseUp(event);
-    Expect(table.getColumnRect(0).width).toEqual(200);
-    Expect(table.getColumnRect(1).width).toEqual(280);
-    Expect(table.getColumnRect(2).width).toEqual(230);
+    Expect(table.getWidth(0)).toEqual(200);
+    Expect(table.getWidth(1)).toEqual(280);
+    Expect(table.getWidth(2)).toEqual(230);
   }
 
   /** Tests what happens when a mousedown happens in the resize region
@@ -288,9 +294,9 @@ export class ColumnResizeTester {
     resizer.onMouseMove(event);
     event = new MouseEvent(585, 50);
     resizer.onMouseUp(event);
-    Expect(table.getColumnRect(0).width).toEqual(585);
-    Expect(table.getColumnRect(1).width).toEqual(300);
-    Expect(table.getColumnRect(2).width).toEqual(200);
+    Expect(table.getWidth(0)).toEqual(585);
+    Expect(table.getWidth(1)).toEqual(300);
+    Expect(table.getWidth(2)).toEqual(200);
   }
 
   /** Tests that the table does not resize if the cursor isn't on the
@@ -307,8 +313,8 @@ export class ColumnResizeTester {
     resizer.onMouseMove(event);
     event = new MouseEvent(205, 300);
     resizer.onMouseUp(event);
-    Expect(table.getColumnRect(0).width).toEqual(200);
-    Expect(table.getColumnRect(1).width).toEqual(300);
-    Expect(table.getColumnRect(2).width).toEqual(200);
+    Expect(table.getWidth(0)).toEqual(200);
+    Expect(table.getWidth(1)).toEqual(300);
+    Expect(table.getWidth(2)).toEqual(200);
   }
 }

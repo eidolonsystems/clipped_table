@@ -1,9 +1,6 @@
 
 export interface Rectangle {
-
-  /** The width of the element. */
-  width: number,
-
+  
   /** Returns the top coordinate value. */
   top: number,
 
@@ -42,7 +39,7 @@ export interface TableInterface {
   showResizeCursor:() => void;
 
   /** Hide the cursor. */
-  hideResizeCursor: () => void;
+  restoreCursor: () => void;
 }
 
 /** Provides the functionality needed to resize a table's columns. */
@@ -93,7 +90,7 @@ export class ColumnResizer {
 
   private s0() {
     this.state = 0;
-    this.table.hideResizeCursor();
+    this.table.restoreCursor();
   }
 
   private s1(event: PointerEvent) { 
@@ -117,13 +114,12 @@ export class ColumnResizer {
 
   private s4(event: PointerEvent) {
     this.state = 4;
-    const rectange = this.table.getColumnRect(this.currentIndex);
-    if(event.clientX < rectange.left) {
-      return this.s3();
+    const rectangle = this.table.getColumnRect(this.currentIndex);
+    if(event.clientX > rectangle.left) {
+      this.table.onResize(
+        this.currentIndex, 
+        Math.abs(event.clientX - rectangle.left));
     }
-    this.table.onResize(
-      this.currentIndex, 
-      Math.abs(event.clientX - rectange.left));
     return this.s3();
   }
 
