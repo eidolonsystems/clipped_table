@@ -17,13 +17,13 @@ interface Properties {
   /** The CSS style to apply. */
   style?: any;
 
-  /** The CSS style to apply. */
+  /** The width of active area measured from the right edge. */
   activeWidth?: any;
 }
 
 /** Renders a TableModel to HTML. */
 export class TableView extends React.Component<Properties> implements 
-    TableInterface{
+    TableInterface {
   public static readonly defaultProps = {
     header: [] as string[],
     style: {},
@@ -32,36 +32,34 @@ export class TableView extends React.Component<Properties> implements
 
   constructor(props: Properties) {
     super(props);
-    addEventListener
-    this._header_refs = [];
+    this.headerRefs = [];
     for(let i = 0; i < this.props.labels.length; ++i) {
-      this._header_refs[i] = null;
+      this.headerRefs[i] = null;
     }
-  this.onResize = this.onResize.bind(this);
-  this.getColumnRect = this.getColumnRect.bind(this);
+    this.onResize = this.onResize.bind(this);
+    this.getColumnRect = this.getColumnRect.bind(this);
   }
 
   public componentDidMount() {
-    this._column_resizer = new ColumnResizer(this);
-    document.addEventListener('pointerdown', this._column_resizer.onMouseDown);
-    document.addEventListener('pointerup', this._column_resizer.onMouseUp);
-    document.addEventListener('pointermove', this._column_resizer.onMouseMove);
+    this.columnResizer = new ColumnResizer(this);
+    document.addEventListener('pointerdown', this.columnResizer.onMouseDown);
+    document.addEventListener('pointerup', this.columnResizer.onMouseUp);
+    document.addEventListener('pointermove', this.columnResizer.onMouseMove);
   }
 
   public componentWillUnmount() {
-    document.removeEventListener('pointerdown', this._column_resizer.onMouseDown);
-    document.removeEventListener('pointerup', this._column_resizer.onMouseUp);
-    document.removeEventListener('pointermove', this._column_resizer.onMouseMove);
+    document.removeEventListener('pointerdown', this.columnResizer.onMouseDown);
+    document.removeEventListener('pointerup', this.columnResizer.onMouseUp);
+    document.removeEventListener('pointermove', this.columnResizer.onMouseMove);
   }
 
   public render(): JSX.Element {
-    console.log('RENDER!');
     const header = [];
     for(let i = 0; i < this.props.labels.length; ++i) {
       header.push(
         <th style={this.props.style.th}
             className={this.props.className}
-            ref={(label) => this._header_refs[i] = label}
+            ref={(label) => this.headerRefs[i] = label}
             key={this.props.labels[i]}>
           {this.props.labels[i]}
         </th>);
@@ -86,60 +84,57 @@ export class TableView extends React.Component<Properties> implements
     }
     return(
       <div style={{overflowX: 'scroll'}}>
-      <table style={this.props.style.table}
-          className={this.props.className}>
-        <thead style={this.props.style.thead}
+        <table style={this.props.style.table}
             className={this.props.className}>
-          <tr style={this.props.style.tr}
-              ref={(row) => this._header_row_ref = row}
+          <thead style={this.props.style.thead}
               className={this.props.className}>
-            {header}
-          </tr>
-        </thead>
-        <tbody style={this.props.style.tbody}
-            className={this.props.className}>
-          {tableRows}
-        </tbody>
-      </table>
+            <tr style={this.props.style.tr}
+                ref={(row) => this.headerRowRef = row}
+                className={this.props.className}>
+              {header}
+            </tr>
+          </thead>
+          <tbody style={this.props.style.tbody}
+              className={this.props.className}>
+            {tableRows}
+          </tbody>
+        </table>
       </div>);
   }
 
-  public get columnCount() {
+  public get columnCount(): number {
     return this.props.model.columnCount;
   }
 
-  public get activeWidth() {
+  public get activeWidth(): number {
     return this.props.activeWidth;
   }
 
   public getColumnRect(index: number): Rectangle {
+    const rectangle = this.headerRefs[index].getBoundingClientRect();
     return ({  
-      x: this._header_refs[index].getBoundingClientRect().left,
-      y: this._header_refs[index].getBoundingClientRect().top,
-      width: this._header_refs[index].getBoundingClientRect().width,
-      height: this._header_refs[index].getBoundingClientRect().height,
-      top: this._header_refs[index].getBoundingClientRect().top,
-      left: this._header_refs[index].getBoundingClientRect().left,
-      bottom: this._header_refs[index].getBoundingClientRect().bottom,
-      right: this._header_refs[index].getBoundingClientRect().right
+      top: rectangle.top,
+      left: rectangle.left,
+      bottom: rectangle.bottom,
+      right: rectangle.right
     } as Rectangle);
   }
 
   public onResize(columnIndex: number, width: number) {
-    this._header_refs[columnIndex].style.width = `${width}px`;
-    this._header_refs[columnIndex].style.minWidth = `${width}px`;
-    this._header_refs[columnIndex].style.maxWidth = `${width}px`;
+    this.headerRefs[columnIndex].style.width = `${width}px`;
+    this.headerRefs[columnIndex].style.minWidth = `${width}px`;
+    this.headerRefs[columnIndex].style.maxWidth = `${width}px`;
   }
 
-  public showCursor() {
-    this._header_row_ref.style.cursor = 'col-resize';
+  public showResizeCursor() {
+    this.headerRowRef.style.cursor = 'col-resize';
   }
 
-  public hideCursor() {
-    this._header_row_ref.style.cursor = 'auto';
+  public hideResizeCursor() {
+    this.headerRowRef.style.cursor = 'auto';
   } 
 
-  private _header_refs: HTMLHeadElement[];
-  private _header_row_ref: HTMLTableRowElement;
-  private _column_resizer: ColumnResizer;
+  private headerRefs: HTMLHeadElement[];
+  private headerRowRef: HTMLTableRowElement;
+  private columnResizer: ColumnResizer;
 }

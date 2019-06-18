@@ -8,30 +8,21 @@ class MockTableInterface implements TableInterface {
     this._columnRects = [] as Rectangle[];
     this._columnRects[0] =
       {
-        x: 0,
-        y: 0,
         width: 200,
-        height: 100,
         top: 1,
         left: 0,
         bottom: 100,
         right: 200
       } as Rectangle;
       this._columnRects[1] = {
-        x: 200,
-        y: 0,
         width: 300,
-        height: 100,
         top: 1,
         left: 200,
         bottom: 100,
         right: 500
       } as Rectangle;
       this._columnRects[2] ={
-        x: 500,
-        y: 0,
         width: 200,
-        height: 100,
         top: 0,
         left: 500,
         bottom: 100,
@@ -63,8 +54,7 @@ class MockTableInterface implements TableInterface {
       this.getColumnRect(columnIndex).width;
     if(columnIndex < this._columnCount - 1) {
       for(let i = columnIndex + 1; i < this.columnCount; ++i) {
-        this.getColumnRect(i).x = this.getColumnRect(i-1).right;
-        this.getColumnRect(i).left = this.getColumnRect(i).x;  
+        this.getColumnRect(i).left = this.getColumnRect(i-1).right;
         this.getColumnRect(i).right = 
           this.getColumnRect(i).left + 
           this.getColumnRect(i).width;
@@ -72,13 +62,9 @@ class MockTableInterface implements TableInterface {
     }
   }
 
-  public showCursor() {
-    return;
-  }
+  public showResizeCursor() {}
 
-  public hideCursor() {
-    return;
-  }
+  public hideResizeCursor() {}
 
   private _columnCount: number;
   private _activeWidth: number;
@@ -303,6 +289,25 @@ export class ColumnResizeTester {
     event = new MouseEvent(585, 50);
     resizer.onMouseUp(event);
     Expect(table.getColumnRect(0).width).toEqual(585);
+    Expect(table.getColumnRect(1).width).toEqual(300);
+    Expect(table.getColumnRect(2).width).toEqual(200);
+  }
+
+  /** Tests that the table does not resize if the cursor isn't on the
+   *  header, even if it's inside the active width on the x-axis.
+   */
+  @Test()
+  public testCursorXisGoodButNotY(): void {
+    const table = new MockTableInterface();
+    const resizer = new ColumnResizer(table);
+    let event: any = new MouseEvent(185, 600);
+    resizer.onMouseMove(event);
+    resizer.onMouseDown(event);
+    event = new MouseEvent(205, 300);
+    resizer.onMouseMove(event);
+    event = new MouseEvent(205, 300);
+    resizer.onMouseUp(event);
+    Expect(table.getColumnRect(0).width).toEqual(200);
     Expect(table.getColumnRect(1).width).toEqual(300);
     Expect(table.getColumnRect(2).width).toEqual(200);
   }

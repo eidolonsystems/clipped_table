@@ -20,7 +20,7 @@ digraph ColumnResizing{
   s3 -> s0 [label = "E2"];
   s3 -> s4 [label = "E0"];
 
-  s4 -> s3 [label = "e"];
+  s4 -> s3 [label = "&#949;"];
 
   { rank=same; s2, s3 }
 }

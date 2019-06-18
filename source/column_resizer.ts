@@ -1,12 +1,19 @@
 
 export interface Rectangle {
-  x: number,
-  y: number,
+
+  /** The width of the element. */
   width: number,
-  height: number,
+
+  /** Returns the top coordinate value. */
   top: number,
+
+  /** Returns the left coordinate value. */
   left: number,
+
+  /** Returns the bottom coordinate value. */
   bottom: number,
+
+  /** Returns the right coordinate value. */
   right: number
 }
 
@@ -19,7 +26,7 @@ export interface TableInterface {
   /** Returns the width of the active region. */
   activeWidth: number;
 
-  /** Returns the width of a column.
+  /** Returns the rectangle of a column.
    * @param index - The index of the column.
    * @return The rectange denoting all the corners of the element.
    */
@@ -32,10 +39,10 @@ export interface TableInterface {
   onResize: (columnIndex: number, width: number) => void;
 
   /** Show the cursor. */
-  showCursor:() => void;
+  showResizeCursor:() => void;
 
   /** Hide the cursor. */
-  hideCursor: () => void;
+  hideResizeCursor: () => void;
 }
 
 /** Provides the functionality needed to resize a table's columns. */
@@ -47,10 +54,10 @@ export class ColumnResizer {
   constructor(table: TableInterface) {
     this.table = table;
     this.currentIndex = -1;
-    this.s0();
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
+    this.s0();
   }
 
   /** Handles the cursor moving.
@@ -59,9 +66,9 @@ export class ColumnResizer {
   public onMouseMove(event: PointerEvent) {
     if(this.state === 0) {
       return this.s1(event);
-    } else if (this.state === 2) {
+    } else if(this.state === 2) {
       return this.s1(event);
-    } else if (this.state === 3) {
+    } else if(this.state === 3) {
       return this.s4(event);
     }
   }
@@ -86,7 +93,7 @@ export class ColumnResizer {
 
   private s0() {
     this.state = 0;
-    this.table.hideCursor();
+    this.table.hideResizeCursor();
   }
 
   private s1(event: PointerEvent) { 
@@ -101,21 +108,22 @@ export class ColumnResizer {
 
   private s2() {
     this.state = 2;
-    this.table.showCursor();
+    this.table.showResizeCursor();
   }
 
-   private s3() {
+  private s3() {
     this.state = 3;
   }
 
   private s4(event: PointerEvent) {
     this.state = 4;
-    if(event.clientX < this.table.getColumnRect(this.currentIndex).x) {
+    const rectange = this.table.getColumnRect(this.currentIndex);
+    if(event.clientX < rectange.left) {
       return this.s3();
     }
     this.table.onResize(
       this.currentIndex, 
-      Math.abs(event.clientX - this.table.getColumnRect(this.currentIndex).left));
+      Math.abs(event.clientX - rectange.left));
     return this.s3();
   }
 
@@ -125,13 +133,15 @@ export class ColumnResizer {
       const leftRectangle = this.table.getColumnRect(i);
       const rightEdge = leftRectangle.right;
       const innerRightEdge = rightEdge - this.table.activeWidth;
-      if(innerRightEdge <= point.x && point.x <= rightEdge ) {
+      if(innerRightEdge <= point.x && point.x <= rightEdge &&
+          leftRectangle.top < point.y && point.y < leftRectangle.bottom) {
         label = i;
         break;
       }
-      if(i < this.table.columnCount-1) {
+      if(i < this.table.columnCount - 1) {
         const innerLeftEdge = rightEdge + this.table.activeWidth;
-        if(rightEdge <= point.x && point.x <= innerLeftEdge ) {
+        if(rightEdge <= point.x && point.x <= innerLeftEdge &&
+            leftRectangle.top < point.y && point.y < leftRectangle.bottom) {
           label = i;
           break;
         }
