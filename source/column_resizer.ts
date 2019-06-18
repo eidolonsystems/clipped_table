@@ -10,7 +10,6 @@ export interface Rectangle {
   right: number
 }
 
-
 /** Specifies the members needed on a table class to resize its columns. */
 export interface TableInterface {
 
@@ -32,9 +31,10 @@ export interface TableInterface {
    */
   onResize: (columnIndex: number, width: number) => void;
 
-  /** */
+  /** Show the cursor. */
   showCursor:() => void;
 
+  /** Hide the cursor. */
   hideCursor: () => void;
 }
 
@@ -48,7 +48,6 @@ export class ColumnResizer {
   constructor(table: TableInterface) {
     this.table = table;
     this.currentIndex = -1;
-    this.cursorIndex = 0;
     this.s0();
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
@@ -103,7 +102,6 @@ export class ColumnResizer {
 
   private s2() {
     this.state = 2;
-    this.cursorIndex = this.currentIndex;
     this.table.showCursor();
   }
 
@@ -113,7 +111,6 @@ export class ColumnResizer {
 
   private s4(event: PointerEvent) {
     this.state = 4;
-    console.log(this.table.getColumnRect(this.currentIndex));
     if(event.clientX < this.table.getColumnRect(this.currentIndex).x) {
       return this.s3();
     }
@@ -134,11 +131,8 @@ export class ColumnResizer {
         break;
       }
       if(i < this.table.columnCount-1) {
-        console.log('IZ HERE');
         const innerLeftEdge = rightEdge + this.table.activeWidth;
-        console.log('edge in the other', innerLeftEdge);
         if(rightEdge <= point.x && point.x <= innerLeftEdge ) {
-          console.log('HAAAAAI');
           label = i;
           break;
         }
@@ -151,5 +145,4 @@ export class ColumnResizer {
   private table: TableInterface;
   private state: number;
   private currentIndex: number;
-  private cursorIndex: number;
 }

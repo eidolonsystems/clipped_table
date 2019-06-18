@@ -59,8 +59,8 @@ class MockTableInterface implements TableInterface {
     }
     this.getColumnRect(columnIndex).width = width;
     this.getColumnRect(columnIndex).right =
-      this.getColumnRect(columnIndex).left + this.getColumnRect(columnIndex).width;
-
+      this.getColumnRect(columnIndex).left + 
+      this.getColumnRect(columnIndex).width;
     if(columnIndex < this._columnCount - 1) {
       for(let i = columnIndex + 1; i < this.columnCount; ++i) {
         this.getColumnRect(i).x = this.getColumnRect(i-1).right;
@@ -86,7 +86,7 @@ class MockTableInterface implements TableInterface {
 }
 
 class MouseEvent {
-  constructor(cx: number, cy: number, mx: number) {
+  constructor(cx: number, cy: number) {
     this._clientX = cx;
     this._clientY = cy;
   }
@@ -113,12 +113,12 @@ export class ColumnResizeTester {
   public testPerfectCaseIncrease(): void {
     const table = new MockTableInterface();
     const resizer = new ColumnResizer(table);
-    let event: any = new MouseEvent(185, 50, 0);
+    let event: any = new MouseEvent(185, 50);
     resizer.onMouseMove(event);
     resizer.onMouseDown(event);
-    event = new MouseEvent(205, 50, 20);
+    event = new MouseEvent(205, 50);
     resizer.onMouseMove(event);
-    event = new MouseEvent(205, 50, 0);
+    event = new MouseEvent(205, 50);
     resizer.onMouseUp(event);
     Expect(table.getColumnRect(0).width).toEqual(205);
     Expect(table.getColumnRect(1).width).toEqual(300);
@@ -132,13 +132,14 @@ export class ColumnResizeTester {
   public testPerfectCaseDecrease(): void {
     const table = new MockTableInterface();
     const resizer = new ColumnResizer(table);
-    let event: any = new MouseEvent(185, 50, 0);
-    resizer.onMouseDown(event);
-    event = new MouseEvent(165, 50, -20);
+    let event: any = new MouseEvent(185, 50);
     resizer.onMouseMove(event);
-    event = new MouseEvent(165, 50, 0);
+    resizer.onMouseDown(event);
+    event = new MouseEvent(165, 50);
+    resizer.onMouseMove(event);
+    event = new MouseEvent(165, 50);
     resizer.onMouseUp(event);
-    Expect(table.getColumnRect(0).width).toEqual(180);
+    Expect(table.getColumnRect(0).width).toEqual(165);
     Expect(table.getColumnRect(1).width).toEqual(300);
     Expect(table.getColumnRect(2).width).toEqual(200);
   }
@@ -150,9 +151,9 @@ export class ColumnResizeTester {
   public testPerfectCaseNoMove(): void {
     const table = new MockTableInterface();
     const resizer = new ColumnResizer(table);
-    let event: any = new MouseEvent(190, 50, 0);
+    let event: any = new MouseEvent(190, 50);
     resizer.onMouseDown(event);
-    event = new MouseEvent(190, 70, 0);
+    event = new MouseEvent(190, 70);
     resizer.onMouseUp(event);
     Expect(table.getColumnRect(0).width).toEqual(200);
     Expect(table.getColumnRect(1).width).toEqual(300);
@@ -166,14 +167,15 @@ export class ColumnResizeTester {
   public testMovedBackInPlace(): void {
     const table = new MockTableInterface();
     const resizer = new ColumnResizer(table);
-    let event: any = new MouseEvent(185, 50, 0);
+    let event: any = new MouseEvent(185, 50);
+    resizer.onMouseMove(event);
     resizer.onMouseDown(event);
-    event = new MouseEvent(165, 50, -20);
+    event = new MouseEvent(165, 50);
     resizer.onMouseMove(event);
-    Expect(table.getColumnRect(0).width).toEqual(180);
-    event = new MouseEvent(185, 50, 20);
+    Expect(table.getColumnRect(0).width).toEqual(165);
+    event = new MouseEvent(200, 50);
     resizer.onMouseMove(event);
-    event = new MouseEvent(185, 50, 0);
+    event = new MouseEvent(200, 50);
     resizer.onMouseUp(event);
     Expect(table.getColumnRect(0).width).toEqual(200);
     Expect(table.getColumnRect(1).width).toEqual(300);
@@ -184,22 +186,23 @@ export class ColumnResizeTester {
    *  width and then repeated.
    */
   @Test()
-  public testTwoClicksTwoGrows(): void {
+  public testTwoClicksOneGrow(): void {
     const table = new MockTableInterface();
     const resizer = new ColumnResizer(table);
-    let event: any = new MouseEvent(190, 50, 0);
-    resizer.onMouseDown(event);
-    event = new MouseEvent(210, 50, 20);
+    let event: any = new MouseEvent(190, 50);
     resizer.onMouseMove(event);
-    event = new MouseEvent(210, 50, 0);
-    resizer.onMouseUp(event);
-    event = new MouseEvent(210, 60, 0);
     resizer.onMouseDown(event);
-    event = new MouseEvent(225, 60, 15);
+    event = new MouseEvent(210, 50);
     resizer.onMouseMove(event);
-    event = new MouseEvent(225, 60, 0);
+    event = new MouseEvent(210, 50);
     resizer.onMouseUp(event);
-    Expect(table.getColumnRect(0).width).toEqual(235);
+    event = new MouseEvent(210, 60);
+    resizer.onMouseDown(event);
+    event = new MouseEvent(225, 60);
+    resizer.onMouseMove(event);
+    event = new MouseEvent(225, 60);
+    resizer.onMouseUp(event);
+    Expect(table.getColumnRect(0).width).toEqual(210);
     Expect(table.getColumnRect(1).width).toEqual(300);
     Expect(table.getColumnRect(2).width).toEqual(200);
   }
@@ -208,22 +211,23 @@ export class ColumnResizeTester {
    *  and then repeated.
    */
   @Test()
-  public testTwoClicksTwoShrinks(): void {
+  public testTwoClicksOneShrink(): void {
     const table = new MockTableInterface();
     const resizer = new ColumnResizer(table);
-    let event: any = new MouseEvent(190, 50, 0);
-    resizer.onMouseDown(event);
-    event = new MouseEvent(170, 50, -20);
+    let event: any = new MouseEvent(190, 50);
     resizer.onMouseMove(event);
-    event = new MouseEvent(170, 50, 0);
-    resizer.onMouseUp(event);
-    event = new MouseEvent(170, 60, 0);
     resizer.onMouseDown(event);
-    event = new MouseEvent(150, 60, -20);
+    event = new MouseEvent(170, 50);
     resizer.onMouseMove(event);
-    event = new MouseEvent(150, 60, 0);
+    event = new MouseEvent(170, 50);
     resizer.onMouseUp(event);
-    Expect(table.getColumnRect(0).width).toEqual(160);
+    event = new MouseEvent(170, 60);
+    resizer.onMouseDown(event);
+    event = new MouseEvent(150, 60);
+    resizer.onMouseMove(event);
+    event = new MouseEvent(150, 60);
+    resizer.onMouseUp(event);
+    Expect(table.getColumnRect(0).width).toEqual(170);
     Expect(table.getColumnRect(1).width).toEqual(300);
     Expect(table.getColumnRect(2).width).toEqual(200);
   }
@@ -235,11 +239,12 @@ export class ColumnResizeTester {
   public mouseClickedOutsideAndMoved(): void {
     const table = new MockTableInterface();
     const resizer = new ColumnResizer(table);
-    let event: any = new MouseEvent(800, 300, 0);
-    resizer.onMouseDown(event);
-    event = new MouseEvent(190, 50, -610);
+    let event: any = new MouseEvent(800, 300);
     resizer.onMouseMove(event);
-    event = new MouseEvent(190, 50, 0);
+    resizer.onMouseDown(event);
+    event = new MouseEvent(190, 50);
+    resizer.onMouseMove(event);
+    event = new MouseEvent(190, 50);
     resizer.onMouseUp(event);
     Expect(table.getColumnRect(0).width).toEqual(200);
     Expect(table.getColumnRect(1).width).toEqual(300);
@@ -251,9 +256,9 @@ export class ColumnResizeTester {
   public testMoveNoMouseDown(): void {
     const table = new MockTableInterface();
     const resizer = new ColumnResizer(table);
-    let event: any = new MouseEvent(800, 300, 50);
+    let event: any = new MouseEvent(800, 300);
     resizer.onMouseMove(event);
-    event = new MouseEvent(190, 50, -30);
+    event = new MouseEvent(190, 50);
     resizer.onMouseMove(event);
     Expect(table.getColumnRect(0).width).toEqual(200);
     Expect(table.getColumnRect(1).width).toEqual(300);
@@ -265,20 +270,21 @@ export class ColumnResizeTester {
   public testTwoResizes(): void {
     const table = new MockTableInterface();
     const resizer = new ColumnResizer(table);
-    let event: any = new MouseEvent(492, 20, 0);
-    resizer.onMouseDown(event);
-    event = new MouseEvent(482, 50, -10);
+    let event: any = new MouseEvent(490, 20);
     resizer.onMouseMove(event);
-    event = new MouseEvent(482, 50, 0);
+    resizer.onMouseDown(event);
+    event = new MouseEvent(480, 50);
+    resizer.onMouseMove(event);
+    event = new MouseEvent(480, 50);
     resizer.onMouseUp(event);
-    event = new MouseEvent(680, 20, 0);
-    resizer.onMouseDown(event);
-    event = new MouseEvent(710, 50, 30);
+    event = new MouseEvent(680, 20);
     resizer.onMouseMove(event);
-    event = new MouseEvent(710, 50, 0);
+    resizer.onMouseDown(event);
+    event = new MouseEvent(710, 50);
+    resizer.onMouseMove(event);
     resizer.onMouseUp(event);
     Expect(table.getColumnRect(0).width).toEqual(200);
-    Expect(table.getColumnRect(1).width).toEqual(290);
+    Expect(table.getColumnRect(1).width).toEqual(280);
     Expect(table.getColumnRect(2).width).toEqual(230);
   }
 
@@ -289,13 +295,14 @@ export class ColumnResizeTester {
   public testBigResize(): void {
     const table = new MockTableInterface();
     const resizer = new ColumnResizer(table);
-    let event: any = new MouseEvent(185, 50, 0);
-    resizer.onMouseDown(event);
-    event = new MouseEvent(585, 50, 400);
+    let event: any = new MouseEvent(185, 50);
     resizer.onMouseMove(event);
-    event = new MouseEvent(585, 50, 0);
+    resizer.onMouseDown(event);
+    event = new MouseEvent(585, 50);
+    resizer.onMouseMove(event);
+    event = new MouseEvent(585, 50);
     resizer.onMouseUp(event);
-    Expect(table.getColumnRect(0).width).toEqual(600);
+    Expect(table.getColumnRect(0).width).toEqual(585);
     Expect(table.getColumnRect(1).width).toEqual(300);
     Expect(table.getColumnRect(2).width).toEqual(200);
   }

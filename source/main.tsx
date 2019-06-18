@@ -12,7 +12,7 @@ for(let row = 0; row < 100; ++row) {
   model.addRow(r);
 }
 
-const header = ['one', 'two', 'three', 'three'];
+const header = ['one', 'two', 'three', 'four'];
 
 const someStyle = {
   table: {
