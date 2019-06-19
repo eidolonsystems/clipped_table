@@ -25,7 +25,7 @@ export interface TableInterface {
 
   /** Returns the rectangle of a column.
    * @param index - The index of the column.
-   * @return The rectange denoting all the corners of the element.
+   * @return The rectangle denoting all the corners of the element.
    */
   getColumnRect: (index: number) => Rectangle;
 
@@ -90,10 +90,11 @@ export class ColumnResizer {
     this.table.restoreCursor();
   }
 
-  private s1(event: PointerEvent) { 
+  private s1(event: PointerEvent) {
     this.state = 1;
     const currentCoor = {x: event.clientX, y: event.clientY};
-    if(this.getLabel(currentCoor) > -1) {
+    this.currentIndex = this.getLabel(currentCoor); 
+    if(this.currentIndex > -1) {
       return this.s2();
     } else {
       return this.s0();
@@ -140,8 +141,7 @@ export class ColumnResizer {
         }
       }
     }
-    this.currentIndex = label;
-    return this.currentIndex;
+    return label;
   }
 
   private table: TableInterface;
