@@ -1,21 +1,26 @@
 digraph ColumnResizing{
   rankdir=LR;
   node [shape = circle, fontsize = 10];
+  edge [ fontsize = 10];
 
   s0 [label="s0: rest state" color = green, fontcolor = green,];
-  s1 [label="s1: evaluate the click"];
-  s2 [label="s2: mouse is down, \n resizing is possible"];
-  s3 [label="s3: resizing"];
+  s1 [label="s1: evaluate the move"];
+  s2 [label="s2: cursor shown"];
+  s3 [label="s3: mouse down"];
+  s4 [label="s4: resizing"];
 
   s0 -> s1 [label = "E0"];
 
-  s1 -> s0 [label = "C0"];
-  s1 -> s2 [label = "Not C0"];
+  s1 -> s0 [label = "~C0"];
+  s1 -> s2 [label = "C0"];
 
-  s2 -> s0 [label = "E1"];
-  s2 -> s3 [label = "E2"];
+  s2 -> s1 [label = "E0"];
+  s2 -> s3 [label = "E1"];
 
-  s3 -> s2 [label = "e"];
+  s3 -> s0 [label = "E2"];
+  s3 -> s4 [label = "E0"];
+
+  s4 -> s3 [label = "&#949;"];
 
   { rank=same; s2, s3 }
 }
@@ -27,16 +32,18 @@ currentIndex (number) - The index of the column that will be resized
 States:
 s0: Staring state.
 s1: Evaluate if the cursor is in the active region.
--set currentIndex to -1 if it isn't in the active region, 
+- set currentIndex to -1 if it isn't in the active region, 
 - otherwise set it to the appropriate index
-s2: Resizing can happen
+s2: Show the cursor.
+s3: Mouse is down.
 - Wait for the mouse to move so a resize can happen
-s3: Resizing
+s4: Resizing
 - get the distance the mouse was moved on the x-axis
-- resize the column whose index is at currentIndex
+- resize the column whose index is at currentIndex 
 
 C0 - Mouse is inside active region.
-E0 - Mouse down.
-E1 - Mouse up.
-E2 - Mouse move.
+E0 - Mouse move.
+E1 - Mouse down.
+E2 - Mouse up.
+
 */

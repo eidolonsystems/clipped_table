@@ -4,31 +4,35 @@ import { ArrayTableModel } from './array_table_model';
 import { TableView } from './table_view';
 
 const model = new ArrayTableModel();
-for(let row = 0; row < 500; ++row) {
+for(let row = 0; row < 100; ++row) {
   const r = [];
-  for(let column = 0; column < 5; ++column) {
+  for(let column = 0; column < 4; ++column) {
     r.push(Math.floor(Math.random() * 1000000));
   }
   model.addRow(r);
 }
 
-const header = ['one', 'two', 'three', 'four', 'five'];
+const header = ['one', 'two', 'three', 'four'];
 
 const someStyle = {
   table: {
     fontFamily: 'Arial, Helvetica, sans-serif',
     fontSize: '20px',
     borderCollapse: 'collapse',
-    boxSizing: 'border-box',
-    border: '2px solid #4b23a0'
+    border: '5px solid #000000'    
+  },
+  th: {
+    border: '2px solid #000000',
+    color: '#4b23a0',
+    margin: '20px'
   },
   td: {
-    border: '1px dashed #4b23a0',
-    color: '#4b23a0',
-    padding: '10px'
+    border: '2px solid #000000',
+    padding: 10,
+    color: '#4b23a0'
   }
 };
 
 ReactDOM.render(
-  <TableView model={model} labels={header} style={someStyle}/>,
+  <TableView model={model} labels={header} style={someStyle} activeWidth={30}/>,
   document.getElementById('main'));
