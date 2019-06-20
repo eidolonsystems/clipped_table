@@ -35,7 +35,7 @@ export class TableView extends React.Component<Properties> implements
     for(let i = 0; i < this.props.labels.length; ++i) {
       this.headerRefs[i] = null;
     }
-    this.props.model.connect(this.setState.bind(this));
+    this.props.model.connect(this.forceUpdate.bind(this, null));
   }
 
   public componentDidMount() {
