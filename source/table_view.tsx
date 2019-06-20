@@ -1,4 +1,3 @@
-import { css, StyleSheet } from 'aphrodite/no-important';
 import * as React from 'react';
 import { TableModel } from './table_model';
 import { ColumnResizer, Rectangle, TableInterface } from './column_resizer';
