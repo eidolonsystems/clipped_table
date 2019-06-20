@@ -33,6 +33,15 @@ const someStyle = {
   }
 };
 
+function changeValues() {
+  model.set(0, 0, Math.floor(Math.random() * 1000000));
+  model.set(1, 1, Math.floor(Math.random() * 1000000));
+  model.set(2, 2, Math.floor(Math.random() * 1000000));
+  model.set(3, 3, Math.floor(Math.random() * 1000000));
+}
+
+setInterval(changeValues.bind(this), 5000);
+
 ReactDOM.render(
   <TableView model={model} labels={header} style={someStyle} activeWidth={30}/>,
   document.getElementById('main'));

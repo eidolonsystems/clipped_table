@@ -1,3 +1,4 @@
+import * as Kola from 'kola-signals';
 import * as React from 'react';
 import { TableModel } from './table_model';
 import { ColumnResizer, Rectangle, TableInterface } from './column_resizer';
@@ -35,6 +36,7 @@ export class TableView extends React.Component<Properties> implements
     for(let i = 0; i < this.props.labels.length; ++i) {
       this.headerRefs[i] = null;
     }
+    this.props.model.connect(() => {this.forceUpdate();});
   }
 
   public componentDidMount() {
@@ -46,6 +48,7 @@ export class TableView extends React.Component<Properties> implements
     document.addEventListener('pointermove',
       this.columnResizer.onMouseMove.bind(this.columnResizer));
   }
+
 
   public componentWillUnmount() {
     document.removeEventListener('pointerdown', this.columnResizer.onMouseDown);
@@ -133,6 +136,9 @@ export class TableView extends React.Component<Properties> implements
   public restoreCursor() {
     this.headerRowRef.style.cursor = 'auto';
   } 
+
+
+  
 
   private headerRefs: HTMLHeadElement[];
   private headerRowRef: HTMLTableRowElement;
