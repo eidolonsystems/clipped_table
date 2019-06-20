@@ -35,16 +35,10 @@ const someStyle = {
 
 function changeValues() {
   const rowsToChange = Math.floor(Math.random() * model.rowCount);
-  console.log(rowsToChange);
   for(let i = 0; i < rowsToChange; ++i) {
     const someRow = Math.floor(Math.random() * model.rowCount);
     const someColumn = Math.floor(Math.random() * model.columnCount);
     model.set(someRow, someColumn, Math.floor(Math.random() * 10));
-  }
-  if(model.rowCount > 1 && rowsToChange % 2 === 0) {
-    model.removeRow(0);
-  } else {
-    model.addRow([0, 1, 2, 3]);
   }
 }
 
