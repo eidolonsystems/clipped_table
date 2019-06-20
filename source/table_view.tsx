@@ -35,7 +35,7 @@ export class TableView extends React.Component<Properties> implements
     for(let i = 0; i < this.props.labels.length; ++i) {
       this.headerRefs[i] = null;
     }
-    this.props.model.connect(this.handleUpdate.bind(this));
+    this.props.model.connect(this.setState.bind(this));
   }
 
   public componentDidMount() {
@@ -133,10 +133,6 @@ export class TableView extends React.Component<Properties> implements
 
   public restoreCursor() {
     this.headerRowRef.style.cursor = 'auto';
-  }
-
-  private handleUpdate(): void {
-    this.forceUpdate();
   } 
 
   private headerRefs: HTMLHeadElement[];
