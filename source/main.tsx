@@ -34,10 +34,18 @@ const someStyle = {
 };
 
 function changeValues() {
-  model.set(0, 0, Math.floor(Math.random() * 1000000));
-  model.set(1, 1, Math.floor(Math.random() * 1000000));
-  model.set(2, 2, Math.floor(Math.random() * 1000000));
-  model.set(3, 3, Math.floor(Math.random() * 1000000));
+  const rowsToChange = Math.floor(Math.random() * model.rowCount);
+  console.log(rowsToChange);
+  for(let i = 0; i < rowsToChange; ++i) {
+    const someRow = Math.floor(Math.random() * model.rowCount);
+    const someColumn = Math.floor(Math.random() * model.columnCount);
+    model.set(someRow, someColumn, Math.floor(Math.random() * 10));
+  }
+  if(model.rowCount > 1 && rowsToChange % 2 === 0) {
+    model.removeRow(0);
+  } else {
+    model.addRow([0, 1, 2, 3]);
+  }
 }
 
 setInterval(changeValues.bind(this), 5000);
