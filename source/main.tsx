@@ -33,6 +33,17 @@ const someStyle = {
   }
 };
 
+function changeValues() {
+  const rowsToChange = Math.floor(Math.random() * model.rowCount);
+  for(let i = 0; i < rowsToChange; ++i) {
+    const someRow = Math.floor(Math.random() * model.rowCount);
+    const someColumn = Math.floor(Math.random() * model.columnCount);
+    model.set(someRow, someColumn, Math.floor(Math.random() * 10));
+  }
+}
+
+setInterval(changeValues, 5000);
+
 ReactDOM.render(
   <TableView model={model} labels={header} style={someStyle} activeWidth={30}/>,
   document.getElementById('main'));
