@@ -7,7 +7,11 @@ const model = new ArrayTableModel();
 for(let row = 0; row < 100; ++row) {
   const r = [];
   for(let column = 0; column < 4; ++column) {
-    r.push(Math.floor(Math.random() * 1000000));
+    if(column === 2 || column === 3 ) {
+      r.push(Math.floor(Math.random() * 10));
+    } else {
+      r.push(Math.floor(Math.random() * 50));
+    }
   }
   model.addRow(r);
 }
@@ -19,16 +23,15 @@ const someStyle = {
     fontFamily: 'Arial, Helvetica, sans-serif',
     fontSize: '20px',
     borderCollapse: 'collapse',
-    border: '5px solid #000000'    
+    border: '5px solid #000000'
   },
   th: {
     border: '2px solid #000000',
-    color: '#4b23a0',
-    margin: '20px'
+    color: '#4b23a0'
   },
   td: {
     border: '2px solid #000000',
-    padding: 10,
+    padding: '30px',
     color: '#4b23a0'
   }
 };
@@ -45,5 +48,5 @@ function changeValues() {
 setInterval(changeValues, 5000);
 
 ReactDOM.render(
-  <TableView model={model} labels={header} style={someStyle} activeWidth={30}/>,
+  <TableView model={model} labels={header} style={someStyle} activeWidth={10}/>,
   document.getElementById('main'));

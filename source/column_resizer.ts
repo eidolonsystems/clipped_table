@@ -124,18 +124,18 @@ export class ColumnResizer {
   private getLabel(point: {x: number, y: number}) {
     let label = -1;
     for(let i = 0; i < this.table.columnCount; ++i) {
-      const leftRectangle = this.table.getColumnRect(i);
-      const rightEdge = leftRectangle.right;
+      const rectangle = this.table.getColumnRect(i);
+      const rightEdge = rectangle.right;
       const innerRightEdge = rightEdge - this.table.activeWidth;
       if(innerRightEdge <= point.x && point.x <= rightEdge &&
-          leftRectangle.top < point.y && point.y < leftRectangle.bottom) {
+          rectangle.top < point.y && point.y < rectangle.bottom) {
         label = i;
         break;
       }
       if(i < this.table.columnCount - 1) {
         const innerLeftEdge = rightEdge + this.table.activeWidth;
         if(rightEdge <= point.x && point.x <= innerLeftEdge &&
-            leftRectangle.top < point.y && point.y < leftRectangle.bottom) {
+            rectangle.top < point.y && point.y < rectangle.bottom) {
           label = i;
           break;
         }

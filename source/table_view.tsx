@@ -1,14 +1,15 @@
 import * as React from 'react';
-import { TableModel } from './table_model';
 import { ColumnResizer, Rectangle, TableInterface } from './column_resizer';
+import { ColumnOrder, SortedTableModel } from './sorted_table_model';
+import { TableModel } from './table_model';
 
 interface Properties {
 
   /** The model to display. */
   model: TableModel;
 
-  /**  The label for the columns of the table.*/
-  labels?: string[]
+  /** The label for the columns of the table. */
+  labels?: string[];
 
   /** Specifies the CSS class. */
   className?: string;
@@ -21,7 +22,7 @@ interface Properties {
 }
 
 /** Renders a TableModel to HTML. */
-export class TableView extends React.Component<Properties> implements 
+export class TableView extends React.Component<Properties> implements
     TableInterface {
   public static readonly defaultProps = {
     header: [] as string[],
@@ -35,7 +36,8 @@ export class TableView extends React.Component<Properties> implements
     for(let i = 0; i < this.props.labels.length; ++i) {
       this.headerRefs[i] = null;
     }
-    this.props.model.connect(this.forceUpdate.bind(this, null));
+    this.table = new SortedTableModel(this.props.model);
+    this.table.connect(this.forceUpdate.bind(this, null));
   }
 
   public componentDidMount() {
@@ -61,19 +63,21 @@ export class TableView extends React.Component<Properties> implements
         <th style={this.props.style.th}
             className={this.props.className}
             ref={(label) => this.headerRefs[i] = label}
+            onMouseDown={(e: React.MouseEvent<HTMLTableHeaderCellElement>) =>
+              this.onClickHeader(e, i)}
             key={this.props.labels[i]}>
           {this.props.labels[i]}
         </th>);
     }
     const tableRows = [];
-    for(let i = 0; i < this.props.model.rowCount; ++i) {
+    for(let i = 0; i < this.table.rowCount; ++i) {
       const row = [];
-      for(let j = 0; j < this.props.model.columnCount; ++j) {
+      for(let j = 0; j < this.table.columnCount; ++j) {
         row.push(
           <td style={this.props.style.td}
               className={this.props.className}
-              key={(i * this.props.model.columnCount) + j}>
-            {this.props.model.get(i, j)}
+              key={(i * this.table.columnCount) + j}>
+            {this.table.get(i, j)}
           </td>);
       }
       tableRows.push(
@@ -113,7 +117,7 @@ export class TableView extends React.Component<Properties> implements
 
   public getColumnRect(index: number): Rectangle {
     const rectangle = this.headerRefs[index].getBoundingClientRect();
-    return ({  
+    return ({
       top: rectangle.top,
       left: rectangle.left,
       bottom: rectangle.bottom,
@@ -133,9 +137,40 @@ export class TableView extends React.Component<Properties> implements
 
   public restoreCursor() {
     this.headerRowRef.style.cursor = 'auto';
-  } 
+  }
+
+  private onClickHeader(event: React.MouseEvent<HTMLTableHeaderCellElement>,
+      index: number) {
+    const rectangle = this.getColumnRect(index);
+    const rightEdge = rectangle.right;
+    const innerRightEdge = rightEdge - this.activeWidth;
+    if(innerRightEdge <= event.clientX && event.clientX <= rightEdge) {
+      return;
+    }
+    if(index > 0) {
+      const previousRectangle = this.getColumnRect(index - 1);
+      const leftEdge = previousRectangle.right;
+      const innerLeftEdge = leftEdge + this.props.activeWidth;
+      if(leftEdge <= event.clientX && event.clientX <= innerLeftEdge) {
+        return;
+      }
+    }
+    const order = this.table.columnOrder;
+    const foundIndex = order.findIndex((element) => element.index === index);
+    if(foundIndex === 0) {
+      order[0] = order[0].reverseSortOrder();
+    } else if(foundIndex > 0) {
+      const current = order.splice(foundIndex);
+      order.unshift(current[0]);
+    } else {
+      order.unshift(new ColumnOrder(index));
+    }
+    this.table.columnOrder = order;
+    this.forceUpdate();
+  }
 
   private headerRefs: HTMLHeadElement[];
   private headerRowRef: HTMLTableRowElement;
   private columnResizer: ColumnResizer;
+  private table: SortedTableModel;
 }
