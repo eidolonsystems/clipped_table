@@ -156,14 +156,12 @@ export class TableView extends React.Component<Properties> implements
       }
     }
     const order = this.table.columnOrder;
-    if(order[0] && order[0].index === index) {
+    const foundIndex = order.findIndex((element) => element.index === index);
+    if(foundIndex === 0) {
       order[0] = order[0].reverseSortOrder();
-    } else if(order && -1 <
-        order.findIndex((element) => element.index === index)) {
-      const currentIndex =
-        order.findIndex((element) => element.index === index);
-      const curent = order.splice(currentIndex);
-      order.unshift(order[0]);
+    } else if(foundIndex > 0) {
+      const current = order.splice(foundIndex);
+      order.unshift(current[0]);
     } else {
       order.unshift(new ColumnOrder(index));
     }
