@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { TableModel } from './table_model';
 import { ColumnResizer, Rectangle, TableInterface } from './column_resizer';
 import { ColumnOrder, SortedTableModel } from './sorted_table_model';
+import { TableModel } from './table_model';
 
 interface Properties {
 
   /** The model to display. */
   model: TableModel;
 
-  /**  The label for the columns of the table. */
+  /** The label for the columns of the table. */
   labels?: string[];
 
   /** Specifies the CSS class. */
@@ -38,7 +38,6 @@ export class TableView extends React.Component<Properties> implements
     }
     this.table = new SortedTableModel(this.props.model);
     this.table.connect(this.forceUpdate.bind(this, null));
-    this.columnOrder = [];
   }
 
   public componentDidMount() {
@@ -156,18 +155,19 @@ export class TableView extends React.Component<Properties> implements
         return;
       }
     }
-    if(this.columnOrder[0] && this.columnOrder[0].index === index) {
-      this.columnOrder[0] = this.columnOrder[0].reverseSortOrder();
-    } else if( this.columnOrder[0] && -1 <
-        this.columnOrder.findIndex((element) => element.index === index)) {
+    const order = this.table.columnOrder;
+    if(order[0] && order[0].index === index) {
+      order[0] = order[0].reverseSortOrder();
+    } else if(order && -1 <
+        order.findIndex((element) => element.index === index)) {
       const currentIndex =
-        this.columnOrder.findIndex((element) => element.index === index);
-      const order = this.columnOrder.splice(currentIndex);
-      this.columnOrder.unshift(order[0]);
+        order.findIndex((element) => element.index === index);
+      const curent = order.splice(currentIndex);
+      order.unshift(order[0]);
     } else {
-      this.columnOrder.unshift(new ColumnOrder(index));
+      order.unshift(new ColumnOrder(index));
     }
-    this.table.columnOrder = this.columnOrder;
+    this.table.columnOrder = order;
     this.forceUpdate();
   }
 
@@ -175,5 +175,4 @@ export class TableView extends React.Component<Properties> implements
   private headerRowRef: HTMLTableRowElement;
   private columnResizer: ColumnResizer;
   private table: SortedTableModel;
-  private columnOrder: ColumnOrder[];
 }

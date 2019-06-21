@@ -31,7 +31,7 @@ const someStyle = {
   },
   td: {
     border: '2px solid #000000',
-    padding: '15px',
+    padding: '30px',
     color: '#4b23a0'
   }
 };
@@ -45,7 +45,7 @@ function changeValues() {
   }
 }
 
-setInterval(changeValues, 200000);
+setInterval(changeValues, 5000);
 
 ReactDOM.render(
   <TableView model={model} labels={header} style={someStyle} activeWidth={10}/>,
