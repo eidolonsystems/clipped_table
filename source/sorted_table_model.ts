@@ -110,6 +110,7 @@ export class SortedTableModel extends TableModel {
 
   /** Sets the order that the columns are sorted by. */
   public set columnOrder(columnOrder: ColumnOrder[]) {
+    console.log('updated!!');
     this._columnOrder = columnOrder.slice();
     this.sort();
   }
@@ -145,6 +146,7 @@ export class SortedTableModel extends TableModel {
   }
 
   private sort() {
+    console.log('sorting');
     const rowOrdering = [];
     for(let i = 0; i < this.translatedTable.rowCount; ++i) {
       rowOrdering.push(i);

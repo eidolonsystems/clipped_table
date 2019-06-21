@@ -4,10 +4,14 @@ import { ArrayTableModel } from './array_table_model';
 import { TableView } from './table_view';
 
 const model = new ArrayTableModel();
-for(let row = 0; row < 100; ++row) {
+for(let row = 0; row < 1000; ++row) {
   const r = [];
   for(let column = 0; column < 4; ++column) {
-    r.push(Math.floor(Math.random() * 1000000));
+    if(column === 3) {
+      r.push(Math.floor(Math.random() * 10));
+    } else {
+      r.push(Math.floor(Math.random() * 100));
+    }
   }
   model.addRow(r);
 }
@@ -24,11 +28,11 @@ const someStyle = {
   th: {
     border: '2px solid #000000',
     color: '#4b23a0',
-    margin: '20px'
+    padding: '10px'
   },
   td: {
     border: '2px solid #000000',
-    padding: 10,
+    padding: '5px',
     color: '#4b23a0'
   }
 };
@@ -42,8 +46,8 @@ function changeValues() {
   }
 }
 
-setInterval(changeValues, 5000);
+//setInterval(changeValues, 5000);
 
 ReactDOM.render(
-  <TableView model={model} labels={header} style={someStyle} activeWidth={30}/>,
+  <TableView model={model} labels={header} style={someStyle} activeWidth={10}/>,
   document.getElementById('main'));

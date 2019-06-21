@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { TableModel } from './table_model';
 import { ColumnResizer, Rectangle, TableInterface } from './column_resizer';
+import { ColumnOrder, SortedTableModel } from './sorted_table_model';
 
 interface Properties {
 
@@ -35,7 +36,9 @@ export class TableView extends React.Component<Properties> implements
     for(let i = 0; i < this.props.labels.length; ++i) {
       this.headerRefs[i] = null;
     }
-    this.props.model.connect(this.forceUpdate.bind(this, null));
+    this.columnOrder = [];
+    this.table = new SortedTableModel(this.props.model);
+    this.table.connect(this.forceUpdate.bind(this, null));
   }
 
   public componentDidMount() {
@@ -61,6 +64,9 @@ export class TableView extends React.Component<Properties> implements
         <th style={this.props.style.th}
             className={this.props.className}
             ref={(label) => this.headerRefs[i] = label}
+            onClick={() => {
+              console.log('clicky on', i);
+              this.onClickHeader(i);}}
             key={this.props.labels[i]}>
           {this.props.labels[i]}
         </th>);
@@ -73,7 +79,7 @@ export class TableView extends React.Component<Properties> implements
           <td style={this.props.style.td}
               className={this.props.className}
               key={(i * this.props.model.columnCount) + j}>
-            {this.props.model.get(i, j)}
+            {this.table.get(i, j)}
           </td>);
       }
       tableRows.push(
@@ -135,7 +141,30 @@ export class TableView extends React.Component<Properties> implements
     this.headerRowRef.style.cursor = 'auto';
   } 
 
+  private onClickHeader(index: number) {
+    console.log('column', this.columnOrder);
+    if(this.columnOrder.length === 0) {
+      this.columnOrder.push(new ColumnOrder(index));
+      console.log('added a thing');
+    } else if(this.columnOrder[0].index === index) {
+      this.columnOrder[0] = this.columnOrder[0].reverseSortOrder();
+      console.log('reverse order!');
+    } else if(this.columnOrder.findIndex(function(element) {
+        return element.index === index }) > -1) {
+        const thing = this.columnOrder.findIndex(function(element) {
+        return element.index === index });
+        const element = this.columnOrder.splice(thing);
+        this.columnOrder.unshift(element[0]);
+    } else {
+      this.columnOrder.push(new ColumnOrder(index));
+    }
+    this.table.columnOrder = this.columnOrder;
+    this.forceUpdate();
+  }
+
   private headerRefs: HTMLHeadElement[];
   private headerRowRef: HTMLTableRowElement;
   private columnResizer: ColumnResizer;
+  private table: SortedTableModel;
+  private columnOrder: ColumnOrder[];
 }
