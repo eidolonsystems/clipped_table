@@ -49,5 +49,5 @@ function changeValues() {
 //setInterval(changeValues, 5000);
 
 ReactDOM.render(
-  <TableView model={model} labels={header} style={someStyle} activeWidth={10}/>,
+  <TableView model={model} labels={header} style={someStyle} activeWidth={5}/>,
   document.getElementById('main'));

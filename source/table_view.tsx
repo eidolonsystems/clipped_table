@@ -43,8 +43,10 @@ export class TableView extends React.Component<Properties> implements
 
   public componentDidMount() {
     this.columnResizer = new ColumnResizer(this);
-    document.addEventListener('pointerdown',
-      this.columnResizer.onMouseDown.bind(this.columnResizer));
+    this.columnResizer.onMouseDown.bind(this.columnResizer);
+    document.addEventListener('pointerdown', () => {
+      
+    });
     document.addEventListener('pointerup',
       this.columnResizer.onMouseUp.bind(this.columnResizer));
     document.addEventListener('pointermove',
@@ -114,6 +116,7 @@ export class TableView extends React.Component<Properties> implements
   }
 
   public get activeWidth(): number {
+    console.log('active width!!');
     return this.props.activeWidth;
   }
 
