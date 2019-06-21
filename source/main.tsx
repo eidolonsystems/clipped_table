@@ -4,13 +4,13 @@ import { ArrayTableModel } from './array_table_model';
 import { TableView } from './table_view';
 
 const model = new ArrayTableModel();
-for(let row = 0; row < 1000; ++row) {
+for(let row = 0; row < 100; ++row) {
   const r = [];
   for(let column = 0; column < 4; ++column) {
-    if(column === 3) {
+    if(column === 2 || column === 3 ) {
       r.push(Math.floor(Math.random() * 10));
     } else {
-      r.push(Math.floor(Math.random() * 100));
+      r.push(Math.floor(Math.random() * 50));
     }
   }
   model.addRow(r);
@@ -23,16 +23,15 @@ const someStyle = {
     fontFamily: 'Arial, Helvetica, sans-serif',
     fontSize: '20px',
     borderCollapse: 'collapse',
-    border: '5px solid #000000'    
+    border: '5px solid #000000'
   },
   th: {
     border: '2px solid #000000',
-    color: '#4b23a0',
-    padding: '10px'
+    color: '#4b23a0'
   },
   td: {
     border: '2px solid #000000',
-    padding: '5px',
+    padding: '15px',
     color: '#4b23a0'
   }
 };
@@ -46,8 +45,8 @@ function changeValues() {
   }
 }
 
-//setInterval(changeValues, 5000);
+setInterval(changeValues, 200000);
 
 ReactDOM.render(
-  <TableView model={model} labels={header} style={someStyle} activeWidth={5}/>,
+  <TableView model={model} labels={header} style={someStyle} activeWidth={10}/>,
   document.getElementById('main'));

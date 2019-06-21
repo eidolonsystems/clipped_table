@@ -8,8 +8,8 @@ interface Properties {
   /** The model to display. */
   model: TableModel;
 
-  /**  The label for the columns of the table.*/
-  labels?: string[]
+  /**  The label for the columns of the table. */
+  labels?: string[];
 
   /** Specifies the CSS class. */
   className?: string;
@@ -22,7 +22,7 @@ interface Properties {
 }
 
 /** Renders a TableModel to HTML. */
-export class TableView extends React.Component<Properties> implements 
+export class TableView extends React.Component<Properties> implements
     TableInterface {
   public static readonly defaultProps = {
     header: [] as string[],
@@ -36,17 +36,15 @@ export class TableView extends React.Component<Properties> implements
     for(let i = 0; i < this.props.labels.length; ++i) {
       this.headerRefs[i] = null;
     }
-    this.columnOrder = [];
     this.table = new SortedTableModel(this.props.model);
     this.table.connect(this.forceUpdate.bind(this, null));
+    this.columnOrder = [];
   }
 
   public componentDidMount() {
     this.columnResizer = new ColumnResizer(this);
-    this.columnResizer.onMouseDown.bind(this.columnResizer);
-    document.addEventListener('pointerdown', () => {
-      
-    });
+    document.addEventListener('pointerdown',
+      this.columnResizer.onMouseDown.bind(this.columnResizer));
     document.addEventListener('pointerup',
       this.columnResizer.onMouseUp.bind(this.columnResizer));
     document.addEventListener('pointermove',
@@ -66,21 +64,20 @@ export class TableView extends React.Component<Properties> implements
         <th style={this.props.style.th}
             className={this.props.className}
             ref={(label) => this.headerRefs[i] = label}
-            onClick={() => {
-              console.log('clicky on', i);
-              this.onClickHeader(i);}}
+            onMouseDown={(e: React.MouseEvent<HTMLTableHeaderCellElement>) =>
+              this.onClickHeader(e, i)}
             key={this.props.labels[i]}>
           {this.props.labels[i]}
         </th>);
     }
     const tableRows = [];
-    for(let i = 0; i < this.props.model.rowCount; ++i) {
+    for(let i = 0; i < this.table.rowCount; ++i) {
       const row = [];
-      for(let j = 0; j < this.props.model.columnCount; ++j) {
+      for(let j = 0; j < this.table.columnCount; ++j) {
         row.push(
           <td style={this.props.style.td}
               className={this.props.className}
-              key={(i * this.props.model.columnCount) + j}>
+              key={(i * this.table.columnCount) + j}>
             {this.table.get(i, j)}
           </td>);
       }
@@ -116,13 +113,12 @@ export class TableView extends React.Component<Properties> implements
   }
 
   public get activeWidth(): number {
-    console.log('active width!!');
     return this.props.activeWidth;
   }
 
   public getColumnRect(index: number): Rectangle {
     const rectangle = this.headerRefs[index].getBoundingClientRect();
-    return ({  
+    return ({
       top: rectangle.top,
       left: rectangle.left,
       bottom: rectangle.bottom,
@@ -142,24 +138,34 @@ export class TableView extends React.Component<Properties> implements
 
   public restoreCursor() {
     this.headerRowRef.style.cursor = 'auto';
-  } 
+  }
 
-  private onClickHeader(index: number) {
-    console.log('column', this.columnOrder);
-    if(this.columnOrder.length === 0) {
-      this.columnOrder.push(new ColumnOrder(index));
-      console.log('added a thing');
-    } else if(this.columnOrder[0].index === index) {
+  private onClickHeader(event: React.MouseEvent<HTMLTableHeaderCellElement>,
+      index: number) {
+    const rectangle = this.getColumnRect(index);
+    const rightEdge = rectangle.right;
+    const innerRightEdge = rightEdge - this.activeWidth;
+    if(innerRightEdge <= event.clientX && event.clientX <= rightEdge) {
+      return;
+    }
+    if(index > 0) {
+      const previousRectangle = this.getColumnRect(index - 1);
+      const leftEdge = previousRectangle.right;
+      const innerLeftEdge = leftEdge + this.props.activeWidth;
+      if(leftEdge <= event.clientX && event.clientX <= innerLeftEdge) {
+        return;
+      }
+    }
+    if(this.columnOrder[0] && this.columnOrder[0].index === index) {
       this.columnOrder[0] = this.columnOrder[0].reverseSortOrder();
-      console.log('reverse order!');
-    } else if(this.columnOrder.findIndex(function(element) {
-        return element.index === index }) > -1) {
-        const thing = this.columnOrder.findIndex(function(element) {
-        return element.index === index });
-        const element = this.columnOrder.splice(thing);
-        this.columnOrder.unshift(element[0]);
+    } else if( this.columnOrder[0] && -1 <
+        this.columnOrder.findIndex((element) => element.index === index)) {
+      const currentIndex =
+        this.columnOrder.findIndex((element) => element.index === index);
+      const order = this.columnOrder.splice(currentIndex);
+      this.columnOrder.unshift(order[0]);
     } else {
-      this.columnOrder.push(new ColumnOrder(index));
+      this.columnOrder.unshift(new ColumnOrder(index));
     }
     this.table.columnOrder = this.columnOrder;
     this.forceUpdate();
