@@ -1,7 +1,7 @@
 import * as Kola from 'kola-signals';
 import { Comparator } from './comparator';
 import { TableModel } from './table_model';
-import { AddRowOperation, Operation, RemoveRowOperation } from './operations';
+import { AddRowOperation, Operation, RemoveRowOperation, UpdateValueOperation } from './operations';
 import { TranslatedTableModel } from './translated_table_model';
 
 /** Specifies whether to sort in ascending order or descending order. */
@@ -139,6 +139,8 @@ export class SortedTableModel extends TableModel {
       } else if(operation instanceof RemoveRowOperation) {
         this.operations.push(
           new RemoveRowOperation(operation.index, operation.row));
+      } else if(operation instanceof UpdateValueOperation) {
+        this.rowUpdated(operation);
       }
     }
     this.endTransaction();
@@ -202,6 +204,37 @@ export class SortedTableModel extends TableModel {
     }
     this.translatedTable.moveRow(rowAddedIndex, destination);
     this.operations.push(new AddRowOperation(destination, operation.row));
+    this.endTransaction();
+  }
+
+  private rowUpdated(operation: UpdateValueOperation) {
+    this.beginTransaction();
+    const rowUpdatedIndex = operation.row;
+    const leftIndex = (() => {
+      if(rowUpdatedIndex === 0) {
+        return rowUpdatedIndex;
+      } else {
+        return rowUpdatedIndex - 1;
+      }
+    })();
+    const rightIndex = (() => {
+      if(rowUpdatedIndex === this.translatedTable.rowCount - 1 ) {
+        return rowUpdatedIndex;
+      } else {
+        return rowUpdatedIndex + 1;
+      }
+    })();
+    let destination = rowUpdatedIndex;
+    if(this.compareRows(leftIndex, rowUpdatedIndex) > 0) {
+      destination = this.findIndex(0, leftIndex, rowUpdatedIndex);
+    } else if(this.compareRows(rowUpdatedIndex, rightIndex) > 0) {
+      destination = this.findIndex(rightIndex,
+        this.translatedTable.rowCount - 1, rowUpdatedIndex);
+    }
+    this.translatedTable.moveRow(rowUpdatedIndex, destination);
+    this.operations.push(
+      new UpdateValueOperation(
+        destination, operation.column, operation.previous, operation.current));
     this.endTransaction();
   }
 
