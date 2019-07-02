@@ -1,7 +1,8 @@
 import * as Kola from 'kola-signals';
 import { Comparator } from './comparator';
 import { TableModel } from './table_model';
-import { AddRowOperation, Operation, RemoveRowOperation, UpdateValueOperation } from './operations';
+import { AddRowOperation, Operation, RemoveRowOperation, UpdateValueOperation }
+  from './operations';
 import { TranslatedTableModel } from './translated_table_model';
 
 /** Specifies whether to sort in ascending order or descending order. */
@@ -140,6 +141,7 @@ export class SortedTableModel extends TableModel {
         this.operations.push(
           new RemoveRowOperation(operation.index, operation.row));
       } else if(operation instanceof UpdateValueOperation) {
+        console.log('update thing!');
         this.rowUpdated(operation);
       }
     }
@@ -209,32 +211,31 @@ export class SortedTableModel extends TableModel {
 
   private rowUpdated(operation: UpdateValueOperation) {
     this.beginTransaction();
-    const rowUpdatedIndex = operation.row;
+    const changedRowIndex = operation.row;
     const leftIndex = (() => {
-      if(rowUpdatedIndex === 0) {
-        return rowUpdatedIndex;
+      if(changedRowIndex === 0) {
+        return changedRowIndex;
       } else {
-        return rowUpdatedIndex - 1;
+        return changedRowIndex - 1;
       }
     })();
     const rightIndex = (() => {
-      if(rowUpdatedIndex === this.translatedTable.rowCount - 1 ) {
-        return rowUpdatedIndex;
+      if(changedRowIndex === this.translatedTable.rowCount - 1 ) {
+        return changedRowIndex;
       } else {
-        return rowUpdatedIndex + 1;
+        return changedRowIndex + 1;
       }
     })();
-    let destination = rowUpdatedIndex;
-    if(this.compareRows(leftIndex, rowUpdatedIndex) > 0) {
-      destination = this.findIndex(0, leftIndex, rowUpdatedIndex);
-    } else if(this.compareRows(rowUpdatedIndex, rightIndex) > 0) {
+    let destination = changedRowIndex;
+    if(this.compareRows(leftIndex, changedRowIndex) > 0) {
+      destination = this.findIndex(0, leftIndex, changedRowIndex);
+    } else if(this.compareRows(changedRowIndex, rightIndex) > 0) {
       destination = this.findIndex(rightIndex,
-        this.translatedTable.rowCount - 1, rowUpdatedIndex);
+        this.translatedTable.rowCount - 1, changedRowIndex);
     }
-    this.translatedTable.moveRow(rowUpdatedIndex, destination);
-    this.operations.push(
-      new UpdateValueOperation(
-        destination, operation.column, operation.previous, operation.current));
+    this.translatedTable.moveRow(changedRowIndex, destination);
+    this.operations.push(new UpdateValueOperation(
+      destination, operation.column, operation.previous, operation.current));
     this.endTransaction();
   }
 

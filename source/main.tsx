@@ -31,7 +31,8 @@ const someStyle = {
   },
   td: {
     border: '2px solid #000000',
-    padding: '30px',
+    paddingLeft: '30px',
+    paddingRight: '30px',
     color: '#4b23a0'
   }
 };
@@ -41,7 +42,7 @@ function changeValues() {
   for(let i = 0; i < rowsToChange; ++i) {
     const someRow = Math.floor(Math.random() * model.rowCount);
     const someColumn = Math.floor(Math.random() * model.columnCount);
-    model.set(someRow, someColumn, Math.floor(Math.random() * 10));
+    model.set(someRow, someColumn, Math.floor(Math.random() * 0) + 777);
   }
 }
 
