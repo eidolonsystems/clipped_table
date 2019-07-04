@@ -38,6 +38,29 @@ export class TranslatedTableModel extends TableModel {
   public endTransaction(): void {
     --this.transactionCount;
     if(this.transactionCount === 0) {
+      console.log('table', this.translation.toString());
+      console.log('reverse table', this.reverseTranslation.toString());
+      console.log('operation is done.');
+      let used = [] as any[];
+      for(let index = 0; index < this.rowCount; ++index) {
+        if(used.includes(this.reverseTranslation[index])) {
+          console.log('translation', this.translation.toString());
+          console.log('reverse translation',this.reverseTranslation.toString());
+          throw Error('INDEXED TWICE!!!! ' + index);
+        } else {
+          used.push(this.reverseTranslation[index]);
+        }
+      }
+      used = [] as any[];
+      for(let index = 0; index < this.rowCount; ++index) {
+        if(used.includes(this.translation[index])) {
+          console.log('translation', this.translation.toString());
+          console.log('reverse translation',this.reverseTranslation.toString());
+          throw Error('INDEXED TWICE!!!! Reversed Table! ' + index);
+        } else {
+          used.push(this.translation[index]);
+        }
+      }
       this.dispatcher.dispatch(this.operations);
     }
   }
@@ -94,7 +117,10 @@ export class TranslatedTableModel extends TableModel {
       if(operation instanceof AddRowOperation) {
         this.rowAdded(operation);
       } else if(operation instanceof RemoveRowOperation) {
+        console.log('tt: removed row op started');
+        console.log('removing', operation.index);
         this.rowRemoved(operation);
+        console.log('tt: removed row op ended');
       } else if(operation instanceof UpdateValueOperation) {
         this.updateRow(operation);
       } else {
@@ -150,6 +176,9 @@ export class TranslatedTableModel extends TableModel {
   }
 
   private shift(amount: number, rowIndex: number, reverseIndex: number) {
+    console.log('translation ', this.translation.toString());
+    console.log('reversed translation ', this.translation.toString());
+    console.log('start shift!');
     const start = (() => {
       if(reverseIndex < rowIndex) {
         return reverseIndex;
@@ -165,6 +194,9 @@ export class TranslatedTableModel extends TableModel {
         this.reverseTranslation[index] += amount;
       }
     }
+    console.log('translation ', this.translation.toString());
+    console.log('reversed translation ', this.translation.toString());
+    console.log('end shift!');
   }
 
   private updateRow(operation: UpdateValueOperation) {

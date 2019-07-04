@@ -4,7 +4,7 @@ import { ArrayTableModel } from './array_table_model';
 import { TableView } from './table_view';
 
 const model = new ArrayTableModel();
-for(let row = 0; row < 100; ++row) {
+for(let row = 0; row < 10; ++row) {
   const r = [];
   for(let column = 0; column < 4; ++column) {
     if(column === 2 || column === 3 ) {
@@ -39,10 +39,13 @@ const someStyle = {
 
 function changeValues() {
   const rowsToChange = Math.floor(Math.random() * model.rowCount);
-  for(let i = 0; i < rowsToChange; ++i) {
+  for(let i = 0; i < 1; ++i) {
     const someRow = Math.floor(Math.random() * model.rowCount);
     const someColumn = Math.floor(Math.random() * model.columnCount);
-    model.set(someRow, someColumn, Math.floor(Math.random() * 0) + 777);
+    const num = Math.floor(Math.random() * 0) + 777;
+    //model.addRow([num, num, num, num], someRow);
+    console.log('removing: ', someRow, 'of', model.rowCount);
+    model.removeRow(someRow);
   }
 }
 

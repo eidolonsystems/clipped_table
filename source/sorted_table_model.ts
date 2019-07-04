@@ -162,6 +162,7 @@ export class SortedTableModel extends TableModel {
         }
       }
     }
+    console.log('SORTED!!!');
   }
 
   private compareRows(row1: number, row2: number) {
