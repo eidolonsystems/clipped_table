@@ -44,7 +44,7 @@ function changeValues() {
     const someColumn = Math.floor(Math.random() * model.columnCount);
     const num = Math.floor(Math.random() * 0) + 777;
     //model.addRow([num, num, num, num], someRow);
-    console.log('removing: ', someRow, 'of', model.rowCount);
+//    console.log('removing: ', someRow, 'of', model.rowCount);
     model.removeRow(someRow);
   }
 }
