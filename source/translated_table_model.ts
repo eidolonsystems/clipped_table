@@ -46,7 +46,7 @@ export class TranslatedTableModel extends TableModel {
         if(used.includes(this.reverseTranslation[index])) {
           console.log('translation', this.translation.toString());
           console.log('reverse translation',this.reverseTranslation.toString());
-          throw Error('INDEXED TWICE!!!! ' + index);
+          //throw Error('INDEXED TWICE!!!! ' + index);
         } else {
           used.push(this.reverseTranslation[index]);
         }
@@ -56,7 +56,7 @@ export class TranslatedTableModel extends TableModel {
         if(used.includes(this.translation[index])) {
           console.log('translation', this.translation.toString());
           console.log('reverse translation',this.reverseTranslation.toString());
-          throw Error('INDEXED TWICE!!!! Reversed Table! ' + index);
+          //throw Error('INDEXED TWICE!!!! Reversed Table! ' + index);
         } else {
           used.push(this.translation[index]);
         }
@@ -172,12 +172,15 @@ export class TranslatedTableModel extends TableModel {
     this.translation.splice(reverseIndex, 1);
     this.reverseTranslation.splice(operation.index, 1);
     this.operations.push(new RemoveRowOperation(reverseIndex, operation.row));
+    console.log('translation ', this.translation.toString());
+    console.log('reversed translation ', this.reverseTranslation.toString());
+    console.log('after splice shift!');
     this.endTransaction();
   }
 
   private shift(amount: number, rowIndex: number, reverseIndex: number) {
     console.log('translation ', this.translation.toString());
-    console.log('reversed translation ', this.translation.toString());
+    console.log('reversed translation ', this.reverseTranslation.toString());
     console.log('start shift!');
     const start = (() => {
       if(reverseIndex < rowIndex) {
@@ -195,7 +198,7 @@ export class TranslatedTableModel extends TableModel {
       }
     }
     console.log('translation ', this.translation.toString());
-    console.log('reversed translation ', this.translation.toString());
+    console.log('reversed translation ', this.reverseTranslation.toString());
     console.log('end shift!');
   }
 
