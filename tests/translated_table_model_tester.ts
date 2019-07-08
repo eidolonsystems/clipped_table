@@ -335,6 +335,11 @@ export class TranslatedTableModelTester {
     const listener = translatedTable.connect(makeListener(4, 1));
     translatedTable.moveRow(4, 1);
     Expect(signalsReceived).toEqual(1);
+    Expect(translatedTable.get(0, 0)).toEqual(0);
+    Expect(translatedTable.get(1, 0)).toEqual(4);
+    Expect(translatedTable.get(2, 0)).toEqual(1);
+    Expect(translatedTable.get(3, 0)).toEqual(2);
+    Expect(translatedTable.get(4, 0)).toEqual(3);
     listener.unlisten();
   }
 }
