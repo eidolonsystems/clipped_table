@@ -30,6 +30,9 @@ export class TranslatedTableModel extends TableModel {
   public beginTransaction(): void {
     if(this.transactionCount === 0) {
       this.operations = [];
+      console.log('table', this.translation.toString());
+      console.log('reverse table', this.reverseTranslation.toString());
+      console.log('begin.');
     }
     ++this.transactionCount;
   }
@@ -37,16 +40,19 @@ export class TranslatedTableModel extends TableModel {
   /** Ends a transaction. */
   public endTransaction(): void {
     --this.transactionCount;
+//    console.log('table', this.translation.toString());
+  //  console.log('reverse table', this.reverseTranslation.toString());
+   // console.log('operation is done.');
     if(this.transactionCount === 0) {
-     // console.log('table', this.translation.toString());
-     // console.log('reverse table', this.reverseTranslation.toString());
-     // console.log('operation is done.');
+      console.log('table', this.translation.toString());
+      console.log('reverse table', this.reverseTranslation.toString());
+      console.log('operation is done.');
       let used = [] as any[];
       for(let index = 0; index < this.rowCount; ++index) {
         if(used.includes(this.reverseTranslation[index])) {
-        //  console.log('translation', this.translation.toString());
-        //  console.log('reverse translation',this.reverseTranslation.toString());
-          //throw Error('INDEXED TWICE!!!! ' + index);
+          console.log('translation', this.translation.toString());
+          console.log('reverse translation',this.reverseTranslation.toString());
+          throw Error('INDEXED TWICE!!!! ' + index);
         } else {
           used.push(this.reverseTranslation[index]);
         }
@@ -54,9 +60,9 @@ export class TranslatedTableModel extends TableModel {
       used = [] as any[];
       for(let index = 0; index < this.rowCount; ++index) {
         if(used.includes(this.translation[index])) {
-        //  console.log('translation', this.translation.toString());
-        //  console.log('reverse translation',this.reverseTranslation.toString());
-          //throw Error('INDEXED TWICE!!!! Reversed Table! ' + index);
+          console.log('translation', this.translation.toString());
+          console.log('reverse translation',this.reverseTranslation.toString());
+          throw Error('INDEXED TWICE!!!! Reversed Table! ' + index);
         } else {
           used.push(this.translation[index]);
         }
@@ -84,6 +90,7 @@ export class TranslatedTableModel extends TableModel {
     }
     this.beginTransaction();
     this.move(source, destination);
+    console.log('move', source, destination);
     this.operations.push(new MoveRowOperation(source, destination));
     this.endTransaction();
   }
@@ -168,20 +175,14 @@ export class TranslatedTableModel extends TableModel {
   private rowRemoved(operation: RemoveRowOperation) {
     this.beginTransaction();
     const reverseIndex = this.reverseTranslation[operation.index];
-    this.shift(-1, operation.index, reverseIndex);
+    this.removeShift(-1, operation.index, reverseIndex);
     this.translation.splice(reverseIndex, 1);
     this.reverseTranslation.splice(operation.index, 1);
     this.operations.push(new RemoveRowOperation(reverseIndex, operation.row));
-    //console.log('translation ', this.translation.toString());
-    //console.log('reversed translation ', this.reverseTranslation.toString());
-//    console.log('after splice shift!');
     this.endTransaction();
   }
 
-  private shift(amount: number, rowIndex: number, reverseIndex: number) {
-    //console.log('translation ', this.translation.toString());
-    //console.log('reversed translation ', this.reverseTranslation.toString());
-    //console.log('start shift!');
+  private removeShift(amount: number, rowIndex: number, reverseIndex: number) {
     const start = (() => {
       if(reverseIndex < rowIndex) {
         return reverseIndex;
@@ -189,18 +190,35 @@ export class TranslatedTableModel extends TableModel {
         return rowIndex;
       }
     })();
-//    console.log('start', start, 'amount', amount );
+  //  console.log('ammount', amount, 'start', start, 'row', rowIndex, 'reverse', reverseIndex);
     const trans = this.translation.slice();
     const reverse = this.reverseTranslation.slice();
     for(let index = start; index < this.translation.length; ++index) {
-      if(index >= rowIndex) {
+      if(index > rowIndex) {
         this.translation[reverse[index]] += amount;
       }
-      this.reverseTranslation[trans[index]] += amount;
+      if(index > reverseIndex) {
+        this.reverseTranslation[trans[index]] += amount;
+     }
+  }
+  }
+
+  private shift(amount: number, rowIndex: number, reverseIndex: number) {
+    const start = (() => {
+      if(reverseIndex < rowIndex) {
+        return reverseIndex;
+      } else {
+        return rowIndex;
+      }
+    })();
+    for(let index = start; index < this.translation.length; ++index) {
+      if(index >= rowIndex) {
+        this.translation[this.reverseTranslation[index]] += amount;
+      }
+      if(this.reverseTranslation[index] >= reverseIndex) {
+        this.reverseTranslation[index] += amount;
+      }
     }
-    //console.log('translation ', this.translation.toString());
-    //console.log('reversed translation ', this.reverseTranslation.toString());
-    //console.log('end shift!');
   }
 
   private updateRow(operation: UpdateValueOperation) {

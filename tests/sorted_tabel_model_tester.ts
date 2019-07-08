@@ -120,10 +120,12 @@ export class SortedTableModelTester {
     const orders = [new ColumnOrder(0, SortOrder.ASCENDING)];
     const sortedTable = new SortedTableModel(model, comp, orders);
     model.addRow([9]);
+    console.log('beep');
     Expect(sortedTable.get(0, 0)).toEqual(1);
     Expect(sortedTable.get(1, 0)).toEqual(6);
     Expect(sortedTable.get(2, 0)).toEqual(7);
     Expect(sortedTable.get(3, 0)).toEqual(9);
+    console.log('beep');
     Expect(sortedTable.rowCount).toEqual(4);
     model.addRow([1]);
     Expect(sortedTable.get(0, 0)).toEqual(1);
@@ -140,7 +142,9 @@ export class SortedTableModelTester {
     Expect(sortedTable.get(4, 0)).toEqual(9);
     Expect(sortedTable.get(5, 0)).toEqual(10);
     Expect(sortedTable.rowCount).toEqual(6);
+    console.log('BEFORE IT ALL GOES TO HELL');
     model.addRow([5], 3);
+    console.log('ALL GOOD');
     Expect(sortedTable.get(0, 0)).toEqual(1);
     Expect(sortedTable.get(1, 0)).toEqual(1);
     Expect(sortedTable.get(2, 0)).toEqual(5);
@@ -148,6 +152,7 @@ export class SortedTableModelTester {
     Expect(sortedTable.get(4, 0)).toEqual(7);
     Expect(sortedTable.get(5, 0)).toEqual(9);
     Expect(sortedTable.get(6, 0)).toEqual(10);
+    console.log('beep');
     Expect(sortedTable.rowCount).toEqual(7);
   }
 

@@ -230,6 +230,7 @@ export class TranslatedTableModelTester {
     model.addRow([5], 0);
     Expect(signalsReceived).toEqual(3);
     listener.unlisten();
+    console.log('after adddddd ', translatedTable);
   }
 
   /** Tests signals sent when a row is removed. */
@@ -315,7 +316,7 @@ export class TranslatedTableModelTester {
     Expect(translatedTable.get(8, 0)).toEqual(4);
     Expect(translatedTable.get(9, 0)).toEqual(3);
     model.removeRow(6);
-  // console.log('after first remove ', translatedTable);
+  //  console.log('after first remove ', translatedTable);
     Expect(translatedTable.get(0, 0)).toEqual(7);
     Expect(translatedTable.get(1, 0)).toEqual(9);
     Expect(translatedTable.get(2, 0)).toEqual(0);
@@ -326,7 +327,7 @@ export class TranslatedTableModelTester {
     Expect(translatedTable.get(7, 0)).toEqual(4);
     Expect(translatedTable.get(8, 0)).toEqual(3);
     model.removeRow(1);
-   // console.log('after second remove ', translatedTable);
+//    console.log('after second remove ', translatedTable);
     Expect(translatedTable.get(0, 0)).toEqual(7);
     Expect(translatedTable.get(1, 0)).toEqual(9);
     Expect(translatedTable.get(2, 0)).toEqual(0);
