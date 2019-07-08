@@ -41,6 +41,9 @@ export class TranslatedTableModel extends TableModel {
   //  console.log('reverse table', this.reverseTranslation.toString());
    // console.log('operation is done.');
     if(this.transactionCount === 0) {
+      console.log('translation', this.translation.toString());
+      console.log('reverse translation',this.reverseTranslation.toString());
+      console.log('current table');
       let used = [] as any[];
       for(let index = 0; index < this.rowCount; ++index) {
         if(used.includes(this.reverseTranslation[index])) {
@@ -165,7 +168,7 @@ export class TranslatedTableModel extends TableModel {
   private rowRemoved(operation: RemoveRowOperation) {
     this.beginTransaction();
     const reverseIndex = this.reverseTranslation[operation.index];
-    this.removeShift(-1, operation.index, reverseIndex);
+    this.shift(-1, operation.index, reverseIndex);
     this.translation.splice(reverseIndex, 1);
     this.reverseTranslation.splice(operation.index, 1);
     this.operations.push(new RemoveRowOperation(reverseIndex, operation.row));

@@ -38,8 +38,8 @@ const someStyle = {
 };
 
 function changeValues() {
-  const rowsToChange = Math.floor(Math.random() * model.rowCount);
-  for(let i = 0; i < 1; ++i) {
+  const rowsToChange = Math.floor(Math.random() * 5);
+  for(let i = 0; i < rowsToChange; ++i) {
     console.log('about to add');
     const someRow = Math.floor(Math.random() * model.rowCount);
     const someColumn = Math.floor(Math.random() * model.columnCount);
@@ -51,7 +51,7 @@ function changeValues() {
   }
 }
 
-setInterval(changeValues, 5000);
+setInterval(changeValues, 500);
 
 ReactDOM.render(
   <TableView model={model} labels={header} style={someStyle} activeWidth={10}/>,
