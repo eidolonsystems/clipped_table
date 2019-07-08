@@ -30,9 +30,6 @@ export class TranslatedTableModel extends TableModel {
   public beginTransaction(): void {
     if(this.transactionCount === 0) {
       this.operations = [];
-    console.log('table', this.translation.toString());
-      console.log('reverse table', this.reverseTranslation.toString());
-      console.log('operation is done.');
     }
     ++this.transactionCount;
   }
@@ -44,9 +41,6 @@ export class TranslatedTableModel extends TableModel {
   //  console.log('reverse table', this.reverseTranslation.toString());
    // console.log('operation is done.');
     if(this.transactionCount === 0) {
-      console.log('table', this.translation.toString());
-      console.log('reverse table', this.reverseTranslation.toString());
-      console.log('operation is done.');
       let used = [] as any[];
       for(let index = 0; index < this.rowCount; ++index) {
         if(used.includes(this.reverseTranslation[index])) {
@@ -90,7 +84,6 @@ export class TranslatedTableModel extends TableModel {
     }
     this.beginTransaction();
     this.move(source, destination);
-    console.log('move', source, destination);
     this.operations.push(new MoveRowOperation(source, destination));
     this.endTransaction();
   }
@@ -124,10 +117,7 @@ export class TranslatedTableModel extends TableModel {
       if(operation instanceof AddRowOperation) {
         this.rowAdded(operation);
       } else if(operation instanceof RemoveRowOperation) {
-      //  console.log('tt: removed row op started');
-      //  console.log('removing', operation.index);
         this.rowRemoved(operation);
-      //  console.log('tt: removed row op ended');
       } else if(operation instanceof UpdateValueOperation) {
         this.updateRow(operation);
       } else {
@@ -190,7 +180,6 @@ export class TranslatedTableModel extends TableModel {
         return rowIndex;
       }
     })();
-  //  console.log('ammount', amount, 'start', start, 'row', rowIndex, 'reverse', reverseIndex);
     const trans = this.translation.slice();
     const reverse = this.reverseTranslation.slice();
     for(let index = start; index < this.translation.length; ++index) {
@@ -200,7 +189,7 @@ export class TranslatedTableModel extends TableModel {
       if(index > reverseIndex) {
         this.reverseTranslation[trans[index]] += amount;
      }
-  }
+    }
   }
 
   private shift(amount: number, rowIndex: number, reverseIndex: number) {
@@ -211,13 +200,15 @@ export class TranslatedTableModel extends TableModel {
         return rowIndex;
       }
     })();
+    const trans = this.translation.slice();
+    const reverse = this.reverseTranslation.slice();
     for(let index = start; index < this.translation.length; ++index) {
       if(index >= rowIndex) {
-        this.translation[this.reverseTranslation[index]] += amount;
+        this.translation[reverse[index]] += amount;
       }
-      if(this.reverseTranslation[index] >= reverseIndex) {
-        this.reverseTranslation[index] += amount;
-      }
+      if(index >= reverseIndex) {
+        this.reverseTranslation[trans[index]] += amount;
+     }
     }
   }
 

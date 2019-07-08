@@ -141,7 +141,6 @@ export class SortedTableModel extends TableModel {
         this.operations.push(
           new RemoveRowOperation(operation.index, operation.row));
       } else if(operation instanceof UpdateValueOperation) {
-     //   console.log('update thing!');
         this.rowUpdated(operation);
       }
     }
@@ -162,7 +161,6 @@ export class SortedTableModel extends TableModel {
         }
       }
     }
-    console.log('SORTED!!!');
   }
 
   private compareRows(row1: number, row2: number) {
