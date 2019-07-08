@@ -186,7 +186,7 @@ export class TranslatedTableModelTester {
     Expect(translatedTable.get(2, 1)).toEqual(1);
     Expect(translatedTable.get(3, 0)).toEqual(3);
     Expect(translatedTable.get(3, 1)).toEqual(3);
-  } //should be gooood
+  }
 
    /** Tests signals when value is updated. */
   @Test()
