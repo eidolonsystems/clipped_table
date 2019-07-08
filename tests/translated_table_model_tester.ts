@@ -120,10 +120,10 @@ export class TranslatedTableModelTester {
     model3.addRow([7]);
     const translatedTable3 = new TranslatedTableModel(model3);
     translatedTable3.moveRow(1, 3);
-    Expect(translatedTable2.get(0, 0)).toEqual(1);
-    Expect(translatedTable2.get(1, 0)).toEqual(5);
-    Expect(translatedTable2.get(2, 0)).toEqual(7);
-    Expect(translatedTable2.get(3, 0)).toEqual(3);
+    Expect(translatedTable3.get(0, 0)).toEqual(1);
+    Expect(translatedTable3.get(1, 0)).toEqual(5);
+    Expect(translatedTable3.get(2, 0)).toEqual(7);
+    Expect(translatedTable3.get(3, 0)).toEqual(3);
     model3.addRow([0]);
     Expect(translatedTable3.get(0, 0)).toEqual(1);
     Expect(translatedTable3.get(1, 0)).toEqual(5);
