@@ -30,9 +30,9 @@ export class TranslatedTableModel extends TableModel {
   public beginTransaction(): void {
     if(this.transactionCount === 0) {
       this.operations = [];
-      console.log('table', this.translation.toString());
+    console.log('table', this.translation.toString());
       console.log('reverse table', this.reverseTranslation.toString());
-      console.log('begin.');
+      console.log('operation is done.');
     }
     ++this.transactionCount;
   }
