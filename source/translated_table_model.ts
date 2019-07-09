@@ -150,21 +150,15 @@ export class TranslatedTableModel extends TableModel {
   }
 
   private shift(amount: number, rowIndex: number, reverseIndex: number) {
-    const start = (() => {
-      if(reverseIndex < rowIndex) {
-        return reverseIndex;
-      } else {
-        return rowIndex;
-      }
-    })();
-    const trans = this.translation.slice();
-    const reverse = this.reverseTranslation.slice();
+    const start = Math.min(reverseIndex, rowIndex);
+    const trans = this.translation.slice(start);
+    const reverse = this.reverseTranslation.slice(start);
     for(let index = start; index < this.translation.length; ++index) {
       if(index >= rowIndex) {
-        this.translation[reverse[index]] += amount;
+        this.translation[reverse[index - start]] += amount;
       }
       if(index >= reverseIndex) {
-        this.reverseTranslation[trans[index]] += amount;
+        this.reverseTranslation[trans[index - start]] += amount;
      }
     }
   }
