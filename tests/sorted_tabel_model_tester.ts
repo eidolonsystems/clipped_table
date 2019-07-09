@@ -212,4 +212,24 @@ export class SortedTableModelTester {
     Expect(signalsReceived).toEqual(2);
     listener.unlisten();
   }
+
+  @Test()
+  public testManyAdds(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0, 8]);
+    model.addRow([1, 4]);
+    const orders = [new ColumnOrder(1, SortOrder.ASCENDING)];
+    const comp = new Comparator();
+    const sortedTable = new SortedTableModel(model, comp, orders);
+    model.addRow([2, 136], 0);
+    model.addRow([3, 102], 1);
+    model.addRow([4, 170], 2);
+    model.addRow([5, 155], 1);
+    Expect(sortedTable.get(0, 1)).toEqual(4);
+    Expect(sortedTable.get(1, 1)).toEqual(8);
+    Expect(sortedTable.get(2, 1)).toEqual(102);
+    Expect(sortedTable.get(3, 1)).toEqual(136);
+    Expect(sortedTable.get(4, 1)).toEqual(155);
+    Expect(sortedTable.get(5, 1)).toEqual(170);
+  }
 }
