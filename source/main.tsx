@@ -7,7 +7,9 @@ const model = new ArrayTableModel();
 for(let row = 0; row < 8; ++row) {
   const r = [];
   for(let column = 0; column < 4; ++column) {
-    if(column === 2 || column === 3 ) {
+    if(column === 0) {
+      r.push(row);
+    } else if(column === 2 || column === 3) {
       r.push(Math.floor(Math.random() * 10));
     } else {
       r.push(Math.floor(Math.random() * 50));
@@ -40,18 +42,18 @@ const someStyle = {
 function changeValues() {
   const rowsToChange = Math.floor(Math.random() * 5);
   for(let i = 0; i < rowsToChange; ++i) {
-    console.log('about to add');
+    const coinFlip = Math.floor(Math.random() * 5);
     const someRow = Math.floor(Math.random() * model.rowCount);
-    const someColumn = Math.floor(Math.random() * model.columnCount);
-    const num = Math.floor(Math.random() * 10) + 60;
-    console.log('adding: ', someRow, 'to', model.rowCount);
-    model.addRow([num, num, num, num], someRow);
-    console.log('adding: ', someRow, 'to', model.rowCount);
-    // model.removeRow(someRow);
+    if(coinFlip === 0) {
+      model.removeRow(someRow);
+    } else {
+      const num = Math.floor(Math.random() * 50) + 60;
+      model.addRow([model.rowCount, num, num, num], someRow);
+    }
   }
 }
 
-setInterval(changeValues, 500);
+setInterval(changeValues, 5000);
 
 ReactDOM.render(
   <TableView model={model} labels={header} style={someStyle} activeWidth={10}/>,
