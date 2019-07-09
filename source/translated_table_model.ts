@@ -150,12 +150,12 @@ export class TranslatedTableModel extends TableModel {
   }
 
   private shift(amount: number, rowIndex: number, reverseIndex: number) {
-    for(let index = 0; index < this.translation.length; ++index) {
-      if(this.translation[index] >= rowIndex) {
-        this.translation[index] += amount;
+    for(let i = 0; i < this.translation.length; ++i) {
+      if(this.translation[i] >= rowIndex) {
+        this.translation[i] += amount;
       }
-      if(this.reverseTranslation[index] >= reverseIndex) {
-        this.reverseTranslation[index] += amount;
+      if(this.reverseTranslation[i] >= reverseIndex) {
+        this.reverseTranslation[i] += amount;
      }
     }
   }
