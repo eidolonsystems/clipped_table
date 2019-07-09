@@ -47,7 +47,7 @@ function changeValues() {
     if(coinFlip === 0) {
       model.removeRow(someRow);
     } else {
-      const num = Math.floor(Math.random() * 50) + 60;
+      const num = Math.floor(Math.random() * 90) + 100;
       model.addRow([model.rowCount, num, num, num], someRow);
     }
   }
