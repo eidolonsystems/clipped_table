@@ -4,7 +4,7 @@ import { ArrayTableModel } from './array_table_model';
 import { TableView } from './table_view';
 
 const model = new ArrayTableModel();
-for(let row = 0; row < 8; ++row) {
+for(let row = 0; row < 100; ++row) {
   const r = [];
   for(let column = 0; column < 4; ++column) {
     if(column === 0) {
@@ -40,9 +40,9 @@ const someStyle = {
 };
 
 function changeValues() {
-  const rowsToChange = Math.floor(Math.random() * 5);
+  const rowsToChange = Math.floor(Math.random() * model.rowCount);
+  const coinFlip = Math.floor(Math.random() * 5);
   for(let i = 0; i < rowsToChange; ++i) {
-    const coinFlip = Math.floor(Math.random() * 5);
     const someRow = Math.floor(Math.random() * model.rowCount);
     if(coinFlip === 0) {
       model.removeRow(someRow);

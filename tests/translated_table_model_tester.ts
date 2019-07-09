@@ -139,8 +139,8 @@ export class TranslatedTableModelTester {
     model.addRow([5, 6]);
     model.addRow([7, 8]);
     const translatedTable = new TranslatedTableModel(model);
-    translatedTable.moveRow(2, 0); // ????
-    model.removeRow(1); // ??????
+    translatedTable.moveRow(2, 0);
+    model.removeRow(1);
     model.get(0, 0);
     translatedTable.get(0, 0);
     Expect(translatedTable.get(0, 0)).toEqual(5);
