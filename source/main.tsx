@@ -7,7 +7,9 @@ const model = new ArrayTableModel();
 for(let row = 0; row < 100; ++row) {
   const r = [];
   for(let column = 0; column < 4; ++column) {
-    if(column === 2 || column === 3 ) {
+    if(column === 0) {
+      r.push(row);
+    } else if(column === 2 || column === 3) {
       r.push(Math.floor(Math.random() * 10));
     } else {
       r.push(Math.floor(Math.random() * 50));
@@ -31,17 +33,23 @@ const someStyle = {
   },
   td: {
     border: '2px solid #000000',
-    padding: '30px',
+    paddingLeft: '30px',
+    paddingRight: '30px',
     color: '#4b23a0'
   }
 };
 
 function changeValues() {
   const rowsToChange = Math.floor(Math.random() * model.rowCount);
+  const coinFlip = Math.floor(Math.random() * 5);
   for(let i = 0; i < rowsToChange; ++i) {
     const someRow = Math.floor(Math.random() * model.rowCount);
-    const someColumn = Math.floor(Math.random() * model.columnCount);
-    model.set(someRow, someColumn, Math.floor(Math.random() * 10));
+    if(coinFlip === 0) {
+      model.removeRow(someRow);
+    } else {
+      const num = Math.floor(Math.random() * 90) + 100;
+      model.addRow([model.rowCount, num, num, num], someRow);
+    }
   }
 }
 
