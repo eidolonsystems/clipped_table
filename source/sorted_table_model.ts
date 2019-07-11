@@ -210,15 +210,11 @@ export class SortedTableModel extends TableModel {
       return start;
     }
     const mid = Math.floor((start + end) / 2);
-    if(start < mid) {
-      if(this.compareRows(mid - 1, index) > 0) {
-        return(this.findIndex(start, mid - 1, index));
-      }
-    }
-    if(mid < end) {
-      if(this.compareRows(index, mid) > 0) {
-        return(this.findIndex(mid + 1, end, index));
-      }
+    const compare  = this.compareRows(mid, index);
+    if(compare > 0) {
+      return(this.findIndex(start, mid - 1, index));
+    } else if(compare < 0) {
+      return(this.findIndex(mid + 1, end, index));
     }
     return mid;
   }
