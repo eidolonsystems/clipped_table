@@ -44,17 +44,20 @@ function changeValues() {
   const coinFlip = Math.floor(Math.random() * 5);
   for(let i = 0; i < rowsToChange; ++i) {
     const someRow = Math.floor(Math.random() * model.rowCount);
-    if(false) {
+    if(model.rowCount > 200 && coinFlip % 5 === 0) {
+      console.log('removing!');
       model.removeRow(someRow);
+      console.log('removed!');
     } else {
+      console.log('adding!');
       const num = Math.floor(Math.random() * 90) + 100;
       model.addRow([model.rowCount, num, num, num], someRow);
-      console.log('adding', someRow, 'at', model.rowCount);
+      console.log('adding', model.rowCount, 'at',someRow);
     }
   }
 }
 
-setInterval(changeValues, 5000);
+setInterval(changeValues, 500);
 
 ReactDOM.render(
   <TableView model={model} labels={header} style={someStyle} activeWidth={10}/>,

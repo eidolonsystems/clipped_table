@@ -232,4 +232,22 @@ export class SortedTableModelTester {
     Expect(sortedTable.get(4, 1)).toEqual(155);
     Expect(sortedTable.get(5, 1)).toEqual(170);
   }
+
+  @Test()
+  public infiniteLoop(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0, 7]);
+    model.addRow([1, 4]);
+    const orders = [new ColumnOrder(1, SortOrder.ASCENDING)];
+    const comp = new Comparator();
+    const sortedTable = new SortedTableModel(model, comp, orders);
+    model.addRow([2, 153], 0);
+    model.addRow([3, 114], 0);
+    model.addRow([4, 158], 2);
+    model.addRow([5, 122], 3);
+    model.addRow([6, 117], 0);
+    model.addRow([7, 119], 2);
+    model.addRow([8, 170], 3);
+    model.addRow([9, 107], 0);
+  }
 }

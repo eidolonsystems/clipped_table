@@ -197,6 +197,7 @@ export class SortedTableModel extends TableModel {
 
   private findIndex(start: number, end: number, index: number) {
     while(start !== end) {
+      //console.log('hopeing to find');
       const middle = Math.floor((start + end) / 2);
       if(this.compareRows(middle, index) > 0) {
         end = middle - 1;
