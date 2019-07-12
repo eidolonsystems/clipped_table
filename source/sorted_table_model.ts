@@ -178,45 +178,36 @@ export class SortedTableModel extends TableModel {
 
   private rowAdded(operation: AddRowOperation) {
     this.beginTransaction();
-    const rowAddedIndex = operation.index;
-    const leftIndex = (() => {
-      if(rowAddedIndex === 0) {
-        return rowAddedIndex;
+    const sortedIndex = (() => {
+      if(operation.index != 0 &&
+          this.compareRows(operation.index, operation.index - 1) < 0) {
+        return this.findIndex(0, operation.index - 1, operation.index);
+      } else if(operation.index != this.rowCount - 1 &&
+          this.compareRows(operation.index, operation.index + 1) > 0) {
+        return this.findIndex(operation.index + 1, this.rowCount - 1,
+          operation.index);
       } else {
-        return rowAddedIndex - 1;
+        return operation.index;
       }
     })();
-    const rightIndex = (() => {
-      if(rowAddedIndex === this.translatedTable.rowCount - 1 ) {
-        return rowAddedIndex;
-      } else {
-        return rowAddedIndex + 1;
-      }
-    })();
-    let destination = rowAddedIndex;
-    if(this.compareRows(leftIndex, rowAddedIndex) > 0) {
-      destination = this.findIndex(0, leftIndex, rowAddedIndex);
-    } else if(this.compareRows(rowAddedIndex, rightIndex) > 0) {
-      destination = this.findIndex(rightIndex,
-        this.translatedTable.rowCount - 1, rowAddedIndex);
-    }
-    this.translatedTable.moveRow(rowAddedIndex, destination);
-    this.operations.push(new AddRowOperation(destination, operation.row));
+    this.translatedTable.moveRow(operation.index, sortedIndex);
+    this.operations.push(new AddRowOperation(sortedIndex, operation.row));
     this.endTransaction();
   }
 
-  private findIndex(start: number, end: number, index: number): number {
-    if(start === end) {
-      return start;
+  private findIndex(start: number, end: number, index: number) {
+    while(start !== end) {
+      const middle = Math.floor((start + end) / 2);
+      if(this.compareRows(middle, index) > 0) {
+        end = middle - 1;
+      } else {
+        start = middle + 1;
+      }
     }
-    const mid = Math.floor((start + end) / 2);
-    const compare  = this.compareRows(mid, index);
-    if(compare > 0) {
-      return(this.findIndex(start, mid - 1, index));
-    } else if(compare < 0) {
-      return(this.findIndex(mid + 1, end, index));
+    if(index < start && this.compareRows(index, start) < 0) {
+      --start;
     }
-    return mid;
+    return start;
   }
 
   private translatedTable: TranslatedTableModel;
