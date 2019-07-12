@@ -156,7 +156,7 @@ export class TranslatedTableModel extends TableModel {
       }
       if(this.reverseTranslation[i] >= reverseIndex) {
         this.reverseTranslation[i] += amount;
-     }
+      }
     }
   }
 
