@@ -41,18 +41,18 @@ const someStyle = {
 
 function changeValues() {
   const rowsToChange = Math.floor(Math.random() * model.rowCount / 2);
-  const coinFlip = Math.floor(Math.random() * 4);
+  const diceRoll = Math.floor(Math.random() * 4);
   for(let i = 0; i < rowsToChange; ++i) {
-    const someRow = Math.floor(Math.random() * model.rowCount);
-    if(model.rowCount > 500) {
-      model.removeRow(someRow);
-    } else if(coinFlip < 3) {
-      const someValue = Math.floor(Math.random() * model.rowCount) + 0.5;
-      const someColumn = Math.floor(Math.random() * 5);
-      model.set(someRow, someColumn, someValue);
+    const testRow = Math.floor(Math.random() * model.rowCount);
+    if(model.rowCount > 500 || diceRoll < 1) {
+      model.removeRow(testRow);
+    } else if(diceRoll < 3) {
+      const testValue = Math.floor(Math.random() * model.rowCount) + 0.5;
+      const testColumn = Math.floor(Math.random() * 5);
+      model.set(testRow, testColumn, testValue);
     } else {
       const num = Math.floor(Math.random() * 90) + 100;
-      model.addRow([model.rowCount, num, num, num], someRow);
+      model.addRow([model.rowCount, num, num, num], testRow);
     }
   }
 }
