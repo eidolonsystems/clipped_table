@@ -183,10 +183,10 @@ export class SortedTableModel extends TableModel {
     const sortedIndex = (() => {
       if(operation.index !== 0 &&
           this.compareRows(operation.index, operation.index - 1) < 0) {
-        return this.findInStart(0, operation.index - 1, operation.index);
+        return this.findInHead(0, operation.index - 1, operation.index);
       } else if(operation.index !== this.rowCount - 1 &&
           this.compareRows(operation.index, operation.index + 1) > 0) {
-        return this.findInEnd(operation.index + 1, this.rowCount - 1,
+        return this.findInTail(operation.index + 1, this.rowCount - 1,
           operation.index);
       } else {
         return operation.index;
@@ -202,10 +202,10 @@ export class SortedTableModel extends TableModel {
     const sortedIndex = (() => {
       if(operation.row !== 0 &&
           this.compareRows(operation.row , operation.row  - 1) < 0) {
-        return this.findInStart(0, operation.row  - 1, operation.row );
+        return this.findInHead(0, operation.row  - 1, operation.row );
       } else if(operation.row  !== this.rowCount - 1 &&
           this.compareRows(operation.row , operation.row  + 1) > 0) {
-        return this.findInEnd(operation.row  + 1, this.rowCount - 1,
+        return this.findInTail(operation.row  + 1, this.rowCount - 1,
           operation.row );
       } else {
         return operation.row ;
@@ -217,7 +217,7 @@ export class SortedTableModel extends TableModel {
     this.endTransaction();
   }
 
-  private findInStart(start: number, end: number, index: number) {
+  private findInHead(start: number, end: number, index: number) {
     while(start < end) {
       const middle = Math.floor((start + end) / 2);
       if(this.compareRows(index, middle) < 0) {
@@ -229,7 +229,7 @@ export class SortedTableModel extends TableModel {
     return end;
   }
 
-  private findInEnd(start: number, end: number, index: number) {
+  private findInTail(start: number, end: number, index: number) {
     while(start < end) {
       const middle = Math.ceil((start + end) / 2);
       if(this.compareRows(middle, index) < 0) {
