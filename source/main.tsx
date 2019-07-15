@@ -44,7 +44,7 @@ function changeValues() {
   const coinFlip = Math.floor(Math.random() * 4);
   for(let i = 0; i < rowsToChange; ++i) {
     const someRow = Math.floor(Math.random() * model.rowCount);
-    if(model.rowCount > 200 && coinFlip < 1) {
+    if(model.rowCount > 500) {
       model.removeRow(someRow);
     } else if(coinFlip < 2) {
       const someValue = Math.floor(Math.random() * model.rowCount) + 0.5;
