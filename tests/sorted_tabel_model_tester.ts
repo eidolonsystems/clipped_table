@@ -342,5 +342,4 @@ export class SortedTableModelTester {
     Expect(sortedTable2.get(3, 1)).toEqual(-40);
     Expect(sortedTable2.get(4, 1)).toEqual(1);
   }
- 
 }

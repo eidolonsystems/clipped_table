@@ -1,7 +1,8 @@
 import * as Kola from 'kola-signals';
 import { Comparator } from './comparator';
 import { TableModel } from './table_model';
-import { AddRowOperation, Operation, RemoveRowOperation, UpdateValueOperation } from './operations';
+import { AddRowOperation, Operation, RemoveRowOperation, UpdateValueOperation }
+  from './operations';
 import { TranslatedTableModel } from './translated_table_model';
 
 /** Specifies whether to sort in ascending order or descending order. */
