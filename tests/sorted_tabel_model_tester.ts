@@ -330,6 +330,17 @@ export class SortedTableModelTester {
     Expect(sortedTable2.get(2, 1)).toEqual(2);
     Expect(sortedTable2.get(3, 1)).toEqual(-40);
     Expect(sortedTable2.get(4, 1)).toEqual(1);
+    model.set(3, 0, -35);
+    Expect(sortedTable2.get(0, 0)).toEqual(-35);
+    Expect(sortedTable2.get(1, 0)).toEqual(1);
+    Expect(sortedTable2.get(2, 0)).toEqual(7);
+    Expect(sortedTable2.get(3, 0)).toEqual(20);
+    Expect(sortedTable2.get(4, 0)).toEqual(30);
+    Expect(sortedTable2.get(0, 1)).toEqual(3);
+    Expect(sortedTable2.get(1, 1)).toEqual(0);
+    Expect(sortedTable2.get(2, 1)).toEqual(2);
+    Expect(sortedTable2.get(3, 1)).toEqual(-40);
+    Expect(sortedTable2.get(4, 1)).toEqual(1);
   }
  
 }
