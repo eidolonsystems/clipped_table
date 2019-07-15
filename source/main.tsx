@@ -46,7 +46,7 @@ function changeValues() {
     const someRow = Math.floor(Math.random() * model.rowCount);
     if(model.rowCount > 500) {
       model.removeRow(someRow);
-    } else if(coinFlip < 2) {
+    } else if(coinFlip < 3) {
       const someValue = Math.floor(Math.random() * model.rowCount) + 0.5;
       const someColumn = Math.floor(Math.random() * 5);
       model.set(someRow, someColumn, someValue);
