@@ -198,21 +198,21 @@ export class SortedTableModel extends TableModel {
 
   private findSortedIndex(source: number): number {
     if(source !== 0 &&
-        this.compareRows(source , source - 1) < 0) {
-      return this.findInHead(0, source - 1, source );
+        this.compareRows(source, source - 1) < 0) {
+      return this.findInHead(0, source - 1, source);
     } else if(source !== this.rowCount - 1 &&
         this.compareRows(source, source + 1) > 0) {
       return this.findInTail(source + 1, this.rowCount - 1,
-        source );
+        source);
     } else {
       return source;
     }
   }
 
-  private findInHead(start: number, end: number, index: number) {
+  private findInHead(start: number, end: number, indexOfValue: number) {
     while(start < end) {
       const middle = Math.floor((start + end) / 2);
-      if(this.compareRows(index, middle) < 0) {
+      if(this.compareRows(indexOfValue, middle) < 0) {
         end = middle;
       } else {
         start = middle + 1;
@@ -221,10 +221,10 @@ export class SortedTableModel extends TableModel {
     return end;
   }
 
-  private findInTail(start: number, end: number, index: number) {
+  private findInTail(start: number, end: number, indexOfValue: number) {
     while(start < end) {
       const middle = Math.ceil((start + end) / 2);
-      if(this.compareRows(middle, index) < 0) {
+      if(this.compareRows(middle, indexOfValue) < 0) {
         start = middle;
       } else {
         end = middle - 1;
