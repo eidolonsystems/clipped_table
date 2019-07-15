@@ -249,5 +249,25 @@ export class SortedTableModelTester {
     model.addRow([7, 119], 2);
     model.addRow([8, 170], 3);
     model.addRow([9, 107], 0);
+    Expect(sortedTable.get(0, 0)).toEqual(1);
+    Expect(sortedTable.get(1, 0)).toEqual(0);
+    Expect(sortedTable.get(2, 0)).toEqual(9);
+    Expect(sortedTable.get(3, 0)).toEqual(3);
+    Expect(sortedTable.get(4, 0)).toEqual(6);
+    Expect(sortedTable.get(5, 0)).toEqual(7);
+    Expect(sortedTable.get(6, 0)).toEqual(5);
+    Expect(sortedTable.get(7, 0)).toEqual(2);
+    Expect(sortedTable.get(8, 0)).toEqual(4);
+    Expect(sortedTable.get(9, 0)).toEqual(8);
+    Expect(sortedTable.get(0, 1)).toEqual(4);
+    Expect(sortedTable.get(1, 1)).toEqual(7);
+    Expect(sortedTable.get(2, 1)).toEqual(107);
+    Expect(sortedTable.get(3, 1)).toEqual(114);
+    Expect(sortedTable.get(4, 1)).toEqual(117);
+    Expect(sortedTable.get(5, 1)).toEqual(119);
+    Expect(sortedTable.get(6, 1)).toEqual(122);
+    Expect(sortedTable.get(7, 1)).toEqual(153);
+    Expect(sortedTable.get(8, 1)).toEqual(158);
+    Expect(sortedTable.get(9, 1)).toEqual(170);
   }
 }

@@ -1,7 +1,7 @@
 import * as Kola from 'kola-signals';
 import { Comparator } from './comparator';
 import { TableModel } from './table_model';
-import { AddRowOperation, Operation, RemoveRowOperation } from './operations';
+import { AddRowOperation, Operation, RemoveRowOperation, UpdateValueOperation } from './operations';
 import { TranslatedTableModel } from './translated_table_model';
 
 /** Specifies whether to sort in ascending order or descending order. */
@@ -139,6 +139,8 @@ export class SortedTableModel extends TableModel {
       } else if(operation instanceof RemoveRowOperation) {
         this.operations.push(
           new RemoveRowOperation(operation.index, operation.row));
+      } else if(operation instanceof UpdateValueOperation) {
+        this.rowUpdated(operation);
       }
     }
     this.endTransaction();
@@ -192,6 +194,26 @@ export class SortedTableModel extends TableModel {
     })();
     this.translatedTable.moveRow(operation.index, sortedIndex);
     this.operations.push(new AddRowOperation(sortedIndex, operation.row));
+    this.endTransaction();
+  }
+
+  private rowUpdated(operation: UpdateValueOperation) {
+    this.beginTransaction();
+    const sortedIndex = (() => {
+      if(operation.row !== 0 &&
+          this.compareRows(operation.row , operation.row  - 1) < 0) {
+        return this.findInStart(0, operation.row  - 1, operation.row );
+      } else if(operation.row  !== this.rowCount - 1 &&
+          this.compareRows(operation.row , operation.row  + 1) > 0) {
+        return this.findInEnd(operation.row  + 1, this.rowCount - 1,
+          operation.row );
+      } else {
+        return operation.row ;
+      }
+    })();
+    this.translatedTable.moveRow(operation.row, sortedIndex);
+    this.operations.push(new UpdateValueOperation (
+      sortedIndex, operation.column, operation.previous, operation.current));
     this.endTransaction();
   }
 

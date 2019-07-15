@@ -4,7 +4,7 @@ import { ArrayTableModel } from './array_table_model';
 import { TableView } from './table_view';
 
 const model = new ArrayTableModel();
-for(let row = 0; row < 2; ++row) {
+for(let row = 0; row < 15; ++row) {
   const r = [];
   for(let column = 0; column < 4; ++column) {
     if(column === 0) {
@@ -40,12 +40,16 @@ const someStyle = {
 };
 
 function changeValues() {
-  const rowsToChange = 1;
-  const coinFlip = Math.floor(Math.random() * 5);
+  const rowsToChange = Math.floor(Math.random() * model.rowCount / 2);
+  const coinFlip = Math.floor(Math.random() * 4);
   for(let i = 0; i < rowsToChange; ++i) {
     const someRow = Math.floor(Math.random() * model.rowCount);
-    if(model.rowCount > 200 && coinFlip % 5 === 0) {
+    if(model.rowCount > 200 && coinFlip < 1) {
       model.removeRow(someRow);
+    } else if(coinFlip < 2) {
+      const someValue = Math.floor(Math.random() * model.rowCount) + 0.5;
+      const someColumn = Math.floor(Math.random() * 5);
+      model.set(someRow, someColumn, someValue);
     } else {
       const num = Math.floor(Math.random() * 90) + 100;
       model.addRow([model.rowCount, num, num, num], someRow);
@@ -53,7 +57,7 @@ function changeValues() {
   }
 }
 
-setInterval(changeValues, 5000);
+setInterval(changeValues, 2000);
 
 ReactDOM.render(
   <TableView model={model} labels={header} style={someStyle} activeWidth={10}/>,
