@@ -198,10 +198,10 @@ export class SortedTableModel extends TableModel {
 
   private findSortedIndex(source: number): number {
     if(source !== 0 &&
-        this.compareRows(source , source  - 1) < 0) {
-      return this.findInHead(0, source  - 1, source );
+        this.compareRows(source , source - 1) < 0) {
+      return this.findInHead(0, source - 1, source );
     } else if(source !== this.rowCount - 1 &&
-        this.compareRows(source, source  + 1) > 0) {
+        this.compareRows(source, source + 1) > 0) {
       return this.findInTail(source + 1, this.rowCount - 1,
         source );
     } else {
