@@ -180,18 +180,7 @@ export class SortedTableModel extends TableModel {
 
   private rowAdded(operation: AddRowOperation) {
     this.beginTransaction();
-    const sortedIndex = (() => {
-      if(operation.index !== 0 &&
-          this.compareRows(operation.index, operation.index - 1) < 0) {
-        return this.findInHead(0, operation.index - 1, operation.index);
-      } else if(operation.index !== this.rowCount - 1 &&
-          this.compareRows(operation.index, operation.index + 1) > 0) {
-        return this.findInTail(operation.index + 1, this.rowCount - 1,
-          operation.index);
-      } else {
-        return operation.index;
-      }
-    })();
+    const sortedIndex = this.findSortedIndex(operation.index);
     this.translatedTable.moveRow(operation.index, sortedIndex);
     this.operations.push(new AddRowOperation(sortedIndex, operation.row));
     this.endTransaction();
@@ -199,22 +188,24 @@ export class SortedTableModel extends TableModel {
 
   private rowUpdated(operation: UpdateValueOperation) {
     this.beginTransaction();
-    const sortedIndex = (() => {
-      if(operation.row !== 0 &&
-          this.compareRows(operation.row , operation.row  - 1) < 0) {
-        return this.findInHead(0, operation.row  - 1, operation.row );
-      } else if(operation.row  !== this.rowCount - 1 &&
-          this.compareRows(operation.row , operation.row  + 1) > 0) {
-        return this.findInTail(operation.row  + 1, this.rowCount - 1,
-          operation.row );
-      } else {
-        return operation.row ;
-      }
-    })();
+    const sortedIndex = this.findSortedIndex(operation.row);
     this.translatedTable.moveRow(operation.row, sortedIndex);
     this.operations.push(new UpdateValueOperation (
       sortedIndex, operation.column, operation.previous, operation.current));
     this.endTransaction();
+  }
+
+  private findSortedIndex(source: number): number {
+    if(source !== 0 &&
+        this.compareRows(source , source  - 1) < 0) {
+      return this.findInHead(0, source  - 1, source );
+    } else if(source !== this.rowCount - 1 &&
+        this.compareRows(source, source  + 1) > 0) {
+      return this.findInTail(source + 1, this.rowCount - 1,
+        source );
+    } else {
+      return source;
+    }
   }
 
   private findInHead(start: number, end: number, index: number) {
