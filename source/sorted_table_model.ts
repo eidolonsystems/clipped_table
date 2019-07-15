@@ -179,12 +179,12 @@ export class SortedTableModel extends TableModel {
   private rowAdded(operation: AddRowOperation) {
     this.beginTransaction();
     const sortedIndex = (() => {
-      if(operation.index != 0 &&
+      if(operation.index !== 0 &&
           this.compareRows(operation.index, operation.index - 1) < 0) {
-        return this.findIndex(0, operation.index - 1, operation.index);
-      } else if(operation.index != this.rowCount - 1 &&
+        return this.findInStart(0, operation.index - 1, operation.index);
+      } else if(operation.index !== this.rowCount - 1 &&
           this.compareRows(operation.index, operation.index + 1) > 0) {
-        return this.findIndex(operation.index + 1, this.rowCount - 1,
+        return this.findInEnd(operation.index + 1, this.rowCount - 1,
           operation.index);
       } else {
         return operation.index;
@@ -210,6 +210,32 @@ export class SortedTableModel extends TableModel {
     }
     return start;
   }
+
+  private findInStart(start: number, end: number, index: number) {
+    while(start < end) {
+      const middle = Math.floor((start + end) / 2);
+      if(this.compareRows(index, middle) < 0) {
+        end = middle;
+      } else {
+        start = middle + 1;
+      }
+    }
+    return end;
+  }
+
+  private findInEnd(start: number, end: number, index: number) {
+    while(start < end) {
+      const middle = Math.ceil((start + end) / 2);
+      if(this.compareRows(middle, index) < 0) {
+        start = middle;
+      } else {
+        end = middle - 1;
+      }
+    }
+    return start;
+  }
+
+
 
   private translatedTable: TranslatedTableModel;
   private comparator: Comparator;

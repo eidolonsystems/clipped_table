@@ -52,7 +52,7 @@ function changeValues() {
       console.log('adding!');
       const num = Math.floor(Math.random() * 90) + 100;
       model.addRow([model.rowCount, num, num, num], someRow);
-      console.log('adding', model.rowCount, 'at',someRow);
+      console.log('adding', model.rowCount, 'at',0);
     }
   }
 }
