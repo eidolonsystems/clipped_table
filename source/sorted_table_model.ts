@@ -1,7 +1,8 @@
 import * as Kola from 'kola-signals';
 import { Comparator } from './comparator';
+import { AddRowOperation, Operation, RemoveRowOperation, UpdateValueOperation }
+  from './operations';
 import { TableModel } from './table_model';
-import { AddRowOperation, Operation, RemoveRowOperation } from './operations';
 import { TranslatedTableModel } from './translated_table_model';
 
 /** Specifies whether to sort in ascending order or descending order. */
@@ -139,6 +140,8 @@ export class SortedTableModel extends TableModel {
       } else if(operation instanceof RemoveRowOperation) {
         this.operations.push(
           new RemoveRowOperation(operation.index, operation.row));
+      } else if(operation instanceof UpdateValueOperation) {
+        this.rowUpdated(operation);
       }
     }
     this.endTransaction();
@@ -178,49 +181,56 @@ export class SortedTableModel extends TableModel {
 
   private rowAdded(operation: AddRowOperation) {
     this.beginTransaction();
-    const rowAddedIndex = operation.index;
-    const leftIndex = (() => {
-      if(rowAddedIndex === 0) {
-        return rowAddedIndex;
-      } else {
-        return rowAddedIndex - 1;
-      }
-    })();
-    const rightIndex = (() => {
-      if(rowAddedIndex === this.translatedTable.rowCount - 1 ) {
-        return rowAddedIndex;
-      } else {
-        return rowAddedIndex + 1;
-      }
-    })();
-    let destination = rowAddedIndex;
-    if(this.compareRows(leftIndex, rowAddedIndex) > 0) {
-      destination = this.findIndex(0, leftIndex, rowAddedIndex);
-    } else if(this.compareRows(rowAddedIndex, rightIndex) > 0) {
-      destination = this.findIndex(rightIndex,
-        this.translatedTable.rowCount - 1, rowAddedIndex);
-    }
-    this.translatedTable.moveRow(rowAddedIndex, destination);
-    this.operations.push(new AddRowOperation(destination, operation.row));
+    const sortedIndex = this.findSortedIndex(operation.index);
+    this.translatedTable.moveRow(operation.index, sortedIndex);
+    this.operations.push(new AddRowOperation(sortedIndex, operation.row));
     this.endTransaction();
   }
 
-  private findIndex(start: number, end: number, index: number): number {
-    if(start === end) {
-      return start;
+  private rowUpdated(operation: UpdateValueOperation) {
+    this.beginTransaction();
+    const sortedIndex = this.findSortedIndex(operation.row);
+    this.translatedTable.moveRow(operation.row, sortedIndex);
+    this.operations.push(new UpdateValueOperation (
+      sortedIndex, operation.column, operation.previous, operation.current));
+    this.endTransaction();
+  }
+
+  private findSortedIndex(source: number): number {
+    if(source !== 0 &&
+        this.compareRows(source, source - 1) < 0) {
+      return this.findInHead(0, source - 1, source);
+    } else if(source !== this.rowCount - 1 &&
+        this.compareRows(source, source + 1) > 0) {
+      return this.findInTail(source + 1, this.rowCount - 1,
+        source);
+    } else {
+      return source;
     }
-    const mid = Math.floor((start + end) / 2);
-    if(start < mid) {
-      if(this.compareRows(mid - 1, index) > 0) {
-        return(this.findIndex(start, mid - 1, index));
+  }
+
+  private findInHead(start: number, end: number, indexOfValue: number) {
+    while(start < end) {
+      const middle = Math.floor((start + end) / 2);
+      if(this.compareRows(indexOfValue, middle) < 0) {
+        end = middle;
+      } else {
+        start = middle + 1;
       }
     }
-    if(mid < end) {
-      if(this.compareRows(index, mid) > 0) {
-        return(this.findIndex(mid + 1, end, index));
+    return end;
+  }
+
+  private findInTail(start: number, end: number, indexOfValue: number) {
+    while(start < end) {
+      const middle = Math.ceil((start + end) / 2);
+      if(this.compareRows(middle, indexOfValue) < 0) {
+        start = middle;
+      } else {
+        end = middle - 1;
       }
     }
-    return mid;
+    return start;
   }
 
   private translatedTable: TranslatedTableModel;

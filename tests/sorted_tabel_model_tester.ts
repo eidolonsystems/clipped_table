@@ -212,4 +212,134 @@ export class SortedTableModelTester {
     Expect(signalsReceived).toEqual(2);
     listener.unlisten();
   }
+
+  /** Tests multiple adds to middle to the table. */
+  @Test()
+  public testManyAdds(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0, 8]);
+    model.addRow([1, 4]);
+    const orders = [new ColumnOrder(1, SortOrder.ASCENDING)];
+    const comp = new Comparator();
+    const sortedTable = new SortedTableModel(model, comp, orders);
+    model.addRow([2, 136], 0);
+    model.addRow([3, 102], 1);
+    model.addRow([4, 170], 2);
+    model.addRow([5, 155], 1);
+    Expect(sortedTable.get(0, 1)).toEqual(4);
+    Expect(sortedTable.get(1, 1)).toEqual(8);
+    Expect(sortedTable.get(2, 1)).toEqual(102);
+    Expect(sortedTable.get(3, 1)).toEqual(136);
+    Expect(sortedTable.get(4, 1)).toEqual(155);
+    Expect(sortedTable.get(5, 1)).toEqual(170);
+  }
+
+  /** Tests that the add operation does not result in  a infinte loop. */
+  @Test()
+  public infiniteLoop(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0, 7]);
+    model.addRow([1, 4]);
+    const orders = [new ColumnOrder(1, SortOrder.ASCENDING)];
+    const comp = new Comparator();
+    const sortedTable = new SortedTableModel(model, comp, orders);
+    model.addRow([2, 153], 0);
+    model.addRow([3, 114], 0);
+    model.addRow([4, 158], 2);
+    model.addRow([5, 122], 3);
+    model.addRow([6, 117], 0);
+    model.addRow([7, 119], 2);
+    model.addRow([8, 170], 3);
+    model.addRow([9, 107], 0);
+    Expect(sortedTable.get(0, 0)).toEqual(1);
+    Expect(sortedTable.get(1, 0)).toEqual(0);
+    Expect(sortedTable.get(2, 0)).toEqual(9);
+    Expect(sortedTable.get(3, 0)).toEqual(3);
+    Expect(sortedTable.get(4, 0)).toEqual(6);
+    Expect(sortedTable.get(5, 0)).toEqual(7);
+    Expect(sortedTable.get(6, 0)).toEqual(5);
+    Expect(sortedTable.get(7, 0)).toEqual(2);
+    Expect(sortedTable.get(8, 0)).toEqual(4);
+    Expect(sortedTable.get(9, 0)).toEqual(8);
+    Expect(sortedTable.get(0, 1)).toEqual(4);
+    Expect(sortedTable.get(1, 1)).toEqual(7);
+    Expect(sortedTable.get(2, 1)).toEqual(107);
+    Expect(sortedTable.get(3, 1)).toEqual(114);
+    Expect(sortedTable.get(4, 1)).toEqual(117);
+    Expect(sortedTable.get(5, 1)).toEqual(119);
+    Expect(sortedTable.get(6, 1)).toEqual(122);
+    Expect(sortedTable.get(7, 1)).toEqual(153);
+    Expect(sortedTable.get(8, 1)).toEqual(158);
+    Expect(sortedTable.get(9, 1)).toEqual(170);
+  }
+
+  /** Tests the behavior when the table receives a row update signal. */
+  @Test()
+  public testReceiveUpdate(): void {
+    const model = new ArrayTableModel();
+    model.addRow([10, 0]);
+    model.addRow([-3, 1]);
+    model.addRow([7, 2]);
+    model.addRow([4, 3]);
+    model.addRow([20, 4]);
+    const sortedTable = new SortedTableModel(model);
+    Expect(sortedTable.get(0, 0)).toEqual(10);
+    Expect(sortedTable.get(1, 0)).toEqual(-3);
+    Expect(sortedTable.get(2, 0)).toEqual(7);
+    Expect(sortedTable.get(3, 0)).toEqual(4);
+    Expect(sortedTable.get(4, 0)).toEqual(20);
+    Expect(sortedTable.get(0, 1)).toEqual(0);
+    Expect(sortedTable.get(1, 1)).toEqual(1);
+    Expect(sortedTable.get(2, 1)).toEqual(2);
+    Expect(sortedTable.get(3, 1)).toEqual(3);
+    Expect(sortedTable.get(4, 1)).toEqual(4);
+    model.set(0, 0, 1);
+    Expect(sortedTable.rowCount).toEqual(5);
+    Expect(sortedTable.get(0, 0)).toEqual(1);
+    Expect(sortedTable.get(1, 0)).toEqual(-3);
+    Expect(sortedTable.get(2, 0)).toEqual(7);
+    Expect(sortedTable.get(3, 0)).toEqual(4);
+    Expect(sortedTable.get(4, 0)).toEqual(20);
+    Expect(sortedTable.get(0, 1)).toEqual(0);
+    Expect(sortedTable.get(1, 1)).toEqual(1);
+    Expect(sortedTable.get(2, 1)).toEqual(2);
+    Expect(sortedTable.get(3, 1)).toEqual(3);
+    Expect(sortedTable.get(4, 1)).toEqual(4);
+    const orders = [new ColumnOrder(0, SortOrder.ASCENDING)];
+    const comp = new Comparator();
+    const sortedTable2 = new SortedTableModel(model, comp, orders);
+    model.set(1, 0, 30);
+    Expect(sortedTable2.get(0, 0)).toEqual(1);
+    Expect(sortedTable2.get(1, 0)).toEqual(4);
+    Expect(sortedTable2.get(2, 0)).toEqual(7);
+    Expect(sortedTable2.get(3, 0)).toEqual(20);
+    Expect(sortedTable2.get(4, 0)).toEqual(30);
+    Expect(sortedTable2.get(0, 1)).toEqual(0);
+    Expect(sortedTable2.get(1, 1)).toEqual(3);
+    Expect(sortedTable2.get(2, 1)).toEqual(2);
+    Expect(sortedTable2.get(3, 1)).toEqual(4);
+    Expect(sortedTable2.get(4, 1)).toEqual(1);
+    model.set(4, 1, -40);
+    Expect(sortedTable2.get(0, 0)).toEqual(1);
+    Expect(sortedTable2.get(1, 0)).toEqual(4);
+    Expect(sortedTable2.get(2, 0)).toEqual(7);
+    Expect(sortedTable2.get(3, 0)).toEqual(20);
+    Expect(sortedTable2.get(4, 0)).toEqual(30);
+    Expect(sortedTable2.get(0, 1)).toEqual(0);
+    Expect(sortedTable2.get(1, 1)).toEqual(3);
+    Expect(sortedTable2.get(2, 1)).toEqual(2);
+    Expect(sortedTable2.get(3, 1)).toEqual(-40);
+    Expect(sortedTable2.get(4, 1)).toEqual(1);
+    model.set(3, 0, -35);
+    Expect(sortedTable2.get(0, 0)).toEqual(-35);
+    Expect(sortedTable2.get(1, 0)).toEqual(1);
+    Expect(sortedTable2.get(2, 0)).toEqual(7);
+    Expect(sortedTable2.get(3, 0)).toEqual(20);
+    Expect(sortedTable2.get(4, 0)).toEqual(30);
+    Expect(sortedTable2.get(0, 1)).toEqual(3);
+    Expect(sortedTable2.get(1, 1)).toEqual(0);
+    Expect(sortedTable2.get(2, 1)).toEqual(2);
+    Expect(sortedTable2.get(3, 1)).toEqual(-40);
+    Expect(sortedTable2.get(4, 1)).toEqual(1);
+  }
 }

@@ -1,4 +1,4 @@
-import { TableModel } from "./table_model";
+import { TableModel } from './table_model';
 
 /** Unifies all operations that can be performed on a TableModel. */
 export type Operation = AddRowOperation | MoveRowOperation |
