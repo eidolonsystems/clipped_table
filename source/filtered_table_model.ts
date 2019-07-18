@@ -104,18 +104,28 @@ export class FilteredTableModel extends TableModel {
     const truthyness =
       this.predicate.applyPredicate(operation.row.get(0, this.predicate.index));
     if(truthyness) {
-      console.log('true added');
+      let newIndex = this.length;
+      for(let i = 0; i < this.length; ++i) {
+        if(this.subTable[i] > rowAddedIndex && newIndex === this.length) {
+          newIndex = i;
+          this.visiblity[this.subTable[i]]++;
+          this.subTable[i]++;
+        } else if(newIndex !== this.length) {
+          this.visiblity[this.subTable[i]]++;
+          this.subTable[i]++;
+        }
+      }
+      this.subTable.splice(newIndex, 0, rowAddedIndex);
+      this.visiblity.splice(rowAddedIndex, 0, newIndex);
+      this.length++;
     } else {
       for(let i = 0; i < this.length; ++i) {
         if(this.subTable[i] >= rowAddedIndex) {
           this.subTable[i]++;
         }
       }
-      console.log('subtable', this.subTable);
-      console.log('visibility', this.visiblity);
-      this.visiblity.splice(rowAddedIndex, 1, -1);
+      this.visiblity.splice(rowAddedIndex, 0, -1);
     }
-    console.log('adddded');
   }
 
   private rowDeleted(operation: RemoveRowOperation) {

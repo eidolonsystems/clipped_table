@@ -215,7 +215,7 @@ export class FilteredTableModelTester {
     Expect(filterTable.get(1, 0)).toEqual(9);
   }
 
-  //@Test()
+  @Test()
   public testAddTrue(): void {
     const model = new ArrayTableModel();
     model.addRow([-4]);
@@ -227,8 +227,16 @@ export class FilteredTableModelTester {
     Expect(filterTable.get(0, 0)).toEqual(22);
     Expect(filterTable.get(1, 0)).toEqual(9);
     model.addRow([19], 0);
+    //console.log('model', model);
     Expect(filterTable.rowCount).toEqual(3);
-    Expect(filterTable.get(0, 0)).toEqual(22);
-    Expect(filterTable.get(1, 0)).toEqual(9);
+    Expect(filterTable.get(0, 0)).toEqual(19);
+    Expect(filterTable.get(1, 0)).toEqual(22);
+    Expect(filterTable.get(2, 0)).toEqual(9);
+    model.addRow([50]);
+    Expect(filterTable.rowCount).toEqual(4);
+    Expect(filterTable.get(0, 0)).toEqual(19);
+    Expect(filterTable.get(1, 0)).toEqual(22);
+    Expect(filterTable.get(2, 0)).toEqual(9);
+    Expect(filterTable.get(3, 0)).toEqual(50);
   }
 }
