@@ -40,7 +40,7 @@ export class FilteredTableModelTester {
 
   /** Tests if the number of rows is correct */
   @Test()
-  public testUpdateToTrue(): void {
+  public testSimpleFiltering(): void {
     const model = new ArrayTableModel();
     model.addRow([-6]);
     model.addRow([1]);
@@ -48,14 +48,61 @@ export class FilteredTableModelTester {
     model.addRow([6]);
     const filterTable = new FilteredTableModel(model, new MockPredicate(0));
     Expect(filterTable.rowCount).toEqual(2);
-    Expect(model.get(1, 0)).toEqual(1);
     Expect(filterTable.get(0, 0)).toEqual(1);
     Expect(filterTable.get(1, 0)).toEqual(6);
+  }
+
+  /** Tests if the number of rows is correct */
+  @Test()
+  public testUpdateToTrue(): void {
+    const model = new ArrayTableModel();
+    model.addRow([-2]);
+    model.addRow([1]);
+    model.addRow([-8]);
+    model.addRow([-3]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    Expect(filterTable.rowCount).toEqual(1);
+    Expect(filterTable.get(0, 0)).toEqual(1);
     model.set(0, 0, 4);
+    Expect(filterTable.rowCount).toEqual(2);
+    Expect(filterTable.get(0, 0)).toEqual(4);
+    Expect(filterTable.get(1, 0)).toEqual(1);
+    model.set(3, 0, 9);
     Expect(filterTable.rowCount).toEqual(3);
     Expect(filterTable.get(0, 0)).toEqual(4);
     Expect(filterTable.get(1, 0)).toEqual(1);
-    Expect(filterTable.get(2, 0)).toEqual(6);
-    model.set(1, 0, -4);
+    Expect(filterTable.get(2, 0)).toEqual(9);
+    model.set(2, 0, 100);
+    Expect(filterTable.rowCount).toEqual(4);
+    Expect(filterTable.get(0, 0)).toEqual(4);
+    Expect(filterTable.get(1, 0)).toEqual(1);
+    Expect(filterTable.get(2, 0)).toEqual(100);
+    Expect(filterTable.get(3, 0)).toEqual(9);
+  }
+
+  @Test()
+  public testUpdateToFalse(): void {
+    const model = new ArrayTableModel();
+    model.addRow([4]);
+    model.addRow([12]);
+    model.addRow([22]);
+    model.addRow([9]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    Expect(filterTable.rowCount).toEqual(4);
+    model.set(0, 0, -1);
+    Expect(filterTable.rowCount).toEqual(3);
+    Expect(filterTable.get(0, 0)).toEqual(12);
+    Expect(filterTable.get(1, 0)).toEqual(22);
+    Expect(filterTable.get(2, 0)).toEqual(9);
+    model.set(2, 0, -34);
+    Expect(filterTable.rowCount).toEqual(2);
+    Expect(filterTable.get(0, 0)).toEqual(12);
+    Expect(filterTable.get(1, 0)).toEqual(9);
+    model.set(3, 0, -1);
+    Expect(filterTable.rowCount).toEqual(1);
+    Expect(filterTable.get(0, 0)).toEqual(12);
+    model.set(1, 0, -11);
+    Expect(filterTable.rowCount).toEqual(0);
+
   }
 }

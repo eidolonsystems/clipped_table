@@ -64,8 +64,6 @@ export class FilteredTableModel extends TableModel {
     if(column >= this.columnCount || column < 0) {
       throw RangeError();
     }
-    console.log('subtable', this.subTable[row]);
-    console.log('model', this.model);
     return this.model.get(this.subTable[row], column);
   }
   public connect(slot: (operations: Operation[]) => void):
@@ -103,7 +101,6 @@ export class FilteredTableModel extends TableModel {
   }
 
   private rowUpdated(operation: UpdateValueOperation) {
-    console.log('howdy!');
     const row = operation.row;
     const truthyness =
       this.predicate.applyPredicate(this.model.get(row, this.predicate.index));
@@ -112,28 +109,24 @@ export class FilteredTableModel extends TableModel {
       if(truthyness) {
         console.log('is true');
       } else {
-        if(this.visiblity[row] >= 0) {
-        const subTableIndex = this.subTable[this.visiblity[row]];
-        for(let i = subTableIndex ; i < this.length; ++i ) {
+        console.log('is false');
+        const subTableIndex = this.visiblity[row];
+        for(let i = subTableIndex; i < this.length; i++) {
           this.visiblity[this.subTable[i]]--;
         }
-        this.subTable.splice(this.visiblity[row], 1);
-        this.visiblity[row] = -1;
+        this.subTable.splice(subTableIndex, 1);
         this.length--;
-        }
       }
     } else {
       console.log('was false');
       if(truthyness) {
         console.log('was false and is true');
-                console.log('was false');
         let newIndex = this.length;
         for(let i = 0; i < this.length; ++i) {
           if(this.subTable[i] > row && newIndex === this.length) {
             newIndex = i;
-          } else {
+          } else if(newIndex !== this.length){
             this.visiblity[this.subTable[i]]++;
-            this.subTable[i]++;
           }
         }
         this.visiblity[row] = newIndex;
