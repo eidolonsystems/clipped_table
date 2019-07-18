@@ -132,17 +132,21 @@ export class FilteredTableModelTester {
     Expect(filterTable.get(0, 0)).toEqual(22);
     Expect(filterTable.get(1, 0)).toEqual(9);
     Expect(filterTable.get(2, 0)).toEqual(30);
+    model.removeRow(1);
+    Expect(filterTable.rowCount).toEqual(3);
+    Expect(filterTable.get(0, 0)).toEqual(22);
+    Expect(filterTable.get(1, 0)).toEqual(9);
+    Expect(filterTable.get(2, 0)).toEqual(30);
     model.removeRow(0);
     Expect(filterTable.rowCount).toEqual(3);
     Expect(filterTable.get(0, 0)).toEqual(22);
     Expect(filterTable.get(1, 0)).toEqual(9);
     Expect(filterTable.get(2, 0)).toEqual(30);
-    model.set(0,0,4);
-    Expect(filterTable.rowCount).toEqual(4);
-    Expect(filterTable.get(0, 0)).toEqual(4);
-    Expect(filterTable.get(1, 0)).toEqual(22);
-    Expect(filterTable.get(2, 0)).toEqual(9);
-    Expect(filterTable.get(3, 0)).toEqual(30);
+    model.removeRow(3);
+    Expect(filterTable.rowCount).toEqual(3);
+    Expect(filterTable.get(0, 0)).toEqual(22);
+    Expect(filterTable.get(1, 0)).toEqual(9);
+    Expect(filterTable.get(2, 0)).toEqual(30);
   }
 
   @Test()
@@ -152,6 +156,7 @@ export class FilteredTableModelTester {
     model.addRow([-12]);
     model.addRow([22]);
     model.addRow([9]);
+    model.addRow([-55]);
     model.addRow([30]);
     model.addRow([-44]);
     const filterTable = new FilteredTableModel(model, new MockPredicate(0));
@@ -163,5 +168,29 @@ export class FilteredTableModelTester {
     Expect(filterTable.rowCount).toEqual(2);
     Expect(filterTable.get(0, 0)).toEqual(9);
     Expect(filterTable.get(1, 0)).toEqual(30);
+    model.removeRow(2);
+    Expect(filterTable.rowCount).toEqual(1);
+    Expect(filterTable.get(0, 0)).toEqual(30);
+    model.removeRow(3);
+    Expect(filterTable.rowCount).toEqual(0);
+  }
+
+  @Test()
+  public testManyRemoves(): void {
+    const model = new ArrayTableModel();
+    model.addRow([1]);
+    model.addRow([2]);
+    model.addRow([3]);
+    model.addRow([4]);
+    model.addRow([5]);
+    model.addRow([6]);
+    model.addRow([7]);
+    model.addRow([8]);
+    model.addRow([9]);
+    model.addRow([10]);
+    model.addRow([11]);
+    model.addRow([12]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    Expect(filterTable.rowCount).toEqual(12);
   }
 }

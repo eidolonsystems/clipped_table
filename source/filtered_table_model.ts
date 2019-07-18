@@ -103,7 +103,7 @@ export class FilteredTableModel extends TableModel {
     const rowIndex = operation.index;
     const subTableIndex = this.visiblity[rowIndex];
     if(subTableIndex > -1) {
-      for(let i = subTableIndex; i < this.length; i++) {
+      for(let i = subTableIndex; i < this.length; ++i) {
         if(this.subTable[i] > rowIndex) {
           this.visiblity[this.subTable[i]]--;
           this.subTable[i]--;
@@ -112,7 +112,7 @@ export class FilteredTableModel extends TableModel {
       this.subTable.splice(subTableIndex, 1);
       this.length--;
     } else {
-      for(let i = 0; i < this.length; i++) {
+      for(let i = 0; i < this.length; ++i) {
         if(this.subTable[i] > rowIndex) {
           this.subTable[i]--;
         }
@@ -129,6 +129,7 @@ export class FilteredTableModel extends TableModel {
       console.log('was truuuu');
       if(truthyness) {
         console.log('is true');
+        //don't gotta do nothing
       } else {
         const subTableIndex = this.visiblity[row];
         for(let i = subTableIndex; i < this.length; i++) {
