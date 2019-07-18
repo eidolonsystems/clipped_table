@@ -193,4 +193,42 @@ export class FilteredTableModelTester {
     const filterTable = new FilteredTableModel(model, new MockPredicate(0));
     Expect(filterTable.rowCount).toEqual(12);
   }
+
+  @Test()
+  public testAddFalse(): void {
+    const model = new ArrayTableModel();
+    model.addRow([-4]);
+    model.addRow([-12]);
+    model.addRow([22]);
+    model.addRow([9]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    Expect(filterTable.rowCount).toEqual(2);
+    Expect(filterTable.get(0, 0)).toEqual(22);
+    Expect(filterTable.get(1, 0)).toEqual(9);
+    model.addRow([-19], 0);
+    Expect(filterTable.rowCount).toEqual(2);
+    Expect(filterTable.get(0, 0)).toEqual(22);
+    Expect(filterTable.get(1, 0)).toEqual(9);
+    model.addRow([-40]);
+    Expect(filterTable.rowCount).toEqual(2);
+    Expect(filterTable.get(0, 0)).toEqual(22);
+    Expect(filterTable.get(1, 0)).toEqual(9);
+  }
+
+  //@Test()
+  public testAddTrue(): void {
+    const model = new ArrayTableModel();
+    model.addRow([-4]);
+    model.addRow([-12]);
+    model.addRow([22]);
+    model.addRow([9]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    Expect(filterTable.rowCount).toEqual(2);
+    Expect(filterTable.get(0, 0)).toEqual(22);
+    Expect(filterTable.get(1, 0)).toEqual(9);
+    model.addRow([19], 0);
+    Expect(filterTable.rowCount).toEqual(3);
+    Expect(filterTable.get(0, 0)).toEqual(22);
+    Expect(filterTable.get(1, 0)).toEqual(9);
+  }
 }

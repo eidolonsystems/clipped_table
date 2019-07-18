@@ -75,7 +75,7 @@ export class FilteredTableModel extends TableModel {
     this.beginTransaction();
     for(const operation of newOperations) {
       if(operation instanceof AddRowOperation) {
-            throw new Error("Method not implemented.");
+        this.rowAdded(operation);
       } else if(operation instanceof RemoveRowOperation) {
         this.rowDeleted(operation);
       } else if(operation instanceof UpdateValueOperation) {
@@ -97,6 +97,25 @@ export class FilteredTableModel extends TableModel {
         this.visiblity.push(-1);
       }
     }
+  }
+
+  private rowAdded(operation: AddRowOperation) {
+    const rowAddedIndex = operation.index;
+    const truthyness =
+      this.predicate.applyPredicate(operation.row.get(0, this.predicate.index));
+    if(truthyness) {
+      console.log('true added');
+    } else {
+      for(let i = 0; i < this.length; ++i) {
+        if(this.subTable[i] >= rowAddedIndex) {
+          this.subTable[i]++;
+        }
+      }
+      console.log('subtable', this.subTable);
+      console.log('visibility', this.visiblity);
+      this.visiblity.splice(rowAddedIndex, 1, -1);
+    }
+    console.log('adddded');
   }
 
   private rowDeleted(operation: RemoveRowOperation) {
@@ -126,9 +145,9 @@ export class FilteredTableModel extends TableModel {
     const truthyness =
       this.predicate.applyPredicate(this.model.get(row, this.predicate.index));
     if(this.visiblity[row] > -1) {
-      console.log('was truuuu');
+      //console.log('was truuuu');
       if(truthyness) {
-        console.log('is true');
+        //console.log('is true');
         //don't gotta do nothing
       } else {
         const subTableIndex = this.visiblity[row];
