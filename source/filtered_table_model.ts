@@ -1,8 +1,11 @@
 import * as Kola from 'kola-signals';
-import { Operation } from './operations';
+import { AddRowOperation, Operation, RemoveRowOperation, UpdateValueOperation }
+  from './operations';
 import { TableModel } from './table_model';
 
 export abstract class Predicate {
+
+  public abstract get index(): number;
 
   /**
    * @param  row - The row to apply the predicate to.
@@ -61,6 +64,9 @@ export class FilteredTableModel extends TableModel {
     if(column >= this.columnCount || column < 0) {
       throw RangeError();
     }
+    console.log('subtable', this.subTable[row]);
+    console.log('model', this.model);
+    return this.model.get(this.subTable[row], column);
   }
   public connect(slot: (operations: Operation[]) => void):
     Kola.Listener<Operation[]> {
@@ -70,23 +76,76 @@ export class FilteredTableModel extends TableModel {
   private handleOperations(newOperations: Operation[]): void {
     this.beginTransaction();
     for(const operation of newOperations) {
+      if(operation instanceof AddRowOperation) {
+            throw new Error("Method not implemented.");
+      } else if(operation instanceof RemoveRowOperation) {
+        throw new Error("Method not implemented.");
+      } else if(operation instanceof UpdateValueOperation) {
+        console.log('ROW UPDATED!');
+        this.rowUpdated(operation);
+      }
     }
     this.endTransaction();
   }
   private filter() {
     this.visiblity = [];
+    this.subTable = [];
     for(let i = 0; i < this.model.rowCount; ++i) {
-      if(true) {
-        this.visiblity.push(true);
+      if(this.predicate.applyPredicate(
+          this.model.get(i, this.predicate.index))) {
+        this.visiblity.push(this.length);
+        this.subTable.push(i);
         this.length++;
       } else {
-        this.visiblity.push(false);
+        this.visiblity.push(-1);
+      }
+    }
+  }
+
+  private rowUpdated(operation: UpdateValueOperation) {
+    console.log('howdy!');
+    const row = operation.row;
+    const truthyness =
+      this.predicate.applyPredicate(this.model.get(row, this.predicate.index));
+    if(this.visiblity[row] > -1) {
+      console.log('was truuuu');
+      if(truthyness) {
+        console.log('is true');
+      } else {
+        if(this.visiblity[row] >= 0) {
+        const subTableIndex = this.subTable[this.visiblity[row]];
+        for(let i = subTableIndex ; i < this.length; ++i ) {
+          this.visiblity[this.subTable[i]]--;
+        }
+        this.subTable.splice(this.visiblity[row], 1);
+        this.visiblity[row] = -1;
+        this.length--;
+        }
+      }
+    } else {
+      console.log('was false');
+      if(truthyness) {
+        console.log('was false and is true');
+                console.log('was false');
+        let newIndex = this.length;
+        for(let i = 0; i < this.length; ++i) {
+          if(this.subTable[i] > row && newIndex === this.length) {
+            newIndex = i;
+          } else {
+            this.visiblity[this.subTable[i]]++;
+            this.subTable[i]++;
+          }
+        }
+        this.visiblity[row] = newIndex;
+        this.subTable.splice(newIndex, 0, row);
+        this.length++;
       }
     }
   }
 
   private model: TableModel;
-  private visiblity: boolean[];
+  private visiblity: number[];
+  private subTable: number[];
   private predicate: Predicate;
   private length: number;
   private transactionCount: number;
