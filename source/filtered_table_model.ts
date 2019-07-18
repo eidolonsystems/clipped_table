@@ -79,7 +79,6 @@ export class FilteredTableModel extends TableModel {
       } else if(operation instanceof RemoveRowOperation) {
         throw new Error("Method not implemented.");
       } else if(operation instanceof UpdateValueOperation) {
-        console.log('ROW UPDATED!');
         this.rowUpdated(operation);
       }
     }
@@ -100,6 +99,27 @@ export class FilteredTableModel extends TableModel {
     }
   }
 
+  private rowDeleted(operation: UpdateValueOperation) {
+    const row = operation.row;
+    const subTableIndex = this.visiblity[row];
+    if(subTableIndex > -1) {
+      for(let i = subTableIndex; i < this.length; i++) {
+        if(this.subTable[i] > row) {
+          this.visiblity[this.subTable[i]]--;
+          this.subTable[i]--;
+        }
+      }
+      this.subTable.splice(subTableIndex, 1);
+    } else {
+      for(let i = 0; i < this.length; i++) {
+        if(this.subTable[i] > row) {
+          this.subTable[i]--;
+        }
+      }
+      this.visiblity.splice(row, 1);
+    }
+  }
+
   private rowUpdated(operation: UpdateValueOperation) {
     const row = operation.row;
     const truthyness =
@@ -109,7 +129,6 @@ export class FilteredTableModel extends TableModel {
       if(truthyness) {
         console.log('is true');
       } else {
-        console.log('is false');
         const subTableIndex = this.visiblity[row];
         for(let i = subTableIndex; i < this.length; i++) {
           this.visiblity[this.subTable[i]]--;
@@ -118,9 +137,7 @@ export class FilteredTableModel extends TableModel {
         this.length--;
       }
     } else {
-      console.log('was false');
       if(truthyness) {
-        console.log('was false and is true');
         let newIndex = this.length;
         for(let i = 0; i < this.length; ++i) {
           if(this.subTable[i] > row && newIndex === this.length) {

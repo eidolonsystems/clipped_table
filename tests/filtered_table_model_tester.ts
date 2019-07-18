@@ -103,6 +103,43 @@ export class FilteredTableModelTester {
     Expect(filterTable.get(0, 0)).toEqual(12);
     model.set(1, 0, -11);
     Expect(filterTable.rowCount).toEqual(0);
+  }
 
+  @Test()
+  public testUpdateFalseToFalse(): void {
+    const model = new ArrayTableModel();
+    model.addRow([-4]);
+    model.addRow([-12]);
+    model.addRow([22]);
+    model.addRow([9]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    Expect(filterTable.rowCount).toEqual(2);
+    model.set(0, 0, -11);
+    Expect(filterTable.rowCount).toEqual(2);
+  }
+
+  @Test()
+  public testRemoveFalse(): void {
+    const model = new ArrayTableModel();
+    model.addRow([-4]);
+    model.addRow([-12]);
+    model.addRow([22]);
+    model.addRow([9]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    Expect(filterTable.rowCount).toEqual(2);
+    model.removeRow(0);
+    Expect(filterTable.rowCount).toEqual(2);
+
+  }
+
+  @Test()
+  public testRemoveTrue(): void {
+    const model = new ArrayTableModel();
+    model.addRow([-4]);
+    model.addRow([-12]);
+    model.addRow([22]);
+    model.addRow([9]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    Expect(filterTable.rowCount).toEqual(2);
   }
 }
