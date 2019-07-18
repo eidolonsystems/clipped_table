@@ -77,7 +77,7 @@ export class FilteredTableModel extends TableModel {
       if(operation instanceof AddRowOperation) {
             throw new Error("Method not implemented.");
       } else if(operation instanceof RemoveRowOperation) {
-        throw new Error("Method not implemented.");
+        this.rowDeleted(operation);
       } else if(operation instanceof UpdateValueOperation) {
         this.rowUpdated(operation);
       }
@@ -99,25 +99,26 @@ export class FilteredTableModel extends TableModel {
     }
   }
 
-  private rowDeleted(operation: UpdateValueOperation) {
-    const row = operation.row;
-    const subTableIndex = this.visiblity[row];
+  private rowDeleted(operation: RemoveRowOperation) {
+    const rowIndex = operation.index;
+    const subTableIndex = this.visiblity[rowIndex];
     if(subTableIndex > -1) {
       for(let i = subTableIndex; i < this.length; i++) {
-        if(this.subTable[i] > row) {
+        if(this.subTable[i] > rowIndex) {
           this.visiblity[this.subTable[i]]--;
           this.subTable[i]--;
         }
       }
       this.subTable.splice(subTableIndex, 1);
+      this.length--;
     } else {
       for(let i = 0; i < this.length; i++) {
-        if(this.subTable[i] > row) {
+        if(this.subTable[i] > rowIndex) {
           this.subTable[i]--;
         }
       }
-      this.visiblity.splice(row, 1);
     }
+    this.visiblity.splice(rowIndex, 1);
   }
 
   private rowUpdated(operation: UpdateValueOperation) {
