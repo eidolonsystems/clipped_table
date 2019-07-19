@@ -283,6 +283,10 @@ export class FilteredTableModelTester {
   }
 
   @Test()
+  public testReceiveReceiveManyAdds(): void {
+  }
+
+  @Test()
   public testUpdateRowSignalTrueToTrue(): void {
     const model = new ArrayTableModel();
     model.addRow([23]);
@@ -397,18 +401,109 @@ export class FilteredTableModelTester {
   }
 
   @Test()
-  public testReceiveReceiveManyAdds(): void {
+  public testRemoveRowSignalTrue(): void {
+    const model = new ArrayTableModel();
+    model.addRow([23]);
+    model.addRow([-4]);
+    model.addRow([-12]);
+    model.addRow([22]);
+    model.addRow([-70]);
+    model.addRow([9]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    let signalsReceived = 0;
+    const makeListener = (expectedRow: number) => {
+      return (operations: Operation[]) => {
+        Expect(operations.length).toEqual(1);
+        const operation = operations[0] as RemoveRowOperation;
+        Expect(operation).not.toBeNull();
+        Expect(operation.index).toEqual(expectedRow);
+        ++signalsReceived;
+      };
+    };
+    let listener = filterTable.connect(makeListener(1));
+    model.removeRow(3);
+    Expect(signalsReceived).toEqual(1);
+    listener.unlisten();
   }
 
   @Test()
-  public testAddRowSignalTrue(): void {
+  public testRemoveRowSignalFalse(): void {
+    const model = new ArrayTableModel();
+    model.addRow([23]);
+    model.addRow([-4]);
+    model.addRow([-12]);
+    model.addRow([22]);
+    model.addRow([-70]);
+    model.addRow([9]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    let signalsReceived = 0;
+    const makeListener = () => {
+      return (operations: Operation[]) => {
+        Expect(operations.length).toEqual(0);
+        const operation = operations[0] as RemoveRowOperation;
+        Expect(operation).not.toBeNull();
+        ++signalsReceived;
+      };
+    };
+    let listener = filterTable.connect(makeListener());
+    model.removeRow(1);
+    Expect(signalsReceived).toEqual(1);
+    listener.unlisten();
   }
 
   @Test()
   public testAddRowSignalFalse(): void {
+    const model = new ArrayTableModel();
+    model.addRow([23]);
+    model.addRow([-4]);
+    model.addRow([-12]);
+    model.addRow([22]);
+    model.addRow([-70]);
+    model.addRow([9]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    let signalsReceived = 0;
+    const makeListener = () => {
+      return (operations: Operation[]) => {
+        Expect(operations.length).toEqual(0);
+        Expect(operations).not.toBeNull();
+        ++signalsReceived;
+      };
+    };
+    let listener = filterTable.connect(makeListener());
+    model.addRow([-12], 0);
+    Expect(signalsReceived).toEqual(1);
+    listener.unlisten();
   }
 
   @Test()
-  public testRemoveRowSignal(): void {
+  public testAddRowSignalTrue(): void {
+    ///ghdjkhgjkhdjklhfjkghjkfhjkfhkj
+    const model = new ArrayTableModel();
+    model.addRow([23]);
+    model.addRow([-4]);
+    model.addRow([-12]);
+    model.addRow([22]);
+    model.addRow([-70]);
+    model.addRow([9]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    let signalsReceived = 0;
+    const makeListener = (expectedRow: number) => {
+      return (operations: Operation[]) => {
+        Expect(operations.length).toEqual(1);
+        const operation = operations[0] as AddRowOperation;
+        Expect(operation).not.toBeNull();
+        Expect(operation.index).toEqual(expectedRow);
+        ++signalsReceived;
+      };
+    };
+    let listener = filterTable.connect(makeListener(0));
+    model.addRow([12], 0);
+    Expect(signalsReceived).toEqual(1);
+    listener.unlisten();
+    listener = filterTable.connect(makeListener(2));
+    model.addRow([33], 2);
+    Expect(signalsReceived).toEqual(2);
+    listener.unlisten();
   }
+
 }

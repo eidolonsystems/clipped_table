@@ -119,7 +119,7 @@ export class FilteredTableModel extends TableModel {
     if(truthyness) {
       let newIndex = this.length;
       for(let i = 0; i < this.length; ++i) {
-        if(this.subTable[i] > rowAddedIndex && newIndex === this.length) {
+        if(this.subTable[i] >= rowAddedIndex && newIndex === this.length) {
           newIndex = i;
           this.visiblity[this.subTable[i]]++;
           this.subTable[i]++;
@@ -131,7 +131,8 @@ export class FilteredTableModel extends TableModel {
       this.subTable.splice(newIndex, 0, rowAddedIndex);
       this.visiblity.splice(rowAddedIndex, 0, newIndex);
       this.length++;
-      //this.operations.push(new AddRowOperation(newIndex, operation.row));
+      this.operations.push(
+        new AddRowOperation(newIndex, operation.row));
     } else {
       for(let i = 0; i < this.length; ++i) {
         if(this.subTable[i] >= rowAddedIndex) {
@@ -154,7 +155,8 @@ export class FilteredTableModel extends TableModel {
       }
       this.subTable.splice(subTableIndex, 1);
       this.length--;
-      //this.operations.push(new RemoveRowOperation(subTableIndex, operation.row));
+      this.operations.push(
+        new RemoveRowOperation(subTableIndex, operation.row));
     } else {
       for(let i = 0; i < this.length; ++i) {
         if(this.subTable[i] > rowIndex) {
@@ -191,7 +193,7 @@ export class FilteredTableModel extends TableModel {
         for(let i = 0; i < this.length; ++i) {
           if(this.subTable[i] > rowIndex && newIndex === this.length) {
             newIndex = i;
-          } else if(newIndex !== this.length){
+          } else if(newIndex !== this.length) {
             this.visiblity[this.subTable[i]]++;
           }
         }
