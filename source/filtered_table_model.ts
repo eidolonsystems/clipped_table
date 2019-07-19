@@ -2,6 +2,7 @@ import * as Kola from 'kola-signals';
 import { AddRowOperation, Operation, RemoveRowOperation, UpdateValueOperation }
   from './operations';
 import { TableModel } from './table_model';
+import { ArrayTableModel } from './array_table_model';
 
 export abstract class Predicate {
 
@@ -71,19 +72,6 @@ export class FilteredTableModel extends TableModel {
     throw new Error("Method not implemented.");
   }
 
-  private handleOperations(newOperations: Operation[]): void {
-    this.beginTransaction();
-    for(const operation of newOperations) {
-      if(operation instanceof AddRowOperation) {
-        this.rowAdded(operation);
-      } else if(operation instanceof RemoveRowOperation) {
-        this.rowDeleted(operation);
-      } else if(operation instanceof UpdateValueOperation) {
-        this.rowUpdated(operation);
-      }
-    }
-    this.endTransaction();
-  }
   private filter() {
     this.visiblity = [];
     this.subTable = [];
@@ -97,6 +85,28 @@ export class FilteredTableModel extends TableModel {
         this.visiblity.push(-1);
       }
     }
+  }
+
+  private handleOperations(newOperations: Operation[]): void {
+    this.beginTransaction();
+    for(const operation of newOperations) {
+      if(operation instanceof AddRowOperation) {
+        this.rowAdded(operation);
+      } else if(operation instanceof RemoveRowOperation) {
+        this.rowDeleted(operation);
+      } else if(operation instanceof UpdateValueOperation) {
+        this.rowUpdated(operation);
+      }
+    }
+    this.endTransaction();
+  }
+
+  private makeRow(rowIndex: number) {
+    const array = [] as any[];
+    for(let i = 0; i < this.model.columnCount; ++i) {
+      array.push(this.model.get(rowIndex, i));
+    }
+    return new ArrayTableModel().addRow(array);
   }
 
   private rowAdded(operation: AddRowOperation) {
@@ -118,6 +128,7 @@ export class FilteredTableModel extends TableModel {
       this.subTable.splice(newIndex, 0, rowAddedIndex);
       this.visiblity.splice(rowAddedIndex, 0, newIndex);
       this.length++;
+      this.operations.push(new AddRowOperation(newIndex, operation.row));
     } else {
       for(let i = 0; i < this.length; ++i) {
         if(this.subTable[i] >= rowAddedIndex) {
@@ -140,6 +151,7 @@ export class FilteredTableModel extends TableModel {
       }
       this.subTable.splice(subTableIndex, 1);
       this.length--;
+      //this.operations.push(new RemoveRowOperation(subTableIndex, operation.row));
     } else {
       for(let i = 0; i < this.length; ++i) {
         if(this.subTable[i] > rowIndex) {
@@ -151,35 +163,38 @@ export class FilteredTableModel extends TableModel {
   }
 
   private rowUpdated(operation: UpdateValueOperation) {
-    const row = operation.row;
+    const rowIndex = operation.row;
     const truthyness =
-      this.predicate.applyPredicate(this.model.get(row, this.predicate.index));
-    if(this.visiblity[row] > -1) {
-      //console.log('was truuuu');
+      this.predicate.applyPredicate(
+        this.model.get(rowIndex, this.predicate.index));
+    if(this.visiblity[rowIndex] > -1) {
       if(truthyness) {
-        //console.log('is true');
-        //don't gotta do nothing
+        const newIndex = this.visiblity[rowIndex];
+        this.operations.push(new UpdateValueOperation(
+          newIndex, operation.column, operation.previous, operation.current));
       } else {
-        const subTableIndex = this.visiblity[row];
+        const subTableIndex = this.visiblity[rowIndex];
         for(let i = subTableIndex; i < this.length; i++) {
           this.visiblity[this.subTable[i]]--;
         }
         this.subTable.splice(subTableIndex, 1);
         this.length--;
+        //this.operations.push(new RemoveRowOperation());
       }
     } else {
       if(truthyness) {
         let newIndex = this.length;
         for(let i = 0; i < this.length; ++i) {
-          if(this.subTable[i] > row && newIndex === this.length) {
+          if(this.subTable[i] > rowIndex && newIndex === this.length) {
             newIndex = i;
           } else if(newIndex !== this.length){
             this.visiblity[this.subTable[i]]++;
           }
         }
-        this.visiblity[row] = newIndex;
-        this.subTable.splice(newIndex, 0, row);
+        this.visiblity[rowIndex] = newIndex;
+        this.subTable.splice(newIndex, 0, rowIndex);
         this.length++;
+        //this.operations.push(new AddRowOp);
       }
     }
   }

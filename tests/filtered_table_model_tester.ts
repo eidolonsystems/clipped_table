@@ -111,11 +111,20 @@ export class FilteredTableModelTester {
     model.addRow([-4]);
     model.addRow([-12]);
     model.addRow([22]);
+    model.addRow([-30]);
     model.addRow([9]);
     const filterTable = new FilteredTableModel(model, new MockPredicate(0));
     Expect(filterTable.rowCount).toEqual(2);
+    Expect(filterTable.get(0, 0)).toEqual(22);
+    Expect(filterTable.get(1, 0)).toEqual(9);
     model.set(0, 0, -11);
     Expect(filterTable.rowCount).toEqual(2);
+    Expect(filterTable.get(0, 0)).toEqual(22);
+    Expect(filterTable.get(1, 0)).toEqual(9);
+    model.set(3, 0, -90);
+    Expect(filterTable.rowCount).toEqual(2);
+    Expect(filterTable.get(0, 0)).toEqual(22);
+    Expect(filterTable.get(1, 0)).toEqual(9);
   }
 
   @Test()
@@ -227,7 +236,6 @@ export class FilteredTableModelTester {
     Expect(filterTable.get(0, 0)).toEqual(22);
     Expect(filterTable.get(1, 0)).toEqual(9);
     model.addRow([19], 0);
-    //console.log('model', model);
     Expect(filterTable.rowCount).toEqual(3);
     Expect(filterTable.get(0, 0)).toEqual(19);
     Expect(filterTable.get(1, 0)).toEqual(22);
