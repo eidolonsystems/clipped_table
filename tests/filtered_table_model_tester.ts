@@ -214,7 +214,7 @@ export class FilteredTableModelTester {
     Expect(filterTable.rowCount).toEqual(0);
   }
 
-  /** Tests removing multiple rows */
+  /** Tests removing multiple rows both true and false. */
   @Test()
   public testReceiveManyRemoves(): void {
     const model = new ArrayTableModel();
@@ -269,6 +269,7 @@ export class FilteredTableModelTester {
     Expect(filterTable.rowCount).toEqual(6);
   }
 
+  /** Tests removing multiple rows where not a single row is true. */
   @Test()
   public testReceiveManyRemovesWithNoTrue(): void {
     const model = new ArrayTableModel();
@@ -298,6 +299,7 @@ export class FilteredTableModelTester {
     Expect(filterTable.rowCount).toEqual(0);
   }
 
+  /** Test when a row that is false is added. */
   @Test()
   public testReceiveAddFalse(): void {
     const model = new ArrayTableModel();
@@ -319,6 +321,7 @@ export class FilteredTableModelTester {
     Expect(filterTable.get(1, 0)).toEqual(9);
   }
 
+  /** Test when a row that is true is added. */
   @Test()
   public testReceiveReceiveAddTrue(): void {
     const model = new ArrayTableModel();
@@ -343,10 +346,16 @@ export class FilteredTableModelTester {
     Expect(filterTable.get(3, 0)).toEqual(50);
   }
 
+//sdfdsfdsfdsfsdsdfddfsdsf
+//sdfdsfdsfdsfsdsdfddfsdsf
+//sdfdsfdsfdsfsdsdfddfsdsf
+//sdfdsfdsfdsfsdsdfddfsdsf
+//sdfdsfdsfdsfsdsdfddfsdsf
   @Test()
   public testReceiveReceiveManyAdds(): void {
   }
 
+  /** Tests what happens when a row that is true is updated to true. */
   @Test()
   public testUpdateRowSignalTrueToTrue(): void {
     const model = new ArrayTableModel();
@@ -378,6 +387,7 @@ export class FilteredTableModelTester {
     listener.unlisten();
   }
 
+  /** Tests what happens when a false row is updated to false. */
   @Test()
   public testUpdateRowSignalFalseToFalse(): void {
     const model = new ArrayTableModel();
@@ -401,6 +411,7 @@ export class FilteredTableModelTester {
     listener.unlisten();
   }
 
+ /** Tests what happens when a row that is true is updated to false. */
   @Test()
   public testUpdateRowSignalTrueToFalse(): void {
     const model = new ArrayTableModel();
@@ -431,6 +442,7 @@ export class FilteredTableModelTester {
     listener.unlisten();
   }
 
+  /** Tests what happens when a row that is false is updated to true. */
   @Test()
   public testUpdateRowSignalFalseToTrue(): void {
     const model = new ArrayTableModel();
@@ -461,6 +473,7 @@ export class FilteredTableModelTester {
     listener.unlisten();
   }
 
+  /** Tests what happens when a row that is true is removed. */
   @Test()
   public testRemoveRowSignalTrue(): void {
     const model = new ArrayTableModel();
@@ -487,6 +500,7 @@ export class FilteredTableModelTester {
     listener.unlisten();
   }
 
+  /** Tests when a row that is false is removed. */
   @Test()
   public testRemoveRowSignalFalse(): void {
     const model = new ArrayTableModel();
@@ -512,6 +526,7 @@ export class FilteredTableModelTester {
     listener.unlisten();
   }
 
+  /** Tests when a row is added that is false. */
   @Test()
   public testAddRowSignalFalse(): void {
     const model = new ArrayTableModel();
@@ -536,6 +551,7 @@ export class FilteredTableModelTester {
     listener.unlisten();
   }
 
+  /** Tests when a row that is true is added. */
   @Test()
   public testAddRowSignalTrue(): void {
     const model = new ArrayTableModel();
@@ -566,6 +582,7 @@ export class FilteredTableModelTester {
     listener.unlisten();
   }
 
+  /** Tests a mix of operations to test for weird interactions. */
   @Test()
   public testMultipleOperatons(): void {
     const model = new ArrayTableModel();
