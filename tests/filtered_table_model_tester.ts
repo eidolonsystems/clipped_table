@@ -6,10 +6,8 @@ import { AddRowOperation, ArrayTableModel, MoveRowOperation , Operation,
 
 class MockPredicate implements Predicate {
 
-  constructor() {}
-
   public applyPredicate(row: number, model: TableModel): boolean {
-    if(model.get(row, 0) > 0) {
+    if(model.get(row, 0) >= 0) {
       return true;
     } else {
       return false;
@@ -20,7 +18,7 @@ class MockPredicate implements Predicate {
 /** Tests the FilteredTableModel. */
 export class FilteredTableModelTester {
 
-  /** */
+  /** Tests an empty array. */
   @Test()
   public testEmptyArray(): void {
     const model = new ArrayTableModel();
@@ -28,7 +26,7 @@ export class FilteredTableModelTester {
     Expect(filterTable.rowCount).toEqual(0);
   }
 
-  /** Tests if the number of rows is correct */
+  /** Tests if the number of rows is correct. */
   @Test()
   public testRowCount(): void {
     const model = new ArrayTableModel();
@@ -40,7 +38,7 @@ export class FilteredTableModelTester {
     Expect(filterTable.rowCount).toEqual(2);
   }
 
-  /**  */
+  /** Tests filtering. */
   @Test()
   public testSimpleFiltering(): void {
     const model = new ArrayTableModel();
@@ -54,7 +52,7 @@ export class FilteredTableModelTester {
     Expect(filterTable.get(1, 0)).toEqual(6);
   }
 
-  /** */
+  /** Tests what happens when a row that was false is now true. */
   @Test()
   public testReceiveUpdateFalseToTrue(): void {
     const model = new ArrayTableModel();
@@ -82,6 +80,7 @@ export class FilteredTableModelTester {
     Expect(filterTable.get(3, 0)).toEqual(9);
   }
 
+  /** Tests what happens when a row that was true is now false. */
   @Test()
   public testReceiveUpdateTrueToFalse(): void {
     const model = new ArrayTableModel();
@@ -107,6 +106,7 @@ export class FilteredTableModelTester {
     Expect(filterTable.rowCount).toEqual(0);
   }
 
+  /** Tests what happens when a row that was false is now false. */
   @Test()
   public testReceiveUpdateFalseToFalse(): void {
     const model = new ArrayTableModel();
@@ -129,6 +129,7 @@ export class FilteredTableModelTester {
     Expect(filterTable.get(1, 0)).toEqual(9);
   }
 
+  /** Tests what happens when a row that was true is now true. */
   @Test()
   public testReceiveUpdateTrueToTrue(): void {
     const model = new ArrayTableModel();
@@ -154,6 +155,7 @@ export class FilteredTableModelTester {
     Expect(filterTable.get(2, 0)).toEqual(2);
   }
 
+  /** Tests what happens when a row that was false is removed. */
   @Test()
   public testReceiveRemoveFalse(): void {
     const model = new ArrayTableModel();
@@ -185,6 +187,7 @@ export class FilteredTableModelTester {
     Expect(filterTable.get(2, 0)).toEqual(30);
   }
 
+  /** Tests what happens when a row that was true is removed. */
   @Test()
   public testReceiveRemoveTrue(): void {
     const model = new ArrayTableModel();
@@ -211,9 +214,49 @@ export class FilteredTableModelTester {
     Expect(filterTable.rowCount).toEqual(0);
   }
 
+  /** Tests removing multiple rows */
   @Test()
   public testReceiveManyRemoves(): void {
     const model = new ArrayTableModel();
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([2]);
+    model.addRow([3]);
+    model.addRow([-4]);
+    model.addRow([5]);
+    model.addRow([6]);
+    model.addRow([7]);
+    model.addRow([-8]);
+    model.addRow([-9]);
+    model.addRow([10]);
+    model.addRow([11]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
+    Expect(filterTable.rowCount).toEqual(9);
+    model.removeRow(3);
+    Expect(filterTable.get(0, 0)).toEqual(0);
+    Expect(filterTable.get(1, 0)).toEqual(1);
+    Expect(filterTable.get(2, 0)).toEqual(2);
+    Expect(filterTable.get(3, 0)).toEqual(5);
+    Expect(filterTable.get(4, 0)).toEqual(6);
+    Expect(filterTable.get(5, 0)).toEqual(7);
+    Expect(filterTable.get(6, 0)).toEqual(10);
+    Expect(filterTable.get(7, 0)).toEqual(11);
+    Expect(filterTable.rowCount).toEqual(8);
+    model.removeRow(0);
+    Expect(filterTable.get(0, 0)).toEqual(1);
+    Expect(filterTable.get(1, 0)).toEqual(2);
+    Expect(filterTable.get(2, 0)).toEqual(5);
+    Expect(filterTable.get(3, 0)).toEqual(6);
+    Expect(filterTable.get(4, 0)).toEqual(7);
+    Expect(filterTable.get(5, 0)).toEqual(10);
+    Expect(filterTable.get(6, 0)).toEqual(11);
+    Expect(filterTable.rowCount).toEqual(7);
+  }
+
+  @Test()
+  public testReceiveManyRemovesWithNoFalse(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0]);
     model.addRow([1]);
     model.addRow([2]);
     model.addRow([3]);
@@ -225,9 +268,22 @@ export class FilteredTableModelTester {
     model.addRow([9]);
     model.addRow([10]);
     model.addRow([11]);
-    model.addRow([12]);
     const filterTable = new FilteredTableModel(model, new MockPredicate());
     Expect(filterTable.rowCount).toEqual(12);
+    Expect(filterTable.get(0, 0)).toEqual(0);
+    Expect(filterTable.get(1, 0)).toEqual(1);
+    Expect(filterTable.get(2, 0)).toEqual(2);
+    Expect(filterTable.get(3, 0)).toEqual(3);
+    Expect(filterTable.get(4, 0)).toEqual(4);
+    Expect(filterTable.get(5, 0)).toEqual(5);
+    Expect(filterTable.get(6, 0)).toEqual(6);
+    Expect(filterTable.get(7, 0)).toEqual(7);
+    Expect(filterTable.get(8, 0)).toEqual(8);
+    Expect(filterTable.get(9, 0)).toEqual(9);
+    Expect(filterTable.get(10, 0)).toEqual(10);
+    Expect(filterTable.get(11, 0)).toEqual(11);
+    model.removeRow(3);
+    Expect(filterTable.rowCount).toEqual(11);
   }
 
   @Test()
@@ -496,6 +552,35 @@ export class FilteredTableModelTester {
     model.addRow([33], 2);
     Expect(signalsReceived).toEqual(2);
     listener.unlisten();
+  }
+
+  @Test()
+  public testMultipleOperatons(): void {
+    const model = new ArrayTableModel();
+    model.addRow([-100]);
+    model.addRow([11]);
+    model.addRow([22]);
+    model.addRow([33]);
+    model.addRow([-44]);
+    model.addRow([55]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
+    Expect(filterTable.get(0, 0)).toEqual(11);
+    Expect(filterTable.get(1, 0)).toEqual(22);
+    Expect(filterTable.get(2, 0)).toEqual(33);
+    Expect(filterTable.get(3, 0)).toEqual(55);
+    model.addRow([66]);
+    Expect(filterTable.get(0, 0)).toEqual(11);
+    Expect(filterTable.get(1, 0)).toEqual(22);
+    Expect(filterTable.get(2, 0)).toEqual(33);
+    Expect(filterTable.get(3, 0)).toEqual(55);
+    Expect(filterTable.get(4, 0)).toEqual(66);
+    model.set(0, 0, 42);
+    Expect(filterTable.get(0, 0)).toEqual(42);
+    Expect(filterTable.get(1, 0)).toEqual(11);
+    Expect(filterTable.get(2, 0)).toEqual(22);
+    Expect(filterTable.get(3, 0)).toEqual(33);
+    Expect(filterTable.get(4, 0)).toEqual(55);
+    Expect(filterTable.get(5, 0)).toEqual(66);
   }
 
 }
