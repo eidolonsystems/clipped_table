@@ -67,9 +67,10 @@ export class FilteredTableModel extends TableModel {
     }
     return this.model.get(this.subTable[row], column);
   }
+
   public connect(slot: (operations: Operation[]) => void):
     Kola.Listener<Operation[]> {
-    throw new Error("Method not implemented.");
+    return this.dispatcher.listen(slot);
   }
 
   private filter() {

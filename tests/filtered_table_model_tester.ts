@@ -1,7 +1,8 @@
 import { Expect, Test } from 'alsatian';
-import { ArrayTableModel }
-  from '../source';
 import { Predicate, FilteredTableModel } from '../source/filtered_table_model';
+import { AddRowOperation, ArrayTableModel, MoveRowOperation , Operation,
+  RemoveRowOperation, TranslatedTableModel, UpdateValueOperation }
+  from '../source';
 
 class MockPredicate implements Predicate {
   constructor(index: number) {
@@ -26,6 +27,14 @@ class MockPredicate implements Predicate {
 /** Tests the FilteredTableModel. */
 export class FilteredTableModelTester {
 
+  /** */
+  @Test()
+  public testEmptyArray(): void {
+    const model = new ArrayTableModel();
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    Expect(filterTable.rowCount).toEqual(0);
+  }
+
   /** Tests if the number of rows is correct */
   @Test()
   public testRowCount(): void {
@@ -38,7 +47,7 @@ export class FilteredTableModelTester {
     Expect(filterTable.rowCount).toEqual(2);
   }
 
-  /** Tests if the number of rows is correct */
+  /**  */
   @Test()
   public testSimpleFiltering(): void {
     const model = new ArrayTableModel();
@@ -52,9 +61,9 @@ export class FilteredTableModelTester {
     Expect(filterTable.get(1, 0)).toEqual(6);
   }
 
-  /** Tests if the number of rows is correct */
+  /** */
   @Test()
-  public testUpdateToTrue(): void {
+  public testReceiveUpdateFalseToTrue(): void {
     const model = new ArrayTableModel();
     model.addRow([-2]);
     model.addRow([1]);
@@ -81,7 +90,7 @@ export class FilteredTableModelTester {
   }
 
   @Test()
-  public testUpdateToFalse(): void {
+  public testReceiveUpdateTrueToFalse(): void {
     const model = new ArrayTableModel();
     model.addRow([4]);
     model.addRow([12]);
@@ -106,7 +115,7 @@ export class FilteredTableModelTester {
   }
 
   @Test()
-  public testUpdateFalseToFalse(): void {
+  public testReceiveUpdateFalseToFalse(): void {
     const model = new ArrayTableModel();
     model.addRow([-4]);
     model.addRow([-12]);
@@ -128,7 +137,32 @@ export class FilteredTableModelTester {
   }
 
   @Test()
-  public testRemoveFalse(): void {
+  public testReceiveUpdateTrueToTrue(): void {
+    const model = new ArrayTableModel();
+    model.addRow([4]);
+    model.addRow([-12]);
+    model.addRow([22]);
+    model.addRow([-30]);
+    model.addRow([9]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    Expect(filterTable.rowCount).toEqual(3);
+    Expect(filterTable.get(0, 0)).toEqual(4);
+    Expect(filterTable.get(1, 0)).toEqual(22);
+    Expect(filterTable.get(2, 0)).toEqual(9);
+    model.set(0, 0, 50);
+    Expect(filterTable.rowCount).toEqual(3);
+    Expect(filterTable.get(0, 0)).toEqual(50);
+    Expect(filterTable.get(1, 0)).toEqual(22);
+    Expect(filterTable.get(2, 0)).toEqual(9);
+    model.set(4, 0, 2);
+    Expect(filterTable.rowCount).toEqual(3);
+    Expect(filterTable.get(0, 0)).toEqual(50);
+    Expect(filterTable.get(1, 0)).toEqual(22);
+    Expect(filterTable.get(2, 0)).toEqual(2);
+  }
+
+  @Test()
+  public testReceiveRemoveFalse(): void {
     const model = new ArrayTableModel();
     model.addRow([-4]);
     model.addRow([-12]);
@@ -159,7 +193,7 @@ export class FilteredTableModelTester {
   }
 
   @Test()
-  public testRemoveTrue(): void {
+  public testReceiveRemoveTrue(): void {
     const model = new ArrayTableModel();
     model.addRow([-4]);
     model.addRow([-12]);
@@ -185,7 +219,7 @@ export class FilteredTableModelTester {
   }
 
   @Test()
-  public testManyRemoves(): void {
+  public testReceiveManyRemoves(): void {
     const model = new ArrayTableModel();
     model.addRow([1]);
     model.addRow([2]);
@@ -204,7 +238,7 @@ export class FilteredTableModelTester {
   }
 
   @Test()
-  public testAddFalse(): void {
+  public testReceiveAddFalse(): void {
     const model = new ArrayTableModel();
     model.addRow([-4]);
     model.addRow([-12]);
@@ -225,7 +259,7 @@ export class FilteredTableModelTester {
   }
 
   @Test()
-  public testAddTrue(): void {
+  public testReceiveReceiveAddTrue(): void {
     const model = new ArrayTableModel();
     model.addRow([-4]);
     model.addRow([-12]);
@@ -246,5 +280,83 @@ export class FilteredTableModelTester {
     Expect(filterTable.get(1, 0)).toEqual(22);
     Expect(filterTable.get(2, 0)).toEqual(9);
     Expect(filterTable.get(3, 0)).toEqual(50);
+  }
+
+  @Test()
+  public testUpdateRowSignalTrueToTrue(): void {
+    const model = new ArrayTableModel();
+    model.addRow([23]);
+    model.addRow([-4]);
+    model.addRow([-12]);
+    model.addRow([22]);
+    model.addRow([-70]);
+    model.addRow([9]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    let signalsReceived = 0;
+    const makeListener = (expectedRow: number) => {
+      return (operations: Operation[]) => {
+        Expect(operations.length).toEqual(1);
+        const operation = operations[0] as UpdateValueOperation;
+        Expect(operation).not.toBeNull();
+        Expect(operation.row).toEqual(expectedRow);
+        Expect(operation.column).toEqual(0);
+        ++signalsReceived;
+      };
+    };
+    let listener = filterTable.connect(makeListener(0));
+    model.set(0, 0, 40);
+    Expect(signalsReceived).toEqual(1);
+    listener.unlisten();
+    listener = filterTable.connect(makeListener(1));
+    model.set(3, 0, 100);
+    Expect(signalsReceived).toEqual(2);
+    listener.unlisten();
+  }
+
+  @Test()
+  public testUpdateRowSignalFalseToFalse(): void {
+    const model = new ArrayTableModel();
+    model.addRow([23]);
+    model.addRow([-4]);
+    model.addRow([-12]);
+    model.addRow([22]);
+    model.addRow([-70]);
+    model.addRow([9]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    let signalsReceived = 0;
+    const makeListener = () => {
+      return (operations: Operation[]) => {
+        Expect(operations.length).toEqual(0);
+        ++signalsReceived;
+      };
+    };
+    const listener = filterTable.connect(makeListener());
+    model.set(1, 0, -40);
+    Expect(signalsReceived).toEqual(1);
+    listener.unlisten();
+  }
+
+  @Test()
+  public testUpdateRowSignalTrueToFalse(): void {
+  }
+
+  @Test()
+  public testUpdateRowSignalFalseToTrue(): void {
+  }
+
+  @Test()
+  public testReceiveReceiveManyAdds(): void {
+  }
+
+  @Test()
+  public testAddRowSignalTrue(): void {
+  }
+
+  @Test()
+  public testAddRowSignalFalse(): void {
+  }
+
+  @Test()
+  public testRemoveRowSignal(): void {
   }
 }
