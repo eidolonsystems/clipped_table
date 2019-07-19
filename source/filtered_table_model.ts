@@ -107,7 +107,9 @@ export class FilteredTableModel extends TableModel {
     for(let i = 0; i < this.model.columnCount; ++i) {
       array.push(this.model.get(rowIndex, i));
     }
-    return new ArrayTableModel().addRow(array);
+    const row = new ArrayTableModel();
+    row.addRow(array);
+    return row;
   }
 
   private rowAdded(operation: AddRowOperation) {
@@ -129,7 +131,7 @@ export class FilteredTableModel extends TableModel {
       this.subTable.splice(newIndex, 0, rowAddedIndex);
       this.visiblity.splice(rowAddedIndex, 0, newIndex);
       this.length++;
-      this.operations.push(new AddRowOperation(newIndex, operation.row));
+      //this.operations.push(new AddRowOperation(newIndex, operation.row));
     } else {
       for(let i = 0; i < this.length; ++i) {
         if(this.subTable[i] >= rowAddedIndex) {
@@ -180,7 +182,8 @@ export class FilteredTableModel extends TableModel {
         }
         this.subTable.splice(subTableIndex, 1);
         this.length--;
-        //this.operations.push(new RemoveRowOperation());
+        this.operations.push(
+          new RemoveRowOperation(subTableIndex, this.makeRow(rowIndex)));
       }
     } else {
       if(truthyness) {
@@ -195,7 +198,8 @@ export class FilteredTableModel extends TableModel {
         this.visiblity[rowIndex] = newIndex;
         this.subTable.splice(newIndex, 0, rowIndex);
         this.length++;
-        //this.operations.push(new AddRowOp);
+        this.operations.push(
+          new AddRowOperation(newIndex, this.makeRow(rowIndex)));
       }
     }
   }

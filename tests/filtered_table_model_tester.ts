@@ -338,10 +338,62 @@ export class FilteredTableModelTester {
 
   @Test()
   public testUpdateRowSignalTrueToFalse(): void {
+    const model = new ArrayTableModel();
+    model.addRow([23]);
+    model.addRow([-4]);
+    model.addRow([-12]);
+    model.addRow([22]);
+    model.addRow([-70]);
+    model.addRow([9]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    let signalsReceived = 0;
+    const makeListener = (expectedRow: number) => {
+      return (operations: Operation[]) => {
+        Expect(operations.length).toEqual(1);
+        const operation = operations[0] as RemoveRowOperation;
+        Expect(operation).not.toBeNull();
+        Expect(operation.index).toEqual(expectedRow);
+        ++signalsReceived;
+      };
+    };
+    let listener = filterTable.connect(makeListener(1));
+    model.set(3, 0, -40);
+    Expect(signalsReceived).toEqual(1);
+    listener.unlisten();
+    listener = filterTable.connect(makeListener(0));
+    model.set(0, 0, -33);
+    Expect(signalsReceived).toEqual(2);
+    listener.unlisten();
   }
 
   @Test()
   public testUpdateRowSignalFalseToTrue(): void {
+    const model = new ArrayTableModel();
+    model.addRow([23]);
+    model.addRow([-4]);
+    model.addRow([-12]);
+    model.addRow([22]);
+    model.addRow([-70]);
+    model.addRow([9]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    let signalsReceived = 0;
+    const makeListener = (expectedRow: number) => {
+      return (operations: Operation[]) => {
+        Expect(operations.length).toEqual(1);
+        const operation = operations[0] as AddRowOperation;
+        Expect(operation).not.toBeNull();
+        Expect(operation.index).toEqual(expectedRow);
+        ++signalsReceived;
+      };
+    };
+    let listener = filterTable.connect(makeListener(2));
+    model.set(4, 0, 90);
+    Expect(signalsReceived).toEqual(1);
+    listener.unlisten();
+    listener = filterTable.connect(makeListener(1));
+    model.set(1, 0, 11);
+    Expect(signalsReceived).toEqual(2);
+    listener.unlisten();
   }
 
   @Test()
