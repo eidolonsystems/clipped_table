@@ -1,27 +1,20 @@
 import { Expect, Test } from 'alsatian';
 import { Predicate, FilteredTableModel } from '../source/filtered_table_model';
 import { AddRowOperation, ArrayTableModel, MoveRowOperation , Operation,
-  RemoveRowOperation, TranslatedTableModel, UpdateValueOperation }
+  RemoveRowOperation, TableModel, TranslatedTableModel, UpdateValueOperation }
   from '../source';
 
 class MockPredicate implements Predicate {
-  constructor(index: number) {
-    this._index = index;
-  }
 
-  public get index(): number {
-    return this._index;
-  }
+  constructor() {}
 
-  public applyPredicate(data: any): boolean {
-    if(data > 0) {
+  public applyPredicate(row: number, model: TableModel): boolean {
+    if(model.get(row, 0) > 0) {
       return true;
     } else {
       return false;
     }
   }
-
-  private _index: number;
 }
 
 /** Tests the FilteredTableModel. */
@@ -31,7 +24,7 @@ export class FilteredTableModelTester {
   @Test()
   public testEmptyArray(): void {
     const model = new ArrayTableModel();
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     Expect(filterTable.rowCount).toEqual(0);
   }
 
@@ -43,7 +36,7 @@ export class FilteredTableModelTester {
     model.addRow([1]);
     model.addRow([-6]);
     model.addRow([6]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     Expect(filterTable.rowCount).toEqual(2);
   }
 
@@ -55,7 +48,7 @@ export class FilteredTableModelTester {
     model.addRow([1]);
     model.addRow([-6]);
     model.addRow([6]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     Expect(filterTable.rowCount).toEqual(2);
     Expect(filterTable.get(0, 0)).toEqual(1);
     Expect(filterTable.get(1, 0)).toEqual(6);
@@ -69,7 +62,7 @@ export class FilteredTableModelTester {
     model.addRow([1]);
     model.addRow([-8]);
     model.addRow([-3]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     Expect(filterTable.rowCount).toEqual(1);
     Expect(filterTable.get(0, 0)).toEqual(1);
     model.set(0, 0, 4);
@@ -96,7 +89,7 @@ export class FilteredTableModelTester {
     model.addRow([12]);
     model.addRow([22]);
     model.addRow([9]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     Expect(filterTable.rowCount).toEqual(4);
     model.set(0, 0, -1);
     Expect(filterTable.rowCount).toEqual(3);
@@ -122,7 +115,7 @@ export class FilteredTableModelTester {
     model.addRow([22]);
     model.addRow([-30]);
     model.addRow([9]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     Expect(filterTable.rowCount).toEqual(2);
     Expect(filterTable.get(0, 0)).toEqual(22);
     Expect(filterTable.get(1, 0)).toEqual(9);
@@ -144,7 +137,7 @@ export class FilteredTableModelTester {
     model.addRow([22]);
     model.addRow([-30]);
     model.addRow([9]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     Expect(filterTable.rowCount).toEqual(3);
     Expect(filterTable.get(0, 0)).toEqual(4);
     Expect(filterTable.get(1, 0)).toEqual(22);
@@ -170,7 +163,7 @@ export class FilteredTableModelTester {
     model.addRow([9]);
     model.addRow([30]);
     model.addRow([-44]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     Expect(filterTable.rowCount).toEqual(3);
     Expect(filterTable.get(0, 0)).toEqual(22);
     Expect(filterTable.get(1, 0)).toEqual(9);
@@ -202,7 +195,7 @@ export class FilteredTableModelTester {
     model.addRow([-55]);
     model.addRow([30]);
     model.addRow([-44]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     Expect(filterTable.rowCount).toEqual(3);
     Expect(filterTable.get(0, 0)).toEqual(22);
     Expect(filterTable.get(1, 0)).toEqual(9);
@@ -233,7 +226,7 @@ export class FilteredTableModelTester {
     model.addRow([10]);
     model.addRow([11]);
     model.addRow([12]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     Expect(filterTable.rowCount).toEqual(12);
   }
 
@@ -244,7 +237,7 @@ export class FilteredTableModelTester {
     model.addRow([-12]);
     model.addRow([22]);
     model.addRow([9]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     Expect(filterTable.rowCount).toEqual(2);
     Expect(filterTable.get(0, 0)).toEqual(22);
     Expect(filterTable.get(1, 0)).toEqual(9);
@@ -265,7 +258,7 @@ export class FilteredTableModelTester {
     model.addRow([-12]);
     model.addRow([22]);
     model.addRow([9]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     Expect(filterTable.rowCount).toEqual(2);
     Expect(filterTable.get(0, 0)).toEqual(22);
     Expect(filterTable.get(1, 0)).toEqual(9);
@@ -295,7 +288,7 @@ export class FilteredTableModelTester {
     model.addRow([22]);
     model.addRow([-70]);
     model.addRow([9]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     let signalsReceived = 0;
     const makeListener = (expectedRow: number) => {
       return (operations: Operation[]) => {
@@ -326,7 +319,7 @@ export class FilteredTableModelTester {
     model.addRow([22]);
     model.addRow([-70]);
     model.addRow([9]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     let signalsReceived = 0;
     const makeListener = () => {
       return (operations: Operation[]) => {
@@ -349,7 +342,7 @@ export class FilteredTableModelTester {
     model.addRow([22]);
     model.addRow([-70]);
     model.addRow([9]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     let signalsReceived = 0;
     const makeListener = (expectedRow: number) => {
       return (operations: Operation[]) => {
@@ -379,7 +372,7 @@ export class FilteredTableModelTester {
     model.addRow([22]);
     model.addRow([-70]);
     model.addRow([9]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     let signalsReceived = 0;
     const makeListener = (expectedRow: number) => {
       return (operations: Operation[]) => {
@@ -409,7 +402,7 @@ export class FilteredTableModelTester {
     model.addRow([22]);
     model.addRow([-70]);
     model.addRow([9]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     let signalsReceived = 0;
     const makeListener = (expectedRow: number) => {
       return (operations: Operation[]) => {
@@ -435,7 +428,7 @@ export class FilteredTableModelTester {
     model.addRow([22]);
     model.addRow([-70]);
     model.addRow([9]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     let signalsReceived = 0;
     const makeListener = () => {
       return (operations: Operation[]) => {
@@ -460,7 +453,7 @@ export class FilteredTableModelTester {
     model.addRow([22]);
     model.addRow([-70]);
     model.addRow([9]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     let signalsReceived = 0;
     const makeListener = () => {
       return (operations: Operation[]) => {
@@ -477,7 +470,6 @@ export class FilteredTableModelTester {
 
   @Test()
   public testAddRowSignalTrue(): void {
-    ///ghdjkhgjkhdjklhfjkghjkfhjkfhkj
     const model = new ArrayTableModel();
     model.addRow([23]);
     model.addRow([-4]);
@@ -485,7 +477,7 @@ export class FilteredTableModelTester {
     model.addRow([22]);
     model.addRow([-70]);
     model.addRow([9]);
-    const filterTable = new FilteredTableModel(model, new MockPredicate(0));
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
     let signalsReceived = 0;
     const makeListener = (expectedRow: number) => {
       return (operations: Operation[]) => {

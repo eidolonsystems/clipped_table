@@ -6,12 +6,11 @@ import { ArrayTableModel } from './array_table_model';
 
 export abstract class Predicate {
 
-  public abstract get index(): number;
 
   /**
    * @param  row - The row to apply the predicate to.
    */
-  public abstract applyPredicate(row: any[]): boolean;
+  public abstract applyPredicate(row: number, model: TableModel): boolean;
 }
 
 export class FilteredTableModel extends TableModel {
@@ -77,8 +76,7 @@ export class FilteredTableModel extends TableModel {
     this.visiblity = [];
     this.subTable = [];
     for(let i = 0; i < this.model.rowCount; ++i) {
-      if(this.predicate.applyPredicate(
-          this.model.get(i, this.predicate.index))) {
+      if(this.predicate.applyPredicate(i, this.model)) {
         this.visiblity.push(this.length);
         this.subTable.push(i);
         this.length++;
@@ -115,7 +113,7 @@ export class FilteredTableModel extends TableModel {
   private rowAdded(operation: AddRowOperation) {
     const rowAddedIndex = operation.index;
     const truthyness =
-      this.predicate.applyPredicate(operation.row.get(0, this.predicate.index));
+      this.predicate.applyPredicate(0, operation.row);
     if(truthyness) {
       let newIndex = this.length;
       for(let i = 0; i < this.length; ++i) {
@@ -169,9 +167,7 @@ export class FilteredTableModel extends TableModel {
 
   private rowUpdated(operation: UpdateValueOperation) {
     const rowIndex = operation.row;
-    const truthyness =
-      this.predicate.applyPredicate(
-        this.model.get(rowIndex, this.predicate.index));
+    const truthyness = this.predicate.applyPredicate(rowIndex, this.model);
     if(this.visiblity[rowIndex] > -1) {
       if(truthyness) {
         const newIndex = this.visiblity[rowIndex];
