@@ -17,6 +17,7 @@ export class FilteredTableModel extends TableModel {
 
   /** Constructs a FilteredTableModel.
    * @param source - The underlying model to filter.
+   * @param predicate - The predicate used to filter the table.
    */
   public constructor(model: TableModel, predicate: Predicate) {
     super();
