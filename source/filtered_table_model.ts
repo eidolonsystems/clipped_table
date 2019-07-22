@@ -4,13 +4,12 @@ import { AddRowOperation, Operation, RemoveRowOperation, UpdateValueOperation }
   from './operations';
 import { TableModel } from './table_model';
 
-
-export abstract class Predicate {
-
-  /**
-   * @param row - The row to apply the predicate to.
-   */
-  public abstract applyPredicate(row: number, model: TableModel): boolean;
+/**
+ * @param row - The row to apply the predicate to.
+ * @param model - The model that contains the row.
+ */
+export function applyPredicate(row: number, model: TableModel): boolean {
+  return true;
 }
 
 export class FilteredTableModel extends TableModel {
@@ -19,10 +18,15 @@ export class FilteredTableModel extends TableModel {
    * @param source - The underlying model to filter.
    * @param predicate - The predicate used to filter the table.
    */
-  public constructor(model: TableModel, predicate: Predicate) {
+  public constructor(model: TableModel,
+      predicate?: (row: number, model: TableModel) =>  boolean) {
     super();
     this.model = model;
-    this.predicate = predicate;
+    if(predicate) {
+      this.predicate = predicate;
+    } else {
+      this.predicate = applyPredicate;
+    }
     this.length = 0;
     this.filter();
     this.transactionCount = 0;
@@ -77,7 +81,7 @@ export class FilteredTableModel extends TableModel {
     this.visiblity = [];
     this.subTable = [];
     for(let i = 0; i < this.model.rowCount; ++i) {
-      if(this.predicate.applyPredicate(i, this.model)) {
+      if(this.predicate(i, this.model)) {
         this.visiblity.push(this.length);
         this.subTable.push(i);
         ++this.length;
@@ -114,7 +118,7 @@ export class FilteredTableModel extends TableModel {
   private rowAdded(operation: AddRowOperation) {
     const rowAddedIndex = operation.index;
     const truthyness =
-      this.predicate.applyPredicate(0, operation.row);
+      this.predicate(0, operation.row);
     if(truthyness) {
       let newIndex = this.length;
       for(let i = 0; i < this.length; ++i) {
@@ -166,7 +170,7 @@ export class FilteredTableModel extends TableModel {
 
   private rowUpdated(operation: UpdateValueOperation) {
     const rowIndex = operation.row;
-    const isTrue = this.predicate.applyPredicate(rowIndex, this.model);
+    const isTrue = this.predicate(rowIndex, this.model);
     if(this.visiblity[rowIndex] > -1) {
       if(isTrue) {
         const newIndex = this.visiblity[rowIndex];
@@ -206,7 +210,7 @@ export class FilteredTableModel extends TableModel {
   private model: TableModel;
   private visiblity: number[];
   private subTable: number[];
-  private predicate: Predicate;
+  private predicate: (row: number, model: TableModel) =>  boolean;
   private length: number;
   private transactionCount: number;
   private operations: Operation[];
