@@ -38,6 +38,19 @@ export class FilteredTableModelTester {
     Expect(filterTable.rowCount).toEqual(2);
   }
 
+  /** Tests actions that should be invalid. */
+  @Test()
+  public testInvalidGets(): void {
+    const model = new ArrayTableModel();
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
+    Expect(() => filterTable.get(8, 0)).toThrow();
+    model.addRow([4, 4]);
+    model.addRow([5, 5]);
+    model.addRow([-3, -3]);
+    Expect(() => filterTable.get(2, 0)).toThrow();
+    Expect(() => filterTable.get(0, 3)).toThrow();
+  }
+
   /** Tests filtering. */
   @Test()
   public testSimpleFiltering(): void {
@@ -153,6 +166,30 @@ export class FilteredTableModelTester {
     Expect(filterTable.get(0, 0)).toEqual(50);
     Expect(filterTable.get(1, 0)).toEqual(22);
     Expect(filterTable.get(2, 0)).toEqual(2);
+  }
+
+  @Test()
+  public multipleMixedUpdates(): void {
+    const model = new ArrayTableModel();
+    model.addRow([-4]);
+    model.addRow([-12]);
+    model.addRow([-1]);
+    model.addRow([30]);
+    model.addRow([-2]);
+    const filterTable = new FilteredTableModel(model, new MockPredicate());
+    Expect(filterTable.rowCount).toEqual(1);
+    model.set(0, 0, 50);
+    model.set(4, 0, 22);
+    model.set(3, 0, 44);
+    model.set(1, 0, 99);
+    model.set(2, 0, -77);
+    model.set(0, 0, -66);
+    model.set(3, 0, -23);
+    model.set(0, 0, 11);
+    Expect(filterTable.rowCount).toEqual(3);
+    Expect(filterTable.get(0, 0)).toEqual(11);
+    Expect(filterTable.get(1, 0)).toEqual(99);
+    Expect(filterTable.get(2, 0)).toEqual(22);
   }
 
   /** Tests what happens when a row that was false is removed. */

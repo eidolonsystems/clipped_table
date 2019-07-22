@@ -7,7 +7,7 @@ import { ArrayTableModel } from './array_table_model';
 export abstract class Predicate {
 
   /**
-   * @param  row - The row to apply the predicate to.
+   * @param row - The row to apply the predicate to.
    */
   public abstract applyPredicate(row: number, model: TableModel): boolean;
 }
