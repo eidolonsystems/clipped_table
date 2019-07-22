@@ -39,7 +39,7 @@ export class FilteredTableModel extends TableModel {
    *  already being processed, then the sub-transaction gets consolidated into
    *  the parent transaction.
    */
-  public beginTransaction(): void {
+  private beginTransaction(): void {
     if(this.transactionCount === 0) {
       this.operations = [];
     }
@@ -47,7 +47,7 @@ export class FilteredTableModel extends TableModel {
   }
 
   /** Ends a transaction. */
-  public endTransaction(): void {
+  private endTransaction(): void {
     --this.transactionCount;
     if(this.transactionCount === 0) {
       this.dispatcher.dispatch(this.operations);
@@ -117,9 +117,9 @@ export class FilteredTableModel extends TableModel {
 
   private rowAdded(operation: AddRowOperation) {
     const rowAddedIndex = operation.index;
-    const truthyness =
+    const isFiltered =
       this.predicate(0, operation.row);
-    if(truthyness) {
+    if(isFiltered) {
       let newIndex = this.length;
       for(let i = 0; i < this.length; ++i) {
         if(this.subTable[i] >= rowAddedIndex && newIndex === this.length) {
@@ -170,9 +170,9 @@ export class FilteredTableModel extends TableModel {
 
   private rowUpdated(operation: UpdateValueOperation) {
     const rowIndex = operation.row;
-    const isTrue = this.predicate(rowIndex, this.model);
+    const isFiltered = this.predicate(rowIndex, this.model);
     if(this.visiblity[rowIndex] > -1) {
-      if(isTrue) {
+      if(isFiltered) {
         const newIndex = this.visiblity[rowIndex];
         this.operations.push(new UpdateValueOperation(
           newIndex, operation.column, operation.previous, operation.current));
@@ -188,7 +188,7 @@ export class FilteredTableModel extends TableModel {
           new RemoveRowOperation(subTableIndex, this.makeRow(rowIndex)));
       }
     } else {
-      if(isTrue) {
+      if(isFiltered) {
         let newIndex = this.length;
         for(let i = 0; i < this.length; ++i) {
           if(this.subTable[i] > rowIndex && newIndex === this.length) {
