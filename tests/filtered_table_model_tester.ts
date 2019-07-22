@@ -4,7 +4,7 @@ import { AddRowOperation, ArrayTableModel, FilteredTableModel, Operation,
   from '../source';
 
 class MockPredicate {
-  public applyPredicate(row: number, model: TableModel): boolean {
+  public applyPredicate(model: TableModel, row: number): boolean {
     return model.get(row, 0) >= 0;
   }
 }

@@ -4,14 +4,6 @@ import { AddRowOperation, Operation, RemoveRowOperation, UpdateValueOperation }
   from './operations';
 import { TableModel } from './table_model';
 
-/**
- * @param row - The row to apply the predicate to.
- * @param model - The model that contains the row.
- */
-export function applyPredicate(row: number, model: TableModel): boolean {
-  return true;
-}
-
 export class FilteredTableModel extends TableModel {
 
   /** Constructs a FilteredTableModel.
@@ -19,39 +11,16 @@ export class FilteredTableModel extends TableModel {
    * @param predicate - The predicate used to filter the table.
    */
   public constructor(model: TableModel,
-      predicate?: (row: number, model: TableModel) =>  boolean) {
+      predicate: (model: TableModel, row: number) =>  boolean) {
     super();
     this.model = model;
-    if(predicate) {
-      this.predicate = predicate;
-    } else {
-      this.predicate = applyPredicate;
-    }
+    this.predicate = predicate;
     this.length = 0;
     this.filter();
     this.transactionCount = 0;
     this.operations = [];
     this.dispatcher = new Kola.Dispatcher<Operation[]>();
     this.model.connect(this.handleOperations.bind(this));
-  }
-
-  /** Marks the beginning of a transaction. In cases where a transaction is
-   *  already being processed, then the sub-transaction gets consolidated into
-   *  the parent transaction.
-   */
-  private beginTransaction(): void {
-    if(this.transactionCount === 0) {
-      this.operations = [];
-    }
-    ++this.transactionCount;
-  }
-
-  /** Ends a transaction. */
-  private endTransaction(): void {
-    --this.transactionCount;
-    if(this.transactionCount === 0) {
-      this.dispatcher.dispatch(this.operations);
-    }
   }
 
   public get rowCount(): number {
@@ -77,11 +46,25 @@ export class FilteredTableModel extends TableModel {
     return this.dispatcher.listen(slot);
   }
 
+  private beginTransaction() {
+    if(this.transactionCount === 0) {
+      this.operations = [];
+    }
+    ++this.transactionCount;
+  }
+
+  private endTransaction() {
+    --this.transactionCount;
+    if(this.transactionCount === 0) {
+      this.dispatcher.dispatch(this.operations);
+    }
+  }
+
   private filter() {
     this.visiblity = [];
     this.subTable = [];
     for(let i = 0; i < this.model.rowCount; ++i) {
-      if(this.predicate(i, this.model)) {
+      if(this.predicate(this.model, i)) {
         this.visiblity.push(this.length);
         this.subTable.push(i);
         ++this.length;
@@ -117,9 +100,7 @@ export class FilteredTableModel extends TableModel {
 
   private rowAdded(operation: AddRowOperation) {
     const rowAddedIndex = operation.index;
-    const isFiltered =
-      this.predicate(0, operation.row);
-    if(isFiltered) {
+    if(this.predicate(operation.row, 0)) {
       let newIndex = this.length;
       for(let i = 0; i < this.length; ++i) {
         if(this.subTable[i] >= rowAddedIndex && newIndex === this.length) {
@@ -170,9 +151,8 @@ export class FilteredTableModel extends TableModel {
 
   private rowUpdated(operation: UpdateValueOperation) {
     const rowIndex = operation.row;
-    const isFiltered = this.predicate(rowIndex, this.model);
     if(this.visiblity[rowIndex] > -1) {
-      if(isFiltered) {
+      if(this.predicate(this.model, rowIndex)) {
         const newIndex = this.visiblity[rowIndex];
         this.operations.push(new UpdateValueOperation(
           newIndex, operation.column, operation.previous, operation.current));
@@ -188,7 +168,7 @@ export class FilteredTableModel extends TableModel {
           new RemoveRowOperation(subTableIndex, this.makeRow(rowIndex)));
       }
     } else {
-      if(isFiltered) {
+      if(this.predicate(this.model, rowIndex)) {
         let newIndex = this.length;
         for(let i = 0; i < this.length; ++i) {
           if(this.subTable[i] > rowIndex && newIndex === this.length) {
@@ -210,7 +190,7 @@ export class FilteredTableModel extends TableModel {
   private model: TableModel;
   private visiblity: number[];
   private subTable: number[];
-  private predicate: (row: number, model: TableModel) =>  boolean;
+  private predicate: (model: TableModel, row: number) =>  boolean;
   private length: number;
   private transactionCount: number;
   private operations: Operation[];
