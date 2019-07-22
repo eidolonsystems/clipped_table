@@ -163,11 +163,11 @@ export class FilteredTableModel extends TableModel {
     this.visiblity.splice(rowIndex, 1);
   }
 
-  private rowUpdated(operation: UpdateValueOperation) {
+  private rowUpdated(operation: UpdateValueOperation) { ////////
     const rowIndex = operation.row;
-    const truthyness = this.predicate.applyPredicate(rowIndex, this.model);
+    const isTrue = this.predicate.applyPredicate(rowIndex, this.model);
     if(this.visiblity[rowIndex] > -1) {
-      if(truthyness) {
+      if(isTrue) {
         const newIndex = this.visiblity[rowIndex];
         this.operations.push(new UpdateValueOperation(
           newIndex, operation.column, operation.previous, operation.current));
@@ -177,16 +177,18 @@ export class FilteredTableModel extends TableModel {
           --this.visiblity[this.subTable[i]];
         }
         this.subTable.splice(subTableIndex, 1);
+        this.visiblity[rowIndex] = -1;
         --this.length;
         this.operations.push(
           new RemoveRowOperation(subTableIndex, this.makeRow(rowIndex)));
       }
     } else {
-      if(truthyness) {
+      if(isTrue) {
         let newIndex = this.length;
         for(let i = 0; i < this.length; ++i) {
           if(this.subTable[i] > rowIndex && newIndex === this.length) {
             newIndex = i;
+            ++this.visiblity[this.subTable[i]];
           } else if(newIndex !== this.length) {
             ++this.visiblity[this.subTable[i]];
           }

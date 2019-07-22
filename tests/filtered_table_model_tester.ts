@@ -184,7 +184,7 @@ export class FilteredTableModelTester {
     model.set(1, 0, 99);
     model.set(2, 0, -77);
     model.set(0, 0, -66);
-    model.set(3, 0, -23);
+    model.set(3, 0, -23); // > : I
     model.set(0, 0, 11);
     Expect(filterTable.rowCount).toEqual(3);
     Expect(filterTable.get(0, 0)).toEqual(11);
