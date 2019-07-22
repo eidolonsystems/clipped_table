@@ -21,8 +21,12 @@ interface Properties {
   activeWidth?: number;
 }
 
+interface State {
+  containerHeight: number;
+}
+
 /** Renders a TableModel to HTML. */
-export class TableView extends React.Component<Properties> implements
+export class TableView extends React.Component<Properties, State> implements
     TableInterface {
   public static readonly defaultProps = {
     header: [] as string[],
@@ -32,6 +36,9 @@ export class TableView extends React.Component<Properties> implements
 
   constructor(props: Properties) {
     super(props);
+    this.state = {
+      containerHeight: 0
+    }
     this.headerRefs = [];
     for(let i = 0; i < this.props.labels.length; ++i) {
       this.headerRefs[i] = null;
@@ -48,6 +55,9 @@ export class TableView extends React.Component<Properties> implements
       this.columnResizer.onMouseUp.bind(this.columnResizer));
     document.addEventListener('pointermove',
       this.columnResizer.onMouseMove.bind(this.columnResizer));
+    if(this.state.containerHeight !== this.containterRef.clientHeight) {
+      this.setState({containerHeight: this.containterRef.clientHeight});
+    }
   }
 
   public componentWillUnmount() {
@@ -100,6 +110,7 @@ export class TableView extends React.Component<Properties> implements
             </tr>
           </thead>
           <tbody style={this.props.style.tbody}
+              ref={(tbody) => this.containterRef = tbody}
               className={this.props.className}>
             {tableRows}
           </tbody>
@@ -171,6 +182,7 @@ export class TableView extends React.Component<Properties> implements
 
   private headerRefs: HTMLHeadElement[];
   private headerRowRef: HTMLTableRowElement;
+  private containterRef: HTMLTableSectionElement;
   private columnResizer: ColumnResizer;
   private table: SortedTableModel;
 }
