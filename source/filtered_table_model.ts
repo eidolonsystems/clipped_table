@@ -1,8 +1,9 @@
 import * as Kola from 'kola-signals';
+import { ArrayTableModel } from './array_table_model';
 import { AddRowOperation, Operation, RemoveRowOperation, UpdateValueOperation }
   from './operations';
 import { TableModel } from './table_model';
-import { ArrayTableModel } from './array_table_model';
+
 
 export abstract class Predicate {
 
