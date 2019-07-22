@@ -6,7 +6,6 @@ import { ArrayTableModel } from './array_table_model';
 
 export abstract class Predicate {
 
-
   /**
    * @param  row - The row to apply the predicate to.
    */
@@ -68,7 +67,7 @@ export class FilteredTableModel extends TableModel {
   }
 
   public connect(slot: (operations: Operation[]) => void):
-    Kola.Listener<Operation[]> {
+      Kola.Listener<Operation[]> {
     return this.dispatcher.listen(slot);
   }
 
@@ -79,7 +78,7 @@ export class FilteredTableModel extends TableModel {
       if(this.predicate.applyPredicate(i, this.model)) {
         this.visiblity.push(this.length);
         this.subTable.push(i);
-        this.length++;
+        ++this.length;
       } else {
         this.visiblity.push(-1);
       }
@@ -119,22 +118,21 @@ export class FilteredTableModel extends TableModel {
       for(let i = 0; i < this.length; ++i) {
         if(this.subTable[i] >= rowAddedIndex && newIndex === this.length) {
           newIndex = i;
-          this.visiblity[this.subTable[i]]++;
-          this.subTable[i]++;
+          ++this.visiblity[this.subTable[i]];
+          ++this.subTable[i];
         } else if(newIndex !== this.length) {
-          this.visiblity[this.subTable[i]]++;
-          this.subTable[i]++;
+          ++this.visiblity[this.subTable[i]];
+          ++this.subTable[i];
         }
       }
       this.subTable.splice(newIndex, 0, rowAddedIndex);
       this.visiblity.splice(rowAddedIndex, 0, newIndex);
-      this.length++;
-      this.operations.push(
-        new AddRowOperation(newIndex, operation.row));
+      ++this.length;
+      this.operations.push(new AddRowOperation(newIndex, operation.row));
     } else {
       for(let i = 0; i < this.length; ++i) {
         if(this.subTable[i] >= rowAddedIndex) {
-          this.subTable[i]++;
+          ++this.subTable[i];
         }
       }
       this.visiblity.splice(rowAddedIndex, 0, -1);
@@ -147,18 +145,18 @@ export class FilteredTableModel extends TableModel {
     if(subTableIndex > -1) {
       for(let i = subTableIndex; i < this.length; ++i) {
         if(this.subTable[i] > rowIndex) {
-          this.visiblity[this.subTable[i]]--;
-          this.subTable[i]--;
+          --this.visiblity[this.subTable[i]];
+          --this.subTable[i];
         }
       }
       this.subTable.splice(subTableIndex, 1);
-      this.length--;
+      --this.length;
       this.operations.push(
         new RemoveRowOperation(subTableIndex, operation.row));
     } else {
       for(let i = 0; i < this.length; ++i) {
         if(this.subTable[i] > rowIndex) {
-          this.subTable[i]--;
+          --this.subTable[i];
         }
       }
     }
@@ -175,11 +173,11 @@ export class FilteredTableModel extends TableModel {
           newIndex, operation.column, operation.previous, operation.current));
       } else {
         const subTableIndex = this.visiblity[rowIndex];
-        for(let i = subTableIndex; i < this.length; i++) {
-          this.visiblity[this.subTable[i]]--;
+        for(let i = subTableIndex; i < this.length; ++i) {
+          --this.visiblity[this.subTable[i]];
         }
         this.subTable.splice(subTableIndex, 1);
-        this.length--;
+        --this.length;
         this.operations.push(
           new RemoveRowOperation(subTableIndex, this.makeRow(rowIndex)));
       }
@@ -190,12 +188,12 @@ export class FilteredTableModel extends TableModel {
           if(this.subTable[i] > rowIndex && newIndex === this.length) {
             newIndex = i;
           } else if(newIndex !== this.length) {
-            this.visiblity[this.subTable[i]]++;
+            ++this.visiblity[this.subTable[i]];
           }
         }
         this.visiblity[rowIndex] = newIndex;
         this.subTable.splice(newIndex, 0, rowIndex);
-        this.length++;
+        ++this.length;
         this.operations.push(
           new AddRowOperation(newIndex, this.makeRow(rowIndex)));
       }
