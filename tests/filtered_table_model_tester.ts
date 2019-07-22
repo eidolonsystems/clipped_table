@@ -4,7 +4,7 @@ import { AddRowOperation, ArrayTableModel, FilteredTableModel, Operation,
   from '../source';
 
 function applyPredicate(model: TableModel, row: number): boolean {
-  return (model.get(row, 0) >= 0);
+  return model.get(row, 0) >= 0;
 }
 
 /** Tests the FilteredTableModel. */
