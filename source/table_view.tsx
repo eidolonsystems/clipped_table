@@ -68,16 +68,21 @@ export class TableView extends React.Component<Properties, State> implements
   public componentDidUpdate() {
     if(this.firstRowRef !== null) {
       if(this.firstRowRef.clientHeight !== this.state.rowHeight) {
-        this.setState({rowHeight: this.firstRowRef.clientHeight});
+        this.setState({
+          rowHeight: this.firstRowRef.clientHeight,
+          fullScrollHeight:
+            this.props.model.rowCount * this.firstRowRef.clientHeight
+        });
+
       }
     }
     if(this.firstRowRef !== null && this.firstRowRef !== undefined &&
         this.state.rowsToShow !==
          Math.floor(this.props.height / this.state.rowHeight)) {
       if(Math.floor(this.props.height / this.state.rowHeight) !== Infinity) {
-        this.setState({rowsToShow:
-          Math.floor(this.props.height / this.state.rowHeight)});
-        console.log('ratio: ', Math.floor(this.props.height / this.state.rowHeight));
+        this.setState({
+          rowsToShow: Math.floor(this.props.height / this.state.rowHeight
+        )});
       }
     }
   }
@@ -89,6 +94,7 @@ export class TableView extends React.Component<Properties, State> implements
 
   public render(): JSX.Element {
     console.log('height',this.props.height,'rowHeight',this.state.rowHeight);
+    console.log('ratio: ', Math.floor(this.props.height / this.state.rowHeight));
     console.log('rowsToShow', this.state.rowsToShow);
     const header = [];
     for(let i = 0; i < this.props.labels.length; ++i) {
@@ -113,7 +119,7 @@ export class TableView extends React.Component<Properties, State> implements
             {this.table.get(i, j)}
           </td>);
       }
-      if(i === 0) {
+      if(i === 0 ) {
         tableRows.push(
           <tr style={this.props.style.tr}
               ref={(first) => this.firstRowRef = first}
@@ -130,6 +136,13 @@ export class TableView extends React.Component<Properties, State> implements
           </tr>);
       }
     }
+    if(this.state.rowHeight !== 0) {
+      tableRows.push(
+        <tr style=
+          {{height: `${(this.table.rowCount - this.state.rowsToShow) * this.state.rowHeight}px`}}
+            className={this.props.className}
+            key={'filler'}/>);
+      }
     return(
       <div ref={(tbody) => this.containterRef = tbody}>
         <table style={this.props.style.table}
