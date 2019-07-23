@@ -25,7 +25,8 @@ const someStyle = {
     fontFamily: 'Arial, Helvetica, sans-serif',
     fontSize: '20px',
     borderCollapse: 'collapse',
-    border: '5px solid #000000'
+    border: '5px solid #000000',
+    height: '100%'
   },
   th: {
     border: '2px solid #000000',
@@ -40,9 +41,10 @@ const someStyle = {
 };
 
 function changeValues() {
+  console.log('CHANGE!');
   const diceRoll = Math.floor(Math.random() * 4);
   const testRow = Math.floor(Math.random() * model.rowCount);
-  if(model.rowCount > 500 || diceRoll < 1) {
+  if(model.rowCount < -1 || diceRoll < 1) {
     model.removeRow(testRow);
   } else if(diceRoll < 3) {
     const testValue = Math.floor(Math.random() * model.rowCount) + 0.5;
@@ -54,8 +56,10 @@ function changeValues() {
   }
 }
 
-setInterval(changeValues, 5000);
+//setInterval(changeValues, 8000);
 
 ReactDOM.render(
-  <TableView model={model} labels={header} style={someStyle} activeWidth={10}/>,
+  <div style={{height: '700px', overflow: 'auto'}}>
+    <TableView model={model} labels={header} style={someStyle} activeWidth={10} height={700}/>
+  </div>,
   document.getElementById('main'));
