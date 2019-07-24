@@ -4,7 +4,7 @@ import { ArrayTableModel } from './array_table_model';
 import { TableView } from './table_view';
 
 const model = new ArrayTableModel();
-for(let row = 0; row < 500; ++row) {
+for(let row = 0; row < 10000; ++row) {
   const r = [];
   for(let column = 0; column < 4; ++column) {
     if(column === 0) {
@@ -59,7 +59,7 @@ function changeValues() {
 //setInterval(changeValues, 8000);
 
 ReactDOM.render(
-  <div style={{height: '700px', overflow: 'auto'}}>
-    <TableView model={model} labels={header} style={someStyle} activeWidth={10} height={700}/>
+  <div>
+    <TableView model={model} style ={someStyle} labels={header} activeWidth={10} height={700}/>
   </div>,
   document.getElementById('main'));
