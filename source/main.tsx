@@ -4,7 +4,7 @@ import { ArrayTableModel } from './array_table_model';
 import { TableView } from './table_view';
 
 const model = new ArrayTableModel();
-for(let row = 0; row < 1000; ++row) {
+for(let row = 0; row < 20; ++row) {
   const r = [];
   for(let column = 0; column < 4; ++column) {
     if(column === 0) {
@@ -45,7 +45,7 @@ function changeValues() {
   const diceRoll = Math.floor(Math.random() * 4);
   const testRow = Math.floor(Math.random() * model.rowCount);
   if(model.rowCount < -1 || diceRoll < 1) {
-    model.removeRow(testRow);
+    //model.removeRow(testRow);
   } else if(diceRoll < 3) {
     const testValue = Math.floor(Math.random() * model.rowCount) + 0.5;
     const testColumn = Math.floor(Math.random() * 4);
@@ -56,7 +56,7 @@ function changeValues() {
   }
 }
 
-//setInterval(changeValues, 8000);
+setInterval(changeValues, 500);
 
 ReactDOM.render(
   <div>

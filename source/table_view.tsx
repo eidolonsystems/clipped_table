@@ -121,6 +121,9 @@ export class TableView extends React.Component<Properties, State> implements
     })();
     const end = (() => {
       if(this.state.topMostRow + this.state.rowsToShow
+         > this.props.model.rowCount - 1) {
+        return this.props.model.rowCount - 1;
+      } else if(this.state.topMostRow + this.state.rowsToShow
           === this.props.model.rowCount - 1) {
         return this.state.topMostRow + this.state.rowsToShow;
       } else {
