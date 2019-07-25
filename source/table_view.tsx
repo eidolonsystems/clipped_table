@@ -113,11 +113,11 @@ export class TableView extends React.Component<Properties, State> implements
     const endRow = (() => {
       if(this.props.model.rowCount === 0) {
         return 0;
-      } else if(this.state.topMostRow + this.state.rowsToShow
-         > this.props.model.rowCount - 1) {
+      } else if(this.state.topMostRow + this.state.rowsToShow >
+          this.props.model.rowCount - 1) {
         return this.props.model.rowCount - 1;
-      } else if(this.state.topMostRow + this.state.rowsToShow
-          === this.props.model.rowCount - 1) {
+      } else if(this.state.topMostRow + this.state.rowsToShow ===
+          this.props.model.rowCount - 1) {
         return this.state.topMostRow + this.state.rowsToShow;
       } else {
         return this.state.topMostRow + this.state.rowsToShow + 1;
