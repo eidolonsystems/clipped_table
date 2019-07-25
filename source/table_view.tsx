@@ -102,10 +102,10 @@ export class TableView extends React.Component<Properties, State> implements
         </th>);
     }
     const startRow = (() => {
-      if(this.state.topRow !== 0) {
+      if(this.state.topRow > 0) {
         return this.state.topRow - 1;
       } else {
-        return this.state.topRow;
+        return 0;
       }
     })();
     const endRow = (() => {
@@ -124,10 +124,8 @@ export class TableView extends React.Component<Properties, State> implements
     const tableRows = [];
     if(startRow > 0) {
       tableRows.push(
-        <tr style =
-          {{...this.props.style.td,
-            ...{height: `${(this.state.topRow - 1) *
-              this.state.rowHeight}px`}}}
+        <tr style ={{height: `${(this.state.topRow - 1) *
+            this.state.rowHeight}px`}}
           className={this.props.className}
           key={'topFiller'}/>);
       }
@@ -158,12 +156,10 @@ export class TableView extends React.Component<Properties, State> implements
           </tr>);
       }
     }
-    if(endRow < (this.props.model.rowCount - 1)) {
+    if(endRow < this.props.model.rowCount - 1) {
       tableRows.push(
-        <tr style =
-          {{...this.props.style.td,
-            ...{height: `${(this.table.rowCount - endRow - 1) *
-            this.state.rowHeight}px`}}}
+        <tr style = {{height: `${(this.table.rowCount - endRow - 1) *
+            this.state.rowHeight}px`}}
           className={this.props.className}
           key={'bottomFiller'}/>);
     }
@@ -255,10 +251,10 @@ export class TableView extends React.Component<Properties, State> implements
     this.setState({topRow: Math.floor(percent * this.props.model.rowCount)});
   }
 
+  private columnResizer: ColumnResizer;
+  private firstRowRef: HTMLTableRowElement;
   private headerRefs: HTMLHeadElement[];
   private headerRowRef: HTMLTableRowElement;
   private wrapperRef: HTMLDivElement;
-  private firstRowRef: HTMLTableRowElement;
-  private columnResizer: ColumnResizer;
   private table: SortedTableModel;
 }
