@@ -45,7 +45,7 @@ export class TableView extends React.Component<Properties, State> implements
     this.state = {
       fullScrollHeight: 0,
       rowHeight: 0,
-      rowsToShow: this.props.model.rowCount - 1,
+      rowsToShow: 1,
       topMostRow: 0
     };
     this.headerRefs = [];
@@ -130,7 +130,7 @@ export class TableView extends React.Component<Properties, State> implements
         return this.state.topMostRow + this.state.rowsToShow + 1;
       }
     } )();
-
+    console.log('ennnd', end);
     const tableRows = [];
     if(this.state.topMostRow > 1) {
       tableRows.push(
@@ -172,8 +172,10 @@ export class TableView extends React.Component<Properties, State> implements
       tableRows.push(
         <tr style=
           {{...this.props.style.td,
-            ...{height: `${(this.table.rowCount - this.state.topMostRow - this.state.rowsToShow - 2)
-            * this.state.rowHeight}px`}}}
+            ...{height: `${(this.table.rowCount - 
+            this.state.topMostRow - 
+            this.state.rowsToShow - 2) * 
+            this.state.rowHeight}px`}}}
             className={this.props.className}
             key={'bottomFiller'}/>);
     }

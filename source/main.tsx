@@ -4,7 +4,7 @@ import { ArrayTableModel } from './array_table_model';
 import { TableView } from './table_view';
 
 const model = new ArrayTableModel();
-for(let row = 0; row < 20; ++row) {
+for(let row = 0; row < 10000; ++row) {
   const r = [];
   for(let column = 0; column < 4; ++column) {
     if(column === 0) {
@@ -17,7 +17,7 @@ for(let row = 0; row < 20; ++row) {
   }
   model.addRow(r);
 }
-
+console.log('finished building table');
 const header = ['one', 'two', 'three', 'four'];
 
 const someStyle = {
