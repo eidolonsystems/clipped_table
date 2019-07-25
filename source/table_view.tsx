@@ -172,9 +172,7 @@ export class TableView extends React.Component<Properties, State> implements
       tableRows.push(
         <tr style=
           {{...this.props.style.td,
-            ...{height: `${(this.table.rowCount - 
-            this.state.topMostRow - 
-            this.state.rowsToShow - 2) * 
+            ...{height: `${(this.table.rowCount - end - 1) * 
             this.state.rowHeight}px`}}}
             className={this.props.className}
             key={'bottomFiller'}/>);
