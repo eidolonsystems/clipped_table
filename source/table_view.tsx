@@ -164,15 +164,16 @@ export class TableView extends React.Component<Properties, State> implements
           </tr>);
       }
     }
-    if(this.state.rowHeight !== 0) {
+    if(this.state.topMostRow + this.state.rowsToShow
+          < (this.props.model.rowCount - 1)) {
       tableRows.push(
         <tr style=
           {{...this.props.style.td,
-            ...{height: `${(this.table.rowCount - this.state.rowsToShow - this.state.topMostRow - 2)
+            ...{height: `${(this.table.rowCount - this.state.topMostRow - this.state.rowsToShow - 2)
             * this.state.rowHeight}px`}}}
             className={this.props.className}
             key={'bottomFiller'}/>);
-      }
+    }
     return(
       <div style={{height: `${this.props.height}px`, overflow: 'auto'}}
         ref={(tbody) => this.containerRef = tbody}>
