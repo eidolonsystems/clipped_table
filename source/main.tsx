@@ -4,7 +4,7 @@ import { ArrayTableModel } from './array_table_model';
 import { TableView } from './table_view';
 
 const model = new ArrayTableModel();
-for(let row = 0; row < 10000; ++row) {
+for(let row = 0; row < 0; ++row) {
   const r = [];
   for(let column = 0; column < 4; ++column) {
     if(column === 0) {
@@ -17,7 +17,7 @@ for(let row = 0; row < 10000; ++row) {
   }
   model.addRow(r);
 }
-console.log('finished building table');
+
 const header = ['one', 'two', 'three', 'four'];
 
 const someStyle = {
@@ -25,8 +25,7 @@ const someStyle = {
     fontFamily: 'Arial, Helvetica, sans-serif',
     fontSize: '20px',
     borderCollapse: 'collapse',
-    border: '5px solid #000000',
-    height: '100%'
+    border: '5px solid #000000'
   },
   th: {
     border: '2px solid #000000',
@@ -41,25 +40,23 @@ const someStyle = {
 };
 
 function changeValues() {
-  console.log('CHANGE!');
   const diceRoll = Math.floor(Math.random() * 4);
   const testRow = Math.floor(Math.random() * model.rowCount);
-  if(model.rowCount < -1 || diceRoll < 1) {
-    //model.removeRow(testRow);
-  } else if(diceRoll < 3) {
+  if(model.rowCount > 500 || diceRoll === 0) {
+    model.removeRow(testRow);
+  } else if(diceRoll === 1) {
+    const num = Math.floor(Math.random() * 90) + 100;
+    model.addRow([model.rowCount, num, num, num], testRow);
+  } else {
     const testValue = Math.floor(Math.random() * model.rowCount) + 0.5;
     const testColumn = Math.floor(Math.random() * 4);
     model.set(testRow, testColumn, testValue);
-  } else {
-    const num = Math.floor(Math.random() * 90) + 100;
-    model.addRow([model.rowCount, num, num, num], testRow);
   }
 }
 
-setInterval(changeValues, 500);
+//setInterval(changeValues, 1000);
 
 ReactDOM.render(
-  <div>
-    <TableView model={model} style ={someStyle} labels={header} activeWidth={10} height={700}/>
-  </div>,
+  <TableView model={model} style ={someStyle} labels={header}
+    activeWidth={10} height={700}/>,
   document.getElementById('main'));

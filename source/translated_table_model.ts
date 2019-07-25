@@ -74,7 +74,6 @@ export class TranslatedTableModel extends TableModel {
   }
 
   public get(row: number, column: number): any {
-    console.log('start', 'end', row, column);
     if(row >= this.rowCount || row < 0) {
       throw RangeError();
     }

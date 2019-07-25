@@ -25,7 +25,6 @@ interface Properties {
 }
 
 interface State {
-  fullScrollHeight: number;
   rowHeight: number;
   rowsToShow: number;
   topMostRow: number;
@@ -43,8 +42,7 @@ export class TableView extends React.Component<Properties, State> implements
   constructor(props: Properties) {
     super(props);
     this.state = {
-      fullScrollHeight: 0,
-      rowHeight: 0,
+      rowHeight: 1,
       rowsToShow: 1,
       topMostRow: 0
     };
@@ -65,20 +63,14 @@ export class TableView extends React.Component<Properties, State> implements
       this.columnResizer.onMouseUp.bind(this.columnResizer));
     document.addEventListener('pointermove',
       this.columnResizer.onMouseMove.bind(this.columnResizer));
-    this.setState({});
     this.containerRef.addEventListener('scroll', this.onScrollHandler);
+    this.setState({});
   }
 
   public componentDidUpdate() {
     if(this.firstRowRef !== null) {
       if(this.firstRowRef.offsetHeight !== this.state.rowHeight) {
-        console.log('heights', this.firstRowRef.offsetHeight, this.firstRowRef.scrollHeight, this.firstRowRef.clientHeight);
-        this.setState({
-          rowHeight: this.firstRowRef.offsetHeight,
-          fullScrollHeight:
-            this.props.model.rowCount * this.firstRowRef.scrollHeight
-        });
-
+        this.setState({rowHeight: this.firstRowRef.offsetHeight});
       }
     }
     if(this.firstRowRef !== null && this.firstRowRef !== undefined &&
@@ -95,11 +87,10 @@ export class TableView extends React.Component<Properties, State> implements
     document.removeEventListener('pointerdown', this.columnResizer.onMouseDown);
     document.removeEventListener('pointerup', this.columnResizer.onMouseUp);
     document.removeEventListener('pointermove', this.columnResizer.onMouseMove);
-    document.removeEventListener('scroll', this.onScrollHandler);
+    this.containerRef.removeEventListener('scroll', this.onScrollHandler);
   }
 
   public render(): JSX.Element {
-    console.log('height', this.state.rowHeight);
     const header = [];
     for(let i = 0; i < this.props.labels.length; ++i) {
       header.push(
@@ -112,15 +103,17 @@ export class TableView extends React.Component<Properties, State> implements
           {this.props.labels[i]}
         </th>);
     }
-    const start = (() => {
+    const startRow = (() => {
       if(this.state.topMostRow !== 0) {
         return this.state.topMostRow - 1;
       } else {
         return this.state.topMostRow;
       }
     })();
-    const end = (() => {
-      if(this.state.topMostRow + this.state.rowsToShow
+    const endRow = (() => {
+      if(this.props.model.rowCount === 0) {
+        return 0;
+      } else if(this.state.topMostRow + this.state.rowsToShow
          > this.props.model.rowCount - 1) {
         return this.props.model.rowCount - 1;
       } else if(this.state.topMostRow + this.state.rowsToShow
@@ -129,18 +122,18 @@ export class TableView extends React.Component<Properties, State> implements
       } else {
         return this.state.topMostRow + this.state.rowsToShow + 1;
       }
-    } )();
-    console.log('ennnd', end);
+    })();
     const tableRows = [];
     if(this.state.topMostRow > 1) {
       tableRows.push(
-        <tr style=
+        <tr style =
           {{...this.props.style.td,
-            ...{height: `${(this.state.topMostRow - 1) * this.state.rowHeight}px`}}}
-            className={this.props.className}
-            key={'topFiller'}/>);
+            ...{height: `${(this.state.topMostRow - 1) *
+              this.state.rowHeight}px`}}}
+          className={this.props.className}
+          key={'topFiller'}/>);
       }
-    for(let i = start; i <= end; ++i) {
+    for(let i = startRow; i <= endRow; ++i) {
       const row = [];
       for(let j = 0; j < this.table.columnCount; ++j) {
         row.push(
@@ -150,7 +143,7 @@ export class TableView extends React.Component<Properties, State> implements
             {this.table.get(i, j)}
           </td>);
       }
-      if(i === 0 ) {
+      if(i === 0) {
         tableRows.push(
           <tr style={this.props.style.tr}
               ref={(first) => this.firstRowRef = first}
@@ -167,34 +160,34 @@ export class TableView extends React.Component<Properties, State> implements
           </tr>);
       }
     }
-    if(this.state.topMostRow + this.state.rowsToShow
-          < (this.props.model.rowCount - 1)) {
+    if(this.state.topMostRow + this.state.rowsToShow < 
+        (this.props.model.rowCount - 1)) {
       tableRows.push(
-        <tr style=
+        <tr style =
           {{...this.props.style.td,
-            ...{height: `${(this.table.rowCount - end - 1) * 
+            ...{height: `${(this.table.rowCount - endRow - 1) *
             this.state.rowHeight}px`}}}
-            className={this.props.className}
-            key={'bottomFiller'}/>);
+          className={this.props.className}
+          key={'bottomFiller'}/>);
     }
     return(
       <div style={{height: `${this.props.height}px`, overflow: 'auto'}}
-        ref={(tbody) => this.containerRef = tbody}>
-      <table style={{...this.props.style.table}}
-          className={this.props.className}>
-        <thead style={this.props.style.thead}
+          ref={(tbody) => this.containerRef = tbody}>
+        <table style={{...this.props.style.table}}
             className={this.props.className}>
-          <tr style={this.props.style.tr}
-              ref={(row) => this.headerRowRef = row}
+          <thead style={this.props.style.thead}
               className={this.props.className}>
-            {header}
-          </tr>
-        </thead>
-        <tbody style={this.props.style.tbody}
-            className={this.props.className}>
-          {tableRows}
-        </tbody>
-      </table>
+            <tr style={this.props.style.tr}
+                ref={(row) => this.headerRowRef = row}
+                className={this.props.className}>
+              {header}
+            </tr>
+          </thead>
+          <tbody style={this.props.style.tbody}
+              className={this.props.className}>
+            {tableRows}
+          </tbody>
+        </table>
       </div>);
   }
 
@@ -261,10 +254,11 @@ export class TableView extends React.Component<Properties, State> implements
   }
 
   private onScrollHandler() {
-    const percent =
-      this.containerRef.scrollTop / this.containerRef.scrollHeight;
-    this.setState({topMostRow: Math.floor(this.containerRef.scrollTop / this.containerRef.scrollHeight * this.props.model.rowCount)});
-    console.log('first row', Math.floor(percent * this.props.model.rowCount));
+    this.setState({
+      topMostRow:
+      Math.floor(this.containerRef.scrollTop / this.containerRef.scrollHeight *
+      this.props.model.rowCount)
+    });
   }
 
   private headerRefs: HTMLHeadElement[];

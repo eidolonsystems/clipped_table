@@ -148,6 +148,9 @@ export class SortedTableModel extends TableModel {
   }
 
   private sort() {
+    if(this.columnOrder === []) {
+      return;
+    }
     const rowOrdering = [];
     for(let i = 0; i < this.translatedTable.rowCount; ++i) {
       rowOrdering.push(i);
