@@ -203,7 +203,7 @@ export class TableView extends React.Component<Properties, State> implements
 
   private tableUpdated(newOperations: Operation[]): void {
     const start = Math.max(0, this.state.topRow - 1);
-    const end= Math.min(this.props.model.rowCount,
+    const end = Math.min(this.props.model.rowCount,
       Math.abs(this.props.model.rowCount - 1),
       this.state.topRow + this.state.rowsToShow);
     for(const operation of newOperations) {
