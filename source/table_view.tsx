@@ -104,16 +104,9 @@ export class TableView extends React.Component<Properties, State> implements
         </th>);
     }
     const startRow = Math.max(0, this.state.topRow - 1);
-    const endRow = (() => {
-      if(this.props.model.rowCount === 0) {
-        return 0;
-      } else if(this.state.topRow + this.state.rowsToShow >=
-          this.props.model.rowCount - 1) {
-        return this.props.model.rowCount - 1;
-      } else {
-        return this.state.topRow + this.state.rowsToShow + 1;
-      }
-    })();
+    const endRow = Math.min(this.props.model.rowCount,
+      Math.abs(this.props.model.rowCount - 1),
+      this.state.topRow + this.state.rowsToShow + 1);
     const tableRows = [];
     if(startRow > 0) {
       tableRows.push(
@@ -211,16 +204,9 @@ export class TableView extends React.Component<Properties, State> implements
 
   private tableUpdated(newOperations: Operation[]): void {
     const start = Math.max(0, this.state.topRow - 1);
-    const end = (() => {
-      if(this.props.model.rowCount === 0) {
-        return 0;
-      } else if(this.state.topRow + this.state.rowsToShow >=
-          this.props.model.rowCount - 1) {
-        return this.props.model.rowCount - 1;
-      } else {
-        return this.state.topRow + this.state.rowsToShow + 1;
-      }
-    })();
+    const end = Math.min(this.props.model.rowCount,
+      Math.abs(this.props.model.rowCount - 1),
+      this.state.topRow + this.state.rowsToShow + 1);
     for(const operation of newOperations) {
       if(operation instanceof AddRowOperation ||
         operation instanceof RemoveRowOperation) {
