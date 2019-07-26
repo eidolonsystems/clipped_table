@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { ColumnResizer, Rectangle, TableInterface } from './column_resizer';
+import { AddRowOperation, MoveRowOperation, Operation,
+  RemoveRowOperation, UpdateValueOperation } from './operations';
 import { ColumnOrder, SortedTableModel } from './sorted_table_model';
 import { TableModel } from './table_model';
 
@@ -51,7 +53,7 @@ export class TableView extends React.Component<Properties, State> implements
       this.headerRefs[i] = null;
     }
     this.table = new SortedTableModel(this.props.model);
-    this.table.connect(this.forceUpdate.bind(this, null));
+    this.table.connect(this.tableUpdated.bind(this));
     this.onScrollHandler = this.onScrollHandler.bind(this);
   }
 
@@ -205,6 +207,40 @@ export class TableView extends React.Component<Properties, State> implements
 
   public restoreCursor() {
     this.headerRowRef.style.cursor = 'auto';
+  }
+
+  private tableUpdated(newOperations: Operation[]): void {
+    const start = Math.max(0, this.state.topRow - 1);
+    const end = (() => {
+      if(this.props.model.rowCount === 0) {
+        return 0;
+      } else if(this.state.topRow + this.state.rowsToShow >=
+          this.props.model.rowCount - 1) {
+        return this.props.model.rowCount - 1;
+      } else {
+        return this.state.topRow + this.state.rowsToShow + 1;
+      }
+    })();
+    for(const operation of newOperations) {
+      if(operation instanceof AddRowOperation ||
+        operation instanceof RemoveRowOperation) {
+        if(start <= operation.index && operation.index <= end) {
+          this.forceUpdate();
+        }
+      } else if(operation instanceof UpdateValueOperation) {
+        if(start <= operation.row && operation.row <= end) {
+          this.forceUpdate();
+        }
+
+      } else if(operation instanceof MoveRowOperation) {
+        if(start <= operation.source && operation.source <= end) {
+          this.forceUpdate();
+        } else if(start <= operation.destination &&
+            operation.destination <= end) {
+          this.forceUpdate();
+        }
+      }
+    }
   }
 
   private onClickHeader(event: React.MouseEvent<HTMLTableHeaderCellElement>,
