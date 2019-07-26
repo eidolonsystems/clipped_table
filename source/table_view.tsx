@@ -208,21 +208,19 @@ export class TableView extends React.Component<Properties, State> implements
       this.state.topRow + this.state.rowsToShow);
     for(const operation of newOperations) {
       if(operation instanceof AddRowOperation ||
-        operation instanceof RemoveRowOperation) {
-        if(start <= operation.index && operation.index <= end) {
-          this.forceUpdate();
-        }
+          operation instanceof RemoveRowOperation) {
+        this.forceUpdate();
+        return;
       } else if(operation instanceof UpdateValueOperation) {
         if(start <= operation.row && operation.row <= end) {
           this.forceUpdate();
+          return;
         }
-
       } else if(operation instanceof MoveRowOperation) {
-        if(start <= operation.source && operation.source <= end) {
+        if(!(operation.source < start && operation.destination < start) &&
+            !(end < operation.source && end < operation.destination)) {
           this.forceUpdate();
-        } else if(start <= operation.destination &&
-            operation.destination <= end) {
-          this.forceUpdate();
+          return;
         }
       }
     }

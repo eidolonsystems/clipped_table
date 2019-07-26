@@ -54,7 +54,7 @@ function changeValues() {
   }
 }
 
-//setInterval(changeValues, 5000);
+setInterval(changeValues, 5000);
 
 ReactDOM.render(
   <TableView model={model} style={someStyle} labels={header}
