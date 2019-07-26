@@ -64,7 +64,7 @@ export class TableView extends React.Component<Properties, State> implements
     document.addEventListener('pointermove',
       this.columnResizer.onMouseMove.bind(this.columnResizer));
     this.wrapperRef.addEventListener('scroll', this.onScrollHandler);
-    this.setState({});
+    this.forceUpdate();
   }
 
   public componentDidUpdate() {
@@ -101,13 +101,7 @@ export class TableView extends React.Component<Properties, State> implements
           {this.props.labels[i]}
         </th>);
     }
-    const startRow = (() => {
-      if(this.state.topRow > 0) {
-        return this.state.topRow - 1;
-      } else {
-        return 0;
-      }
-    })();
+    const startRow = Math.max(0, this.state.topRow - 1);
     const endRow = (() => {
       if(this.props.model.rowCount === 0) {
         return 0;
