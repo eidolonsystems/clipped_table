@@ -75,9 +75,9 @@ export class TableView extends React.Component<Properties, State> implements
         this.setState({rowHeight: this.firstRowRef.offsetHeight});
       }
       if(this.state.rowsToShow !==
-          Math.floor(this.props.height / this.state.rowHeight)) {
+          Math.ceil(this.props.height / this.state.rowHeight)) {
         this.setState({
-          rowsToShow: Math.floor(this.props.height / this.state.rowHeight)
+          rowsToShow: Math.ceil(this.props.height / this.state.rowHeight)
         });
       }
     }
@@ -106,12 +106,11 @@ export class TableView extends React.Component<Properties, State> implements
     const startRow = Math.max(0, this.state.topRow - 1);
     const endRow = Math.min(this.props.model.rowCount,
       Math.abs(this.props.model.rowCount - 1),
-      this.state.topRow + this.state.rowsToShow + 1);
+      this.state.topRow + this.state.rowsToShow);
     const tableRows = [];
     if(startRow > 0) {
       tableRows.push(
-        <tr style ={{height: `${(startRow) *
-            this.state.rowHeight}px`}}
+        <tr style ={{height: `${(startRow) * this.state.rowHeight}px`}}
           className={this.props.className}
           key={'topFiller'}/>);
       }
@@ -204,9 +203,9 @@ export class TableView extends React.Component<Properties, State> implements
 
   private tableUpdated(newOperations: Operation[]): void {
     const start = Math.max(0, this.state.topRow - 1);
-    const end = Math.min(this.props.model.rowCount,
+    const end= Math.min(this.props.model.rowCount,
       Math.abs(this.props.model.rowCount - 1),
-      this.state.topRow + this.state.rowsToShow + 1);
+      this.state.topRow + this.state.rowsToShow);
     for(const operation of newOperations) {
       if(operation instanceof AddRowOperation ||
         operation instanceof RemoveRowOperation) {
