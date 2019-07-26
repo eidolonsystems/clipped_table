@@ -117,7 +117,7 @@ export class TableView extends React.Component<Properties, State> implements
     const tableRows = [];
     if(startRow > 0) {
       tableRows.push(
-        <tr style ={{height: `${(this.state.topRow - 1) *
+        <tr style ={{height: `${(startRow) *
             this.state.rowHeight}px`}}
           className={this.props.className}
           key={'topFiller'}/>);
