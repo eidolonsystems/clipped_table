@@ -21,11 +21,11 @@ digraph ColumnResizing{
   s2 -> s1 [label = "E7, E9"];
   s2 -> s0 [label = "E3, E5, C0" ];
   s3 -> s4 [label = "&#949;"];
-  s4 -> s4 [label = "E1, E4, E2, E7, E9"];
+  s4 -> s4 [label = "E0, E1, E2, E4, E7, E9git branch"];
   s4 -> s0 [label = "C4"];
   s5 -> s6 [label = "&#949;"];
-  s6 -> s0 [label = "E6"];
-  s6 -> s6 [label = "E0, E1, E6, E2, E7, E9"];
+  s6 -> s0 [label = "E3, E6"];
+  s6 -> s6 [label = "E0, E1, E2, E7, E9"];
   
 }
 
