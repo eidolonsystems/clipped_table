@@ -107,7 +107,9 @@ s6:
     remove rows from previousRow to currentRow
   }
 s7:
+  selectedRows = clear all true values
   highlightedRow = currentRow
+  add hilightedRow to selectedRows
 
 
 C0: !isShiftDown && !isCtrlDown && isMouseDown
