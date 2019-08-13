@@ -13,9 +13,9 @@ digraph ColumnResizing{
 
 
   s0 -> s0 [label = "E0, E3, E5, E7, E9"];
-  s0 -> s5 [label = "C0"];
-  s0 -> s1 [label = "C2"];
-  s0 -> s3 [label = "C3"];
+  s0 -> s5 [label = "C2"];
+  s0 -> s1 [label = "C0"];
+  s0 -> s3 [label = "C1"];
   s5 -> s6 [label = "&#949;"];
   s6 -> s6 [label = "E1, E2, E8, E10"];
   s6 -> s0 [label = "E1, E3" ];
@@ -25,7 +25,7 @@ digraph ColumnResizing{
   s3 -> s4 [label = "&#949;"];
   s4 -> s0 [label = "E1, E3, E6, E8, E10"];
   s4 -> s4 [label = "E2, E7, E9"];
-  s0 -> s7 [label = "C1"];
+  s0 -> s7 [label = "C3"];
   s7 -> s7 [label = "E7, E9"];
   s7 -> s0 [label = "E3, E5, E8, E10"];
   
@@ -118,10 +118,10 @@ s7:
   highlightedRow = currentRow
   add hilightedRow to selectedRows
 
-C0: !isShiftDown && !isCtrlDown && isMouseDown
-C1: !isShiftDown && !isCtrlDown && (isUpDown || isDownDown)
-C2: isShiftDown && (isMouseDown || isUpDown || isDownDown)
-C3: isCtrlDown && (isMouseDown || isUpDown || isDownDown)
+C0: isShiftDown && (isMouseDown || isUpDown || isDownDown)
+C1: isCtrlDown && (isMouseDown || isUpDown || isDownDown)
+C2: !isShiftDown && !isCtrlDown && isMouseDown
+C3: !isShiftDown && !isCtrlDown && (isUpDown || isDownDown)
 C4: !isMouseDown && !isShiftDown
 
 E0: Mouse Down
