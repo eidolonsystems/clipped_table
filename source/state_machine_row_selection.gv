@@ -4,29 +4,32 @@ digraph ColumnResizing{
   edge [ fontsize = 14];
 
   s0 [label="s0" color = green, fontcolor = green,];
+  s5 [label="s5"];
+  s6 [label="s6"];
   s1 [label="s1"];
   s2 [label="s2"];
   s3 [label="s3"];
   s4 [label="s4"];
-  s5 [label="s5"];
-  s6 [label="s6"];
 
 
   s0 -> s0 [label = "E0, E3, E5, E7, E9"];
-  s0 -> s1 [label = "C1"];
-  s0 -> s3 [label = "C2"];
-  s0 -> s5 [label = "C3"];
-  s1 -> s2 [label = "&#949;"];
-  s2 -> s2 [label = "E1, E2, E8, E10"];
-  s2 -> s1 [label = "E7, E9"];
-  s2 -> s0 [label = "E3, E5, C0" ];
-  s3 -> s4 [label = "&#949;"];
-  s4 -> s4 [label = "E0, E1, E2, E4, E7, E9git branch"];
-  s4 -> s0 [label = "C4"];
+  s0 -> s5 [label = "C1"];
+  s0 -> s1 [label = "C2"];
+  s0 -> s3 [label = "C3"];
   s5 -> s6 [label = "&#949;"];
-  s6 -> s0 [label = "E3, E6"];
-  s6 -> s6 [label = "E0, E1, E2, E7, E9"];
+  s6 -> s6 [label = "E1, E2, E8, E10"];
+  s6 -> s0 [label = "E3, E5, E1" ];
+  s1 -> s2 [label = "&#949;"];
+  s2 -> s2 [label = "E0, E1, E2, E4, E7, E9"];
+  s2 -> s0 [label = "C4"];
+  s3 -> s4 [label = "&#949;"];
+  s4 -> s0 [label = "E3, E6"];
+  s4 -> s4 [label = "E0, E1, E2, E7, E9"];
+  s0 -> s7 [label = "C5"];
+  s7 -> s7 [label = "E7, E9"];
+  s7 -> s0 [label = "E3, E5,E8, E10"];
   
+  { rank=same; s5, s7 }
 }
 
 /**
@@ -60,9 +63,8 @@ States:
 s0: Starting state.
 s1:
   selectedRows = clear all true values
-  highlightedRow = currentRow
   previousRow = highlightedRow
-s2:
+s2: 
   if(currentRow >= previousRow && currentRow >= highlightedRow
       || currentRow <= previousRow && currentRow <= highlightedRow) {
     add rows from previousRow to currentRow
@@ -70,16 +72,6 @@ s2:
     remove rows from previousRow to currentRow
   }
 s3:
-  selectedRows = clear all true values
-  previousRow = highlightedRow
-s4: 
-  if(currentRow >= previousRow && currentRow >= highlightedRow
-      || currentRow <= previousRow && currentRow <= highlightedRow) {
-    add rows from previousRow to currentRow
-  } else {
-    remove rows from previousRow to currentRow
-  }
-s5:
   highlightedRow = currentRow
   previousRow = highlightedRow
   if(current in selected[]) {
@@ -87,7 +79,7 @@ s5:
   } else {
     isAdding = true;
   }
-s6:
+s4:
   if(isAdding) {
     if(currentRow >= previousRow && currentRow >= highlightedRow
         || currentRow <= previousRow && currentRow <= highlightedRow) {
@@ -103,12 +95,26 @@ s6:
       remove rows from previousRow to currentRow
     }
   }
+s5:
+  selectedRows = clear all true values
+  highlightedRow = currentRow
+  previousRow = highlightedRow
+s6:
+  if(currentRow >= previousRow && currentRow >= highlightedRow
+      || currentRow <= previousRow && currentRow <= highlightedRow) {
+    add rows from previousRow to currentRow
+  } else {
+    remove rows from previousRow to currentRow
+  }
+s7:
+  highlightedRow = currentRow
 
-C0: !isMouseDown and !isUpDown and !isDownDown
-C1: !isShiftDown and !isCtrlDown and (isMouseDown or isUpDown or isDownDown) 
-C2: isShiftDown && (isMouseDown or isUpDown or isDownDown)
-C3: isCtrlDown && (isMouseDown or isUpDown or isDownDown)
+C0: !isMouseDown && !isUpDown && !isDownDown
+C1: !isShiftDown && !isCtrlDown && isMouseDown
+C2: isShiftDown && (isMouseDown || isUpDown || isDownDown)
+C3: isCtrlDown && (isMouseDown || isUpDown || isDownDown)
 C4: !isMouseDown && !isShiftDown
+C5: !isShiftDown && !isCtrlDown && (isUpDown || isDownDown)
 
 E0: Mouse Down
   isMouseDown = true
