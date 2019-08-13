@@ -1,7 +1,7 @@
 
 digraph ColumnResizing{
   node [shape = circle, fontsize = 9];
-  edge [ fontsize = 14];
+  edge [ fontsize = 12];
 
   s0 [label="s0" color = green, fontcolor = green,];
   s5 [label="s5"];
@@ -40,7 +40,7 @@ highlightedRow (number) - The row currently highlighted
 previousRow (number) - The last row that was current
 currentRow (number) - The row the mouse is currently inside or 
   that the keyboard is focued on
-isShiftDown (boolean) - Keeps track of if SHIFT is down
+isShiftDown (boolean) - Keeps trackXX of if SHIFT is down
 isCtrlDown (boolean) - Keeps track of if CTRL is down
 isMouseDown (boolean) - Keeps track of the left mouse button
 isUpDown (boolean) - Keeps track of if the up key is down
@@ -111,14 +111,11 @@ s7:
   highlightedRow = currentRow
   add hilightedRow to selectedRows
 
-
 C0: !isShiftDown && !isCtrlDown && isMouseDown
 C1: !isShiftDown && !isCtrlDown && (isUpDown || isDownDown)
 C2: isShiftDown && (isMouseDown || isUpDown || isDownDown)
 C3: isCtrlDown && (isMouseDown || isUpDown || isDownDown)
 C4: !isMouseDown && !isShiftDown
-C5: 
-
 
 E0: Mouse Down
   isMouseDown = true
