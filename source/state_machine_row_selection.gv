@@ -129,7 +129,7 @@ E0: Mouse Down
   currentRow = row
 E1: Mouse Up
   isMouseDown = false
-E2: Mouse Enters a row
+E2: Mouse Enters a row ()
   if(isMouseDown): 
     currentRow = row
 E3: Shift Down
@@ -143,14 +143,12 @@ E6: Ctrl Up
 E7: Up Button Down
   isUpDown = true
   if (currentRow != 0 && !isMouseDown):
-    previousRow = currentRow
     currentRow = currentRow - 1
 E8: Up Button Up
   isUpDown = false
 E9: Down Button Down
   isDownDown = true
   if(currentRow < selectedtable && !isMouseDown) {
-    previousRow = currentRow
     currentRow = currentRow + 1
   }
 E10: Down Button Up

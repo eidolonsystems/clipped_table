@@ -2,104 +2,147 @@ import { ArrayTableModel } from "./array_table_model";
 import {TableModel} from "./table_model";
 import { AddRowOperation, MoveRowOperation, Operation,
   RemoveRowOperation, UpdateValueOperation } from './operations';
+import { IgnoreTest } from "alsatian";
+import { isMainThread } from "worker_threads";
 
 /** Provides the functionality needed to resize a table's columns. */
-export class ColumnResizer {
+export class RowSelector {
 
   /** Constructs a ColumnResizer.
    * @param table - The interface to the table being resized.
    */
   constructor(table: TableModel) {
-    this.isShiftDown = true;
-    this.isCtrlDown  = true;
-    this.isMouseDown = true;
-    this.isUpDown = true;
-    this.isDownDown  = true;
-    this.isAdding = false;
+    this.isShiftDown = false;
+    this.isCtrlDown  = false;
+    this.isMouseDown = false;
+    this.isUpDown = false;
+    this.isDownDown  = false;
+    this.isAdding = true;
     this.selectedRows = new ArrayTableModel();
     for(let i = 0; i < table.rowCount; ++i) {
-      this.selectedRows.addRow([false]);
+      if(i === 0) {
+        this.selectedRows.addRow([true]);
+      } else {
+        this.selectedRows.addRow([false]);
+      }
     }
-    this.selectedRows.connect(this.handleOperations.bind(this));
+    this.currentRow = 0;
+    this.hilightedRow = 0;
+    this.previousRow = 0;
+    table.connect(this.handleOperations.bind(this));
     this.s0();
+  }
+
+  public isSelected(row: number): boolean {
+    if(this.selectedRows.get(row, 0) === true) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /** Handles the cursor moving. */
   public onMouseEnter(row: number) {
     if(this.isMouseDown) {
-      this.previousRow = this.currentRow;
       this.currentRow = row;
+      if(this.state === 6) {
+        this.s6();
+      }
     }
   }
 
   /** Handles pressing down a mouse button. */
-  public onMouseDown(event: PointerEvent) {
-    this.isMouseDown = true;
-    if(this.state === 2) {
-      this.s2();
+  public onMouseDown(event: PointerEvent, row: number) {
+    if(event.button === 0) {
+      this.isMouseDown = true;
+      this.currentRow = row;
+      if(this.state === 0) {
+        this.s0();
+      } else if(this.state === 2) {
+        this.s2();
+      }
     }
   }
 
   /** Handles releasing a mouse button. */
   public onMouseUp(event: PointerEvent) {
-    this.isMouseDown = false;
-    if(this.state === 2) {
-      this.s2();
-    } else if(this.state === 4) {
-      this.s0();
-    } else if(this.state === 6) {
-      this.s0();
+    if(event.button === 0) {
+      this.isMouseDown = false;
+      if(this.state === 2) {
+        this.s2();
+      } else if(this.state === 4) {
+        this.s0();
+      } else if(this.state === 6) {
+        this.s0();
+      }
     }
   }
 
-  public onKeyDown(keycode: number) {
-    if(keycode === 38) { // arrow up
+  public onKeyDown(event: KeyboardEvent) {
+    const keyCode = event.keyCode;
+    if(keyCode === 38) { // arrow up
       this.isUpDown = true;
-      if(this.state === 2) {
+      if(this.currentRow > 0) {
+        this.currentRow--;
+      }
+      if(this.state === 0) {
+        this.s0();
+      } else if(this.state === 2) {
         this.s2();
       } else if(this.state === 4) {
         this.s4();
       } else if(this.state === 7) {
         this.s7();
       }
-    } else if(keycode === 40) { // arrow down
+    } else if(keyCode === 40) {
       this.isDownDown = true;
-      if(this.state === 2) {
+      if(this.currentRow < this.selectedRows.rowCount - 1) {
+        this.currentRow++;
+      }
+      if(this.state === 0) {
+        this.s0();
+      } else if(this.state === 2) {
         this.s2();
       } else if(this.state === 4) {
         this.s4();
       } else if(this.state === 7) {
         this.s7();
       }
-    } else if(keycode === 16) { // shift
+    } else if(keyCode === 16) { // shift
       this.isShiftDown = true;
-      if(this.state === 4) {
+      if(this.state === 0) {
+        this.s0();
+      } else if(this.state === 4) {
         this.s0();
       } else if(this.state === 6) {
       this.s0();
       }
-    } else if(keycode === 17) {
+    } else if(keyCode === 17) {
       this.isCtrlDown = true;
+      if(this.state === 0) {
+        this.s0();
+      }
     }
   }
 
-  public onKeyUp(keycode: number) {
-    if(keycode === 38) { // arrow up
+  public onKeyUp(event: KeyboardEvent) {
+    const keyCode = event.keyCode;
+    if(keyCode === 38) { // arrow up
       this.isUpDown = false;
       if(this.state === 4) {
         this.s0();
       }
-    } else if(keycode === 40) { // arrow down
+    } else if(keyCode === 40) { // arrow down
       this.isDownDown = false;
       if(this.state === 4) {
         this.s0();
       }
-    } else if(keycode === 16) { // shift
+    } else if(keyCode === 16) { // shift
       this.isShiftDown = false;
       if(this.state === 2) {
         this.s2();
       }
-    } else if(keycode === 17) {
+    } else if(keyCode === 17) {
       this.isCtrlDown = false;
       if(this.state === 4) {
         this.s0();
@@ -109,7 +152,7 @@ export class ColumnResizer {
 
   private C0() {
     return this.isShiftDown &&
-      (this.isUpDown || this.isDownDown || this.isUpDown);
+      (this.isMouseDown || this.isDownDown || this.isUpDown);
   }
   private C1() {
     return this.isCtrlDown &&
@@ -157,7 +200,7 @@ export class ColumnResizer {
   private s3() {
     this.state = 3;
     this.hilightedRow = this.currentRow;
-    this.previousRow = this.hilightedRow;
+    this.previousRow = this.currentRow;
     if(this.selectedRows.get(this.currentRow, 0) === true) {
       this.isAdding = false;
     } else {
@@ -175,7 +218,7 @@ export class ColumnResizer {
     this.state = 5;
     this.clearTrueRows();
     this.hilightedRow = this.currentRow;
-    this.previousRow = this.hilightedRow;
+    this.previousRow = this.currentRow;
     this.s6();
   }
 
