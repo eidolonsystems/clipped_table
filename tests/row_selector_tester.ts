@@ -522,4 +522,44 @@ export class RowSelectorTester {
     Expect(selector.isSelected(7)).toEqual(false);
     Expect(selector.isSelected(8)).toEqual(false);
   }
+
+  @Test()
+  public testShiftThenCtrlWithMouse(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([2]);
+    model.addRow([3]);
+    model.addRow([4]);
+    model.addRow([5]);
+    model.addRow([6]);
+    model.addRow([7]);
+    model.addRow([8]);
+    const selector = new RowSelector(model);
+    const mouseEvent: any = new MouseEvent(0);
+    const ctrlEvent: any = new KeyboardEvent(17);
+    const downEvent: any = new KeyboardEvent(40);
+    const shiftEvent: any = new KeyboardEvent(16);
+    const upEvent: any = new KeyboardEvent(38);
+    selector.onMouseDown(mouseEvent, 7);
+    selector.onKeyDown(shiftEvent);
+    selector.onMouseEnter(2);
+    selector.onMouseUp(mouseEvent);
+    selector.onKeyUp(shiftEvent);
+    selector.onKeyDown(ctrlEvent);
+    selector.onMouseDown(mouseEvent, 4);
+    selector.onMouseUp(mouseEvent);
+    selector.onMouseDown(mouseEvent, 6);
+    selector.onMouseUp(mouseEvent);
+    selector.onKeyUp(ctrlEvent);
+    Expect(selector.isSelected(0)).toEqual(false);
+    Expect(selector.isSelected(1)).toEqual(false);
+    Expect(selector.isSelected(2)).toEqual(true);
+    Expect(selector.isSelected(3)).toEqual(true);
+    Expect(selector.isSelected(4)).toEqual(false);
+    Expect(selector.isSelected(5)).toEqual(true);
+    Expect(selector.isSelected(6)).toEqual(false);
+    Expect(selector.isSelected(7)).toEqual(true);
+    Expect(selector.isSelected(8)).toEqual(false);
+  }
 }
