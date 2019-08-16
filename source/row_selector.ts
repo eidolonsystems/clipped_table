@@ -39,7 +39,9 @@ export class RowSelector {
   public onMouseEnter(row: number) {
     if(this.isMouseDown) {
       this.currentRow = row;
-      if(this.state === 4) {
+      if(this.state === 2) {
+        this.s2();
+      } else if(this.state === 4) {
         this.s4();
       } else if(this.state === 6) {
         this.s6();
@@ -119,6 +121,8 @@ export class RowSelector {
       this.isCtrlDown = true;
       if(this.state === 0) {
         this.s0();
+      } else if(this.state === 7) {
+        this.s0();
       }
     }
   }
@@ -129,10 +133,14 @@ export class RowSelector {
       this.isUpDown = false;
       if(this.state === 4) {
         this.s0();
+      } else if(this.state === 7) {
+        this.s0();
       }
     } else if(keyCode === 40) { // arrow down
       this.isDownDown = false;
       if(this.state === 4) {
+        this.s0();
+      } else if(this.state === 7) {
         this.s0();
       }
     } else if(keyCode === 16) { // shift
