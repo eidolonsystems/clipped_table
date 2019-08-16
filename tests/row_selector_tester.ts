@@ -330,15 +330,78 @@ export class RowSelectorTester {
     Expect(selector.isSelected(7)).toEqual(false);
     Expect(selector.isSelected(8)).toEqual(false);
   }
+
+  @Test()
+  public testNOT5(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([2]);
+    model.addRow([3]);
+    model.addRow([4]);
+    model.addRow([5]);
+    model.addRow([6]);
+    model.addRow([7]);
+    model.addRow([8]);
+    const selector = new RowSelector(model);
+    const mouseEvent: any = new MouseEvent(0);
+    const ctrlEvent: any = new KeyboardEvent(17);
+    selector.onKeyDown(ctrlEvent);
+    selector.onMouseDown(mouseEvent, 1);
+    selector.onMouseEnter(6);
+    selector.onMouseUp(mouseEvent);
+    // selector.onMouseDown(mouseEvent, 3);
+    //selector.onMouseEnter(4);
+    //selector.onMouseUp(mouseEvent);
+    selector.onKeyUp(ctrlEvent);
+    Expect(selector.isSelected(0)).toEqual(false);
+    Expect(selector.isSelected(1)).toEqual(true);
+    Expect(selector.isSelected(2)).toEqual(true);
+    Expect(selector.isSelected(3)).toEqual(true);
+    Expect(selector.isSelected(4)).toEqual(true);
+    Expect(selector.isSelected(5)).toEqual(true);
+    Expect(selector.isSelected(6)).toEqual(true);
+    Expect(selector.isSelected(7)).toEqual(false);
+    Expect(selector.isSelected(8)).toEqual(false);
+  }
+
+  @Test()
+   public test5(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([2]);
+    model.addRow([3]);
+    model.addRow([4]);
+    model.addRow([5]);
+    model.addRow([6]);
+    model.addRow([7]);
+    model.addRow([8]);
+    const selector = new RowSelector(model);
+    const mouseEvent: any = new MouseEvent(0);
+    const ctrlEvent: any = new KeyboardEvent(17);
+    selector.onKeyDown(ctrlEvent);
+    selector.onMouseDown(mouseEvent, 1);
+    selector.onMouseEnter(6);
+    selector.onMouseUp(mouseEvent);
+    selector.onMouseDown(mouseEvent, 3);
+    selector.onMouseEnter(4);
+    selector.onMouseUp(mouseEvent);
+    selector.onKeyUp(ctrlEvent);
+    Expect(selector.isSelected(0)).toEqual(false);
+    Expect(selector.isSelected(1)).toEqual(true);
+    Expect(selector.isSelected(2)).toEqual(true);
+    Expect(selector.isSelected(3)).toEqual(false);
+    Expect(selector.isSelected(4)).toEqual(false);
+    Expect(selector.isSelected(5)).toEqual(true);
+    Expect(selector.isSelected(6)).toEqual(true);
+    Expect(selector.isSelected(7)).toEqual(false);
+    Expect(selector.isSelected(8)).toEqual(false);
+  }
 }
 
 
 /*
-Case 4:
-Down Arrow down. Shift down. Down arrow up. Shift up. Mouse down at 3. 
-Mouse up at 3.
-result - Row 3 selected
-
 Case 5:
 Ctrl Down. Mouse Down at 0. Mouse Move to 6. Mouse up at 6. 
 Mouse Down at 3. Mouse up at 4.
