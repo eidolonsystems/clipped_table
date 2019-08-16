@@ -2,8 +2,6 @@ import { ArrayTableModel } from "./array_table_model";
 import {TableModel} from "./table_model";
 import { AddRowOperation, MoveRowOperation, Operation,
   RemoveRowOperation, UpdateValueOperation } from './operations';
-import { IgnoreTest } from "alsatian";
-import { isMainThread } from "worker_threads";
 
 /** Provides the functionality needed to resize a table's columns. */
 export class RowSelector {
@@ -34,6 +32,7 @@ export class RowSelector {
   }
 
   public isSelected(row: number): boolean {
+    //console.log(this.selectedRows);
     if(this.selectedRows.get(row, 0) === true) {
       return true;
     } else {
@@ -95,6 +94,7 @@ export class RowSelector {
         this.s7();
       }
     } else if(keyCode === 40) {
+      console.log('KEY DOWN!');
       this.isDownDown = true;
       if(this.currentRow < this.selectedRows.rowCount - 1) {
         this.currentRow++;
@@ -102,6 +102,7 @@ export class RowSelector {
       if(this.state === 0) {
         this.s0();
       } else if(this.state === 2) {
+        console.log('BOOP BOOP');
         this.s2();
       } else if(this.state === 4) {
         this.s4();
@@ -110,12 +111,16 @@ export class RowSelector {
       }
     } else if(keyCode === 16) { // shift
       this.isShiftDown = true;
+      console.log('SHIFT DOWN');
+      console.log();
       if(this.state === 0) {
         this.s0();
       } else if(this.state === 4) {
         this.s0();
       } else if(this.state === 6) {
-      this.s0();
+        this.s0();
+      } else if(this.state === 7) {
+        this.s0();
       }
     } else if(keyCode === 17) {
       this.isCtrlDown = true;
@@ -151,8 +156,15 @@ export class RowSelector {
   }
 
   private C0() {
-    return this.isShiftDown &&
-      (this.isMouseDown || this.isDownDown || this.isUpDown);
+    console.log('Shift', this.isShiftDown, 'Down', this.isDownDown);
+    console.log((this.isShiftDown && this.isMouseDown) ||
+      (this.isShiftDown &&  this.isDownDown) ||
+      (this.isShiftDown && this.isUpDown));
+    //return this.isShiftDown &&
+    //  (this.isMouseDown || this.isDownDown || this.isUpDown);
+    return (this.isShiftDown && this.isMouseDown) ||
+      (this.isShiftDown &&  this.isDownDown) ||
+      (this.isShiftDown && this.isUpDown);
   }
   private C1() {
     return this.isCtrlDown &&
@@ -166,12 +178,14 @@ export class RowSelector {
       (this.isDownDown || this.isUpDown);
   }
   private C4() {
+    console.log(!this.isMouseDown && !this.isShiftDown);
     return !this.isMouseDown && !this.isShiftDown;
   }
 
   private s0() {
+    console.log('STATE ZERO');
     this.state = 0;
-    if(this.C0()) {
+    if(this.C0() ) {
       this.s1();
     } else if(this.C1()) {
       this.s3();
@@ -184,12 +198,16 @@ export class RowSelector {
 
   private s1() {
     this.state = 1;
+    console.log('STATE ONE');
     this.clearTrueRows();
+    this.hilightedRow = this.currentRow;
     this.previousRow = this.hilightedRow;
+    this.isAdding = true;
     this.s2();
   }
 
   private s2() {
+    console.log('STATE TWOOO');
     this.state = 2;
     this.toggleRows();
     if(this.C4()) {
@@ -258,9 +276,9 @@ export class RowSelector {
 
   private toggleRows() {
     for(let i = this.previousRow; i <= this.currentRow; ++i) {
-      if(this.isAdding && !this.selectedRows.get(i,0)) {
+      if(this.isAdding && this.selectedRows.get(i,0) === false) {
         this.selectedRows.set(i, 0, true);
-      } else if(!this.isAdding && this.selectedRows.get(i,0)) {
+      } else if(!this.isAdding && this.selectedRows.get(i,0) === true) {
         this.selectedRows.set(i, 0, false);
       }
     }
