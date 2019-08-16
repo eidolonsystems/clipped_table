@@ -42,7 +42,7 @@ export class RowSelectorTester {
     selector.onMouseEnter(1);
     selector.onMouseEnter(2);
     selector.onMouseEnter(5);
-    Expect(selector.isSelected(0)).toEqual(true);
+    Expect(selector.isSelected(0)).toEqual(false);
     Expect(selector.isSelected(1)).toEqual(false);
     Expect(selector.isSelected(2)).toEqual(false);
     Expect(selector.isSelected(3)).toEqual(false);
@@ -200,7 +200,7 @@ export class RowSelectorTester {
   }
 
   @Test()
-  public test2(): void {
+  public testCtrlAndMouseAndDown(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
     model.addRow([1]);
@@ -235,7 +235,7 @@ export class RowSelectorTester {
   }
 
   @Test()
-  public test3(): void {
+  public testShiftAndMouse(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
     model.addRow([1]);
@@ -267,7 +267,7 @@ export class RowSelectorTester {
   }
 
   @Test()
-  public test4NOt(): void {
+  public testShiftAndArrows(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
     model.addRow([1]);
@@ -299,7 +299,7 @@ export class RowSelectorTester {
   }
 
   @Test()
-  public test4(): void {
+  public testShiftThenJustMouse(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
     model.addRow([1]);
@@ -332,7 +332,7 @@ export class RowSelectorTester {
   }
 
   @Test()
-  public testNOT5(): void {
+  public testCtrlAndMouse(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
     model.addRow([1]);
@@ -350,9 +350,6 @@ export class RowSelectorTester {
     selector.onMouseDown(mouseEvent, 1);
     selector.onMouseEnter(6);
     selector.onMouseUp(mouseEvent);
-    // selector.onMouseDown(mouseEvent, 3);
-    //selector.onMouseEnter(4);
-    //selector.onMouseUp(mouseEvent);
     selector.onKeyUp(ctrlEvent);
     Expect(selector.isSelected(0)).toEqual(false);
     Expect(selector.isSelected(1)).toEqual(true);
@@ -366,7 +363,7 @@ export class RowSelectorTester {
   }
 
   @Test()
-   public test5(): void {
+   public testCtrlToAddAndRemove(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
     model.addRow([1]);
@@ -399,11 +396,3 @@ export class RowSelectorTester {
     Expect(selector.isSelected(8)).toEqual(false);
   }
 }
-
-
-/*
-Case 5:
-Ctrl Down. Mouse Down at 0. Mouse Move to 6. Mouse up at 6. 
-Mouse Down at 3. Mouse up at 4.
-result - Rows 0 to 2 and Rows 5 to 7 selected.
-*/

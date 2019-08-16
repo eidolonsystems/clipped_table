@@ -28,7 +28,6 @@ export class RowSelector {
   }
 
   public isSelected(row: number): boolean {
-    //console.log(this.selectedRows);
     if(this.selectedRows.get(row, 0) === true) {
       return true;
     } else {
@@ -155,7 +154,6 @@ export class RowSelector {
       (this.isShiftDown && this.isUpDown);
   }
   private C1() {
-    console.log('ctrl' ,this.isCtrlDown);
     return this.isCtrlDown &&
       (this.isMouseDown || this.isDownDown || this.isUpDown);
   }
@@ -202,8 +200,6 @@ export class RowSelector {
 
   private s3() {
     this.state = 3;
-    console.log('THREEEEE');
-
     if(this.selectedRows.get(this.currentRow, 0) === true) {
       this.isAdding = false;
     } else {
@@ -215,7 +211,6 @@ export class RowSelector {
   }
 
   private s4() {
-    console.log('FOUR');
     this.state = 4;
     this.toggleRows();
   }
@@ -263,11 +258,21 @@ export class RowSelector {
   }
 
   private toggleRows() {
-    for(let i = this.previousRow; i <= this.currentRow; ++i) {
-      if(this.isAdding && this.selectedRows.get(i,0) === false) {
-        this.selectedRows.set(i, 0, true);
-      } else if(!this.isAdding && this.selectedRows.get(i,0) === true) {
-        this.selectedRows.set(i, 0, false);
+    if(this.previousRow <= this.currentRow) {
+      for(let i = this.previousRow; i <= this.currentRow; ++i) {
+        if(this.isAdding && this.selectedRows.get(i,0) === false) {
+          this.selectedRows.set(i, 0, true);
+        } else if(!this.isAdding && this.selectedRows.get(i,0) === true) {
+          this.selectedRows.set(i, 0, false);
+        }
+      }
+    } else {
+      for(let i = this.previousRow; i >= this.currentRow; --i) {
+        if(this.isAdding && this.selectedRows.get(i,0) === false) {
+          this.selectedRows.set(i, 0, true);
+        } else if(!this.isAdding && this.selectedRows.get(i,0) === true) {
+          this.selectedRows.set(i, 0, false);
+        }
       }
     }
     this.previousRow = this.currentRow;
@@ -281,7 +286,6 @@ export class RowSelector {
   private isUpDown: boolean;
   private isDownDown: boolean;
   private isAdding: boolean;
-
   private hilightedRow: number;
   private previousRow: number;
   private currentRow: number;
