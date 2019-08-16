@@ -224,41 +224,6 @@ export class RowSelectorTester {
   }
 
   @Test()
-  public testCtrlAndMouseAndDown(): void {
-    const model = new ArrayTableModel();
-    model.addRow([0]);
-    model.addRow([1]);
-    model.addRow([2]);
-    model.addRow([3]);
-    model.addRow([4]);
-    model.addRow([5]);
-    model.addRow([6]);
-    model.addRow([7]);
-    model.addRow([8]);
-    const selector = new RowSelector(model);
-    const mouseEvent: any = new MouseEvent(0);
-    const ctrlEvent: any = new KeyboardEvent(17);
-    const downEvent: any = new KeyboardEvent(40);
-    selector.onMouseDown(mouseEvent, 2);
-    selector.onKeyDown(ctrlEvent);
-    selector.onMouseEnter(4);
-    selector.onMouseUp(mouseEvent);
-    selector.onKeyDown(downEvent);
-    selector.onKeyDown(downEvent);
-    selector.onKeyUp(downEvent);
-    selector.onKeyUp(ctrlEvent);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(true);
-    Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(true);
-    Expect(selector.isSelected(5)).toEqual(true);
-    Expect(selector.isSelected(6)).toEqual(true);
-    Expect(selector.isSelected(7)).toEqual(false);
-    Expect(selector.isSelected(8)).toEqual(false);
-  }
-
-  @Test()
   public testShiftAndMouseMoveDown(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -355,6 +320,41 @@ export class RowSelectorTester {
   }
 
   @Test()
+  public testShiftAndArrowsAndMouse(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([2]);
+    model.addRow([3]);
+    model.addRow([4]);
+    model.addRow([5]);
+    model.addRow([6]);
+    model.addRow([7]);
+    model.addRow([8]);
+    const selector = new RowSelector(model);
+    const shiftEvent: any = new KeyboardEvent(16);
+    const mouseEvent: any = new MouseEvent(0);
+    const downEvent: any = new KeyboardEvent(40);
+    selector.onKeyDown(downEvent);
+    selector.onKeyDown(shiftEvent);
+    selector.onKeyDown(downEvent);
+    selector.onKeyDown(downEvent);
+    selector.onKeyUp(downEvent);
+    selector.onMouseDown(mouseEvent, 8);
+    selector.onMouseUp(mouseEvent);
+    selector.onKeyUp(shiftEvent);
+    Expect(selector.isSelected(0)).toEqual(false);
+    Expect(selector.isSelected(1)).toEqual(true);
+    Expect(selector.isSelected(2)).toEqual(true);
+    Expect(selector.isSelected(3)).toEqual(true);
+    Expect(selector.isSelected(4)).toEqual(true);
+    Expect(selector.isSelected(5)).toEqual(true);
+    Expect(selector.isSelected(6)).toEqual(true);
+    Expect(selector.isSelected(7)).toEqual(true);
+    Expect(selector.isSelected(8)).toEqual(true);
+  }
+
+  @Test()
   public testShiftThenJustMouse(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -379,6 +379,42 @@ export class RowSelectorTester {
     Expect(selector.isSelected(0)).toEqual(false);
     Expect(selector.isSelected(1)).toEqual(false);
     Expect(selector.isSelected(2)).toEqual(false);
+    Expect(selector.isSelected(3)).toEqual(true);
+    Expect(selector.isSelected(4)).toEqual(false);
+    Expect(selector.isSelected(5)).toEqual(false);
+    Expect(selector.isSelected(6)).toEqual(false);
+    Expect(selector.isSelected(7)).toEqual(false);
+    Expect(selector.isSelected(8)).toEqual(false);
+  }
+
+  @Test()
+    public testCtrlAndArrows(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([2]);
+    model.addRow([3]);
+    model.addRow([4]);
+    model.addRow([5]);
+    model.addRow([6]);
+    model.addRow([7]);
+    model.addRow([8]);
+    const selector = new RowSelector(model);
+    const upArrow: any = new KeyboardEvent(38);
+    const downArrow: any = new KeyboardEvent(40);
+    const ctrlEvent: any = new KeyboardEvent(17);
+    selector.onKeyDown(downArrow);
+    selector.onKeyDown(downArrow);
+    selector.onKeyDown(downArrow);
+    selector.onKeyUp(downArrow);
+    selector.onKeyDown(ctrlEvent);
+    selector.onKeyDown(upArrow);
+    selector.onKeyDown(upArrow);
+    selector.onKeyUp(upArrow);
+    selector.onKeyUp(ctrlEvent);
+    Expect(selector.isSelected(0)).toEqual(false);
+    Expect(selector.isSelected(1)).toEqual(true);
+    Expect(selector.isSelected(2)).toEqual(true);
     Expect(selector.isSelected(3)).toEqual(true);
     Expect(selector.isSelected(4)).toEqual(false);
     Expect(selector.isSelected(5)).toEqual(false);
@@ -419,7 +455,42 @@ export class RowSelectorTester {
   }
 
   @Test()
-   public testCtrlToAddAndRemove(): void {
+  public testCtrlAndMouseAndDownArrow(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([2]);
+    model.addRow([3]);
+    model.addRow([4]);
+    model.addRow([5]);
+    model.addRow([6]);
+    model.addRow([7]);
+    model.addRow([8]);
+    const selector = new RowSelector(model);
+    const mouseEvent: any = new MouseEvent(0);
+    const ctrlEvent: any = new KeyboardEvent(17);
+    const downEvent: any = new KeyboardEvent(40);
+    selector.onMouseDown(mouseEvent, 2);
+    selector.onKeyDown(ctrlEvent);
+    selector.onMouseEnter(4);
+    selector.onMouseUp(mouseEvent);
+    selector.onKeyDown(downEvent);
+    selector.onKeyDown(downEvent);
+    selector.onKeyUp(downEvent);
+    selector.onKeyUp(ctrlEvent);
+    Expect(selector.isSelected(0)).toEqual(false);
+    Expect(selector.isSelected(1)).toEqual(false);
+    Expect(selector.isSelected(2)).toEqual(true);
+    Expect(selector.isSelected(3)).toEqual(true);
+    Expect(selector.isSelected(4)).toEqual(true);
+    Expect(selector.isSelected(5)).toEqual(true);
+    Expect(selector.isSelected(6)).toEqual(true);
+    Expect(selector.isSelected(7)).toEqual(false);
+    Expect(selector.isSelected(8)).toEqual(false);
+  }
+
+  @Test()
+  public testCtrlToAddAndRemove(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
     model.addRow([1]);
