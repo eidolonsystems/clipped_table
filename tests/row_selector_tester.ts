@@ -175,7 +175,7 @@ export class RowSelectorTester {
   }
 
   @Test()
-  public testMouseDownAndMove(): void {
+  public testMouseDownAndMoveDown(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
     model.addRow([1]);
@@ -192,6 +192,30 @@ export class RowSelectorTester {
     selector.onMouseUp(event);
     Expect(selector.isSelected(0)).toEqual(false);
     Expect(selector.isSelected(1)).toEqual(false);
+    Expect(selector.isSelected(2)).toEqual(true);
+    Expect(selector.isSelected(3)).toEqual(true);
+    Expect(selector.isSelected(4)).toEqual(true);
+    Expect(selector.isSelected(5)).toEqual(true);
+    Expect(selector.isSelected(6)).toEqual(false);
+  }
+
+  @Test()
+  public testMouseDownAndMoveUp(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([2]);
+    model.addRow([3]);
+    model.addRow([4]);
+    model.addRow([5]);
+    model.addRow([6]);
+    const selector = new RowSelector(model);
+    const event: any = new MouseEvent(0);
+    selector.onMouseDown(event, 5);
+    selector.onMouseEnter(1);
+    selector.onMouseUp(event);
+    Expect(selector.isSelected(0)).toEqual(false);
+    Expect(selector.isSelected(1)).toEqual(true);
     Expect(selector.isSelected(2)).toEqual(true);
     Expect(selector.isSelected(3)).toEqual(true);
     Expect(selector.isSelected(4)).toEqual(true);
@@ -235,7 +259,7 @@ export class RowSelectorTester {
   }
 
   @Test()
-  public testShiftAndMouse(): void {
+  public testShiftAndMouseMoveDown(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
     model.addRow([1]);
@@ -262,6 +286,38 @@ export class RowSelectorTester {
     Expect(selector.isSelected(4)).toEqual(true);
     Expect(selector.isSelected(5)).toEqual(true);
     Expect(selector.isSelected(6)).toEqual(false);
+    Expect(selector.isSelected(7)).toEqual(false);
+    Expect(selector.isSelected(8)).toEqual(false);
+  }
+
+  @Test()
+  public testShiftAndMouseMoveUp(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([2]);
+    model.addRow([3]);
+    model.addRow([4]);
+    model.addRow([5]);
+    model.addRow([6]);
+    model.addRow([7]);
+    model.addRow([8]);
+    const selector = new RowSelector(model);
+    const mouseEvent: any = new MouseEvent(0);
+    const shiftEvent: any = new KeyboardEvent(16);
+    selector.onKeyDown(shiftEvent);
+    selector.onMouseDown(mouseEvent, 6);
+    selector.onMouseEnter(5);
+    selector.onMouseEnter(3);
+    selector.onMouseUp(mouseEvent);
+    selector.onKeyUp(shiftEvent);
+    Expect(selector.isSelected(0)).toEqual(false);
+    Expect(selector.isSelected(1)).toEqual(false);
+    Expect(selector.isSelected(2)).toEqual(false);
+    Expect(selector.isSelected(3)).toEqual(true);
+    Expect(selector.isSelected(4)).toEqual(true);
+    Expect(selector.isSelected(5)).toEqual(true);
+    Expect(selector.isSelected(6)).toEqual(true);
     Expect(selector.isSelected(7)).toEqual(false);
     Expect(selector.isSelected(8)).toEqual(false);
   }

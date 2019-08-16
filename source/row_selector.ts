@@ -76,6 +76,7 @@ export class RowSelector {
     }
   }
 
+  /** Handles a keyboard button being pressed down. */
   public onKeyDown(event: KeyboardEvent) {
     const keyCode = event.keyCode;
     if(keyCode === 38) { // arrow up
@@ -127,6 +128,7 @@ export class RowSelector {
     }
   }
 
+  /** Handles a keyboard button going up after a press down. */
   public onKeyUp(event: KeyboardEvent) {
     const keyCode = event.keyCode;
     if(keyCode === 38) { // arrow up
