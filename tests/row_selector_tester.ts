@@ -276,13 +276,13 @@ export class RowSelectorTester {
     selector.onMouseEnter(3);
     selector.onMouseUp(mouseEvent);
     selector.onKeyUp(shiftEvent);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(false);
+    Expect(selector.isSelected(0)).toEqual(true);
+    Expect(selector.isSelected(1)).toEqual(true);
+    Expect(selector.isSelected(2)).toEqual(true);
     Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(true);
-    Expect(selector.isSelected(5)).toEqual(true);
-    Expect(selector.isSelected(6)).toEqual(true);
+    Expect(selector.isSelected(4)).toEqual(false);
+    Expect(selector.isSelected(5)).toEqual(false);
+    Expect(selector.isSelected(6)).toEqual(false);
     Expect(selector.isSelected(7)).toEqual(false);
     Expect(selector.isSelected(8)).toEqual(false);
   }
@@ -561,5 +561,41 @@ export class RowSelectorTester {
     Expect(selector.isSelected(6)).toEqual(false);
     Expect(selector.isSelected(7)).toEqual(true);
     Expect(selector.isSelected(8)).toEqual(false);
+  }
+
+  @Test()
+  public testShiftThenCtrlWithArrows(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([2]);
+    model.addRow([3]);
+    model.addRow([4]);
+    model.addRow([5]);
+    model.addRow([6]);
+    model.addRow([7]);
+    const selector = new RowSelector(model);
+    const mouseEvent: any = new MouseEvent(0);
+    const ctrlEvent: any = new KeyboardEvent(17);
+    const downEvent: any = new KeyboardEvent(40);
+    const shiftEvent: any = new KeyboardEvent(16);
+    const upEvent: any = new KeyboardEvent(38);
+    selector.onMouseDown(mouseEvent, 7);
+    selector.onMouseUp(mouseEvent);
+    selector.onKeyDown(shiftEvent);
+    selector.onKeyDown(upEvent);
+    selector.onKeyDown(upEvent);
+    selector.onKeyDown(upEvent);
+    selector.onKeyDown(upEvent);
+    selector.onKeyUp(upEvent);
+    selector.onKeyUp(shiftEvent);
+    Expect(selector.isSelected(0)).toEqual(false);
+    Expect(selector.isSelected(1)).toEqual(false);
+    Expect(selector.isSelected(2)).toEqual(false);
+    Expect(selector.isSelected(3)).toEqual(true);
+    Expect(selector.isSelected(4)).toEqual(true);
+    Expect(selector.isSelected(5)).toEqual(true);
+    Expect(selector.isSelected(6)).toEqual(true);
+    Expect(selector.isSelected(7)).toEqual(true);
   }
 }

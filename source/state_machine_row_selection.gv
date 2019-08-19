@@ -68,9 +68,11 @@ isAdding = true
 
 States:
 s0: Starting state.
+    currentRow = hilightedRow
 s1:
   selectedRows = clear all true values
   previousRow = highlightedRow
+  isAdding = true;
 s2: 
   if(currentRow >= previousRow && currentRow >= highlightedRow
       || currentRow <= previousRow && currentRow <= highlightedRow) {
