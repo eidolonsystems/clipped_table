@@ -589,11 +589,26 @@ export class RowSelectorTester {
     selector.onKeyDown(upEvent);
     selector.onKeyUp(upEvent);
     selector.onKeyUp(shiftEvent);
+    selector.onKeyDown(ctrlEvent);
+    selector.onKeyDown(downEvent);
+    selector.onKeyDown(downEvent);
+    selector.onKeyUp(downEvent);
+    selector.onKeyUp(ctrlEvent);
+    console.log(
+      selector.isSelected(0),
+      selector.isSelected(1),
+      selector.isSelected(2),
+      selector.isSelected(3),
+      selector.isSelected(4),
+      selector.isSelected(5),
+      selector.isSelected(6),
+      selector.isSelected(7)
+    );
     Expect(selector.isSelected(0)).toEqual(false);
     Expect(selector.isSelected(1)).toEqual(false);
     Expect(selector.isSelected(2)).toEqual(false);
-    Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(true);
+    Expect(selector.isSelected(3)).toEqual(false);
+    Expect(selector.isSelected(4)).toEqual(false);
     Expect(selector.isSelected(5)).toEqual(true);
     Expect(selector.isSelected(6)).toEqual(true);
     Expect(selector.isSelected(7)).toEqual(true);

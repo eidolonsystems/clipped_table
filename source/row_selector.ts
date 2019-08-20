@@ -1,8 +1,7 @@
-import { ArrayTableModel } from "./array_table_model";
-import {TableModel} from "./table_model";
+import { ArrayTableModel } from './array_table_model';
+import { TableModel } from './table_model';
 import { AddRowOperation, MoveRowOperation, Operation,
   RemoveRowOperation, UpdateValueOperation } from './operations';
-import { timingSafeEqual } from "crypto";
 
 /** Provides the functionality needed to resize a table's columns. */
 export class RowSelector {
@@ -83,6 +82,7 @@ export class RowSelector {
     if(keyCode === 38) { // arrow up
       this.isUpDown = true;
       if(this.currentRow > 0) {
+        this.previousRow = this.currentRow;
         this.currentRow--;
       }
       if(this.state === 0) {
@@ -97,6 +97,7 @@ export class RowSelector {
     } else if(keyCode === 40) {
       this.isDownDown = true;
       if(this.currentRow < this.selectedRows.rowCount - 1) {
+        this.previousRow = this.currentRow;
         this.currentRow++;
       }
       if(this.state === 0) {
@@ -165,8 +166,7 @@ export class RowSelector {
       (this.isShiftDown && this.isUpDown);
   }
   private C1() {
-    return this.isCtrlDown &&
-      (this.isMouseDown || this.isDownDown || this.isUpDown);
+    return this.isCtrlDown && this.isMouseDown;
   }
   private C2() {
     return !this.isShiftDown && !this.isCtrlDown && this.isMouseDown;
@@ -181,6 +181,9 @@ export class RowSelector {
 
   private s0() {
     this.state = 0;
+    if(!this.onMouseDown) {
+      this.currentRow = this.hilightedRow;
+    }
     if(this.C0() ) {
       this.s1();
     } else if(this.C1()) {
@@ -237,7 +240,6 @@ export class RowSelector {
   private s6() {
     this.state = 6;
     this.toggleRows();
-    //,console.log('state 6~~~', this.selectedRows);
   }
 
   private s7() {
@@ -267,19 +269,6 @@ export class RowSelector {
         this.selectedRows.set(i,0, false);
       }
     }
-  }
-
-  private oldToggleRows() {
-    if(this.previousRow <= this.currentRow) {
-      for(let i = this.previousRow; i <= this.currentRow; ++i) {
-        this.selectedRows.set(i, 0, this.isAdding);
-      }
-    } else {
-      for(let i = this.previousRow; i >= this.currentRow; --i) {
-        this.selectedRows.set(i, 0, this.isAdding);
-      }
-    }
-    this.previousRow = this.currentRow;
   }
 
   private toggleRows() {
