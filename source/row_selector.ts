@@ -18,7 +18,11 @@ export class RowSelector {
     this.isAdding = true;
     this.selectedRows = new ArrayTableModel();
     for(let i = 0; i < table.rowCount; ++i) {
-      this.selectedRows.addRow([false]);
+      if(i === 0) {
+        this.selectedRows.addRow([true]);
+      } else {
+        this.selectedRows.addRow([false]);
+      }
     }
     this.currentRow = 0;
     this.hilightedRow = 0;
@@ -78,7 +82,6 @@ export class RowSelector {
 
   /** Handles a keyboard button being pressed down. */
   public onKeyDown(event: KeyboardEvent) {
-    console.log('button!!!');
     const keyCode = event.keyCode;
     if(keyCode === 38) { // arrow up
       this.isUpDown = true;
@@ -98,7 +101,6 @@ export class RowSelector {
       this.isDownDown = true;
       if(this.currentRow < this.selectedRows.rowCount - 1) {
         this.currentRow++;
-        console.log('increment!');
       }
       if(this.state === 0) {
         this.s0();
@@ -181,7 +183,7 @@ export class RowSelector {
 
   private s0() {
     this.state = 0;
-    if(!this.isMouseDown) {
+    if(!this.isMouseDown && !this.isDownDown && !this.isUpDown) {
       this.currentRow = this.hilightedRow;
     }
     if(this.C0() ) {
@@ -272,7 +274,6 @@ export class RowSelector {
   }
 
   private toggleRows() {
-    console.log( this.isMouseDown, this.isDownDown);
     if(this.hilightedRow <= this.previousRow &&
         this.previousRow <= this.currentRow) {
       for(let i = this.previousRow; i <= this.currentRow; ++i) {
@@ -285,9 +286,7 @@ export class RowSelector {
       }
     } else if(this.currentRow <= this.previousRow &&
         this.previousRow <= this.hilightedRow) {
-      console.log('case 3');
       for(let i = this.currentRow; i <= this.previousRow; ++i) {
-        console.log('boop');
         this.selectedRows.set(i, 0, this.isAdding);
       }
     } else if(this.previousRow < this.currentRow
@@ -299,7 +298,7 @@ export class RowSelector {
     this.previousRow = this.currentRow;
   }
 
-  state: number;
+  private state: number;
   private selectedRows: ArrayTableModel;
   private isShiftDown: boolean;
   private isCtrlDown: boolean;

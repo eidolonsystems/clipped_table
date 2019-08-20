@@ -68,8 +68,8 @@ isAdding = true
 
 States:
 s0: Starting state.
-  if(!this.onMouseDown) {
-    this.currentRow = this.hilightedRow; ///?????
+  if(!isMouseDown && !this.isDownDown && !this.isUpDown) {
+    this.currentRow = this.hilightedRow;
   }
 s1:
   selectedRows = clear all true values
