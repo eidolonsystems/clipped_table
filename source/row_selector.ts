@@ -1,6 +1,6 @@
 import { ArrayTableModel } from './array_table_model';
 import { TableModel } from './table_model';
-import { AddRowOperation, MoveRowOperation, Operation, RemoveRowOperation }
+import { AddRowOperation, MoveRowOperation, Operation }
   from './operations';
 
 /** Provides the functionality needed to resize a table's columns. */
@@ -83,7 +83,7 @@ export class RowSelector {
   /** Handles a keyboard button being pressed down. */
   public onKeyDown(event: KeyboardEvent) {
     const keyCode = event.keyCode;
-    if(keyCode === 38) { // arrow up
+    if(keyCode === 38) {
       this.isUpDown = true;
       if(this.currentRow > 0) {
         this.currentRow--;
@@ -111,7 +111,7 @@ export class RowSelector {
       } else if(this.state === 7) {
         this.s7();
       }
-    } else if(keyCode === 16) { // shift
+    } else if(keyCode === 16) {
       this.isShiftDown = true;
       if(this.state === 0) {
         this.s0();
@@ -135,21 +135,21 @@ export class RowSelector {
   /** Handles a keyboard button going up after a press down. */
   public onKeyUp(event: KeyboardEvent) {
     const keyCode = event.keyCode;
-    if(keyCode === 38) { // arrow up
+    if(keyCode === 38) {
       this.isUpDown = false;
       if(this.state === 4) {
         this.s0();
       } else if(this.state === 7) {
         this.s0();
       }
-    } else if(keyCode === 40) { // arrow down
+    } else if(keyCode === 40) {
       this.isDownDown = false;
       if(this.state === 4) {
         this.s0();
       } else if(this.state === 7) {
         this.s0();
       }
-    } else if(keyCode === 16) { // shift
+    } else if(keyCode === 16) {
       this.isShiftDown = false;
       if(this.state === 2) {
         this.s2();
@@ -163,9 +163,8 @@ export class RowSelector {
   }
 
   private C0() {
-    return (this.isShiftDown && this.isMouseDown) ||
-      (this.isShiftDown &&  this.isDownDown) ||
-      (this.isShiftDown && this.isUpDown);
+    return this.isShiftDown &&
+      (this.isMouseDown || this.isDownDown || this.isUpDown);
   }
   private C1() {
     return this.isCtrlDown && this.isMouseDown;
@@ -215,13 +214,13 @@ export class RowSelector {
 
   private s3() {
     this.state = 3;
+    this.hilightedRow = this.currentRow;
+    this.previousRow = this.currentRow;
     if(this.selectedRows.get(this.currentRow, 0) === true) {
       this.isAdding = false;
     } else {
       this.isAdding = true;
     }
-    this.hilightedRow = this.currentRow;
-    this.previousRow = this.currentRow;
     this.s4();
   }
 
@@ -263,8 +262,6 @@ export class RowSelector {
         } else {
           this.selectedRows.addRow([false], operation.index);
         }
-      } else if(operation instanceof RemoveRowOperation) {
-        this.selectedRows.removeRow(operation.index);
       } else if(operation instanceof MoveRowOperation) {
         this.selectedRows.moveRow(operation.source, operation.destination);
       }
