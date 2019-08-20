@@ -78,11 +78,11 @@ export class RowSelector {
 
   /** Handles a keyboard button being pressed down. */
   public onKeyDown(event: KeyboardEvent) {
+    console.log('button!!!');
     const keyCode = event.keyCode;
     if(keyCode === 38) { // arrow up
       this.isUpDown = true;
       if(this.currentRow > 0) {
-        this.previousRow = this.currentRow;
         this.currentRow--;
       }
       if(this.state === 0) {
@@ -97,8 +97,8 @@ export class RowSelector {
     } else if(keyCode === 40) {
       this.isDownDown = true;
       if(this.currentRow < this.selectedRows.rowCount - 1) {
-        this.previousRow = this.currentRow;
         this.currentRow++;
+        console.log('increment!');
       }
       if(this.state === 0) {
         this.s0();
@@ -181,7 +181,7 @@ export class RowSelector {
 
   private s0() {
     this.state = 0;
-    if(!this.onMouseDown) {
+    if(!this.isMouseDown) {
       this.currentRow = this.hilightedRow;
     }
     if(this.C0() ) {
@@ -272,6 +272,7 @@ export class RowSelector {
   }
 
   private toggleRows() {
+    console.log( this.isMouseDown, this.isDownDown);
     if(this.hilightedRow <= this.previousRow &&
         this.previousRow <= this.currentRow) {
       for(let i = this.previousRow; i <= this.currentRow; ++i) {
@@ -284,7 +285,9 @@ export class RowSelector {
       }
     } else if(this.currentRow <= this.previousRow &&
         this.previousRow <= this.hilightedRow) {
+      console.log('case 3');
       for(let i = this.currentRow; i <= this.previousRow; ++i) {
+        console.log('boop');
         this.selectedRows.set(i, 0, this.isAdding);
       }
     } else if(this.previousRow < this.currentRow
@@ -296,7 +299,7 @@ export class RowSelector {
     this.previousRow = this.currentRow;
   }
 
-  private state: number;
+  state: number;
   private selectedRows: ArrayTableModel;
   private isShiftDown: boolean;
   private isCtrlDown: boolean;

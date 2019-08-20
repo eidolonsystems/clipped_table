@@ -413,8 +413,8 @@ export class RowSelectorTester {
     selector.onKeyUp(upArrow);
     selector.onKeyUp(ctrlEvent);
     Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(true);
-    Expect(selector.isSelected(2)).toEqual(true);
+    Expect(selector.isSelected(1)).toEqual(false);
+    Expect(selector.isSelected(2)).toEqual(false);
     Expect(selector.isSelected(3)).toEqual(true);
     Expect(selector.isSelected(4)).toEqual(false);
     Expect(selector.isSelected(5)).toEqual(false);
@@ -483,8 +483,8 @@ export class RowSelectorTester {
     Expect(selector.isSelected(2)).toEqual(true);
     Expect(selector.isSelected(3)).toEqual(true);
     Expect(selector.isSelected(4)).toEqual(true);
-    Expect(selector.isSelected(5)).toEqual(true);
-    Expect(selector.isSelected(6)).toEqual(true);
+    Expect(selector.isSelected(5)).toEqual(false);
+    Expect(selector.isSelected(6)).toEqual(false);
     Expect(selector.isSelected(7)).toEqual(false);
     Expect(selector.isSelected(8)).toEqual(false);
   }
@@ -594,6 +594,62 @@ export class RowSelectorTester {
     selector.onKeyDown(downEvent);
     selector.onKeyUp(downEvent);
     selector.onKeyUp(ctrlEvent);
+    Expect(selector.isSelected(0)).toEqual(false);
+    Expect(selector.isSelected(1)).toEqual(false);
+    Expect(selector.isSelected(2)).toEqual(false);
+    Expect(selector.isSelected(3)).toEqual(true);
+    Expect(selector.isSelected(4)).toEqual(true);
+    Expect(selector.isSelected(5)).toEqual(true);
+    Expect(selector.isSelected(6)).toEqual(true);
+    Expect(selector.isSelected(7)).toEqual(true);
+  }
+
+  @Test()
+  public testShiftThenShift(): void {
+    console.log('START!');
+    const model = new ArrayTableModel();
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([2]);
+    model.addRow([3]);
+    model.addRow([4]);
+    model.addRow([5]);
+    model.addRow([6]);
+    model.addRow([7]);
+    const selector = new RowSelector(model);
+    const mouseEvent: any = new MouseEvent(0);
+    const downEvent: any = new KeyboardEvent(40);
+    const shiftEvent: any = new KeyboardEvent(16);
+    const upEvent: any = new KeyboardEvent(38);
+    selector.onMouseDown(mouseEvent, 3);
+    selector.onMouseUp(mouseEvent);
+
+    selector.onKeyDown(shiftEvent);
+    selector.onKeyDown(upEvent);
+    selector.onKeyDown(upEvent);
+    selector.onKeyUp(upEvent);
+    selector.onKeyUp(shiftEvent);
+    console.log(
+      selector.isSelected(0),
+      selector.isSelected(1),
+      selector.isSelected(2),
+      selector.isSelected(3),
+      selector.isSelected(4),
+      selector.isSelected(5),
+      selector.isSelected(6),
+      selector.isSelected(7)
+    );
+
+    console.log(selector.state);
+    selector.onKeyDown(shiftEvent);
+    console.log('right after shift', selector.state);
+    selector.onKeyDown(downEvent); //4
+    console.log('right after first press :D', selector.state);
+    console.log(selector.state);
+    selector.onKeyDown(downEvent); //5
+    selector.onKeyUp(downEvent);
+    selector.onKeyUp(shiftEvent);
+    //console.log(selector);
     console.log(
       selector.isSelected(0),
       selector.isSelected(1),
@@ -607,10 +663,10 @@ export class RowSelectorTester {
     Expect(selector.isSelected(0)).toEqual(false);
     Expect(selector.isSelected(1)).toEqual(false);
     Expect(selector.isSelected(2)).toEqual(false);
-    Expect(selector.isSelected(3)).toEqual(false);
-    Expect(selector.isSelected(4)).toEqual(false);
+    Expect(selector.isSelected(3)).toEqual(true);
+    Expect(selector.isSelected(4)).toEqual(true);
     Expect(selector.isSelected(5)).toEqual(true);
-    Expect(selector.isSelected(6)).toEqual(true);
-    Expect(selector.isSelected(7)).toEqual(true);
+    Expect(selector.isSelected(6)).toEqual(false);
+    Expect(selector.isSelected(7)).toEqual(false);
   }
 }
