@@ -641,4 +641,26 @@ export class RowSelectorTester {
     Expect(selector.isSelected(6)).toEqual(false);
     Expect(selector.isSelected(7)).toEqual(false);
   }
+
+  @Test()
+  public testEmptyToNotEmpty(): void {
+    const model = new ArrayTableModel();
+    const selector = new RowSelector(model);
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([2]);
+    model.addRow([3]);
+    model.addRow([4]);
+    model.addRow([5]);
+    model.addRow([6]);
+    model.addRow([7]);
+    Expect(selector.isSelected(0)).toEqual(true);
+    Expect(selector.isSelected(1)).toEqual(false);
+    Expect(selector.isSelected(2)).toEqual(false);
+    Expect(selector.isSelected(3)).toEqual(false);
+    Expect(selector.isSelected(4)).toEqual(false);
+    Expect(selector.isSelected(5)).toEqual(false);
+    Expect(selector.isSelected(6)).toEqual(false);
+    Expect(selector.isSelected(7)).toEqual(false);
+  }
 }

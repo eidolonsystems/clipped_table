@@ -1,7 +1,7 @@
 import { ArrayTableModel } from './array_table_model';
 import { TableModel } from './table_model';
-import { AddRowOperation, MoveRowOperation, Operation,
-  RemoveRowOperation, UpdateValueOperation } from './operations';
+import { AddRowOperation, MoveRowOperation, Operation, RemoveRowOperation }
+  from './operations';
 
 /** Provides the functionality needed to resize a table's columns. */
 export class RowSelector {
@@ -255,7 +255,14 @@ export class RowSelector {
     this.selectedRows.beginTransaction();
     for(const operation of newOperations) {
       if(operation instanceof AddRowOperation) {
-        this.selectedRows.addRow([false], operation.index);
+        if(this.selectedRows.rowCount === 0) {
+          this.selectedRows.addRow([true]);
+          this.hilightedRow = 0;
+          this.currentRow = 0;
+          this.previousRow = 0;
+        } else {
+          this.selectedRows.addRow([false], operation.index);
+        }
       } else if(operation instanceof RemoveRowOperation) {
         this.selectedRows.removeRow(operation.index);
       } else if(operation instanceof MoveRowOperation) {
