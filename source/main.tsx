@@ -4,7 +4,7 @@ import { ArrayTableModel } from './array_table_model';
 import { TableView } from './table_view';
 
 const model = new ArrayTableModel();
-for(let row = 0; row < 200000; ++row) {
+for(let row = 0; row < 10000; ++row) {
   const r = [];
   for(let column = 0; column < 4; ++column) {
     if(column === 0) {
