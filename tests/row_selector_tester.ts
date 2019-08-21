@@ -29,6 +29,7 @@ class KeyboardEvent {
 /** Tests the RowSelectionTableModel. */
 export class RowSelectionTableModelTester {
 
+  /* Tests what happens when the mouse moves with nothing being pressed. */
   @Test()
   public testMouseMove(): void {
     const model = new ArrayTableModel();
@@ -51,6 +52,7 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(5, 0)).toEqual(false);
   }
 
+  /* Tests what happens when only the down arrow is pressed. */
   @Test()
   public testDownArrow(): void {
     const model = new ArrayTableModel();
@@ -80,6 +82,7 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(5, 0)).toEqual(true);
   }
 
+  /** Tests what happens when only the up arrow is pressed. */
   @Test()
   public testUpArrow(): void {
     const model = new ArrayTableModel();
@@ -103,6 +106,7 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(5, 0)).toEqual(false);
   }
 
+  /** Tests what happens when both up and down arrows are pressed. */
   @Test()
   public testMixedArrows(): void {
     const model = new ArrayTableModel();
@@ -152,6 +156,7 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(6, 0)).toEqual(false);
   }
 
+  /** Tests what happens when the mouse is pressed but not moved. */
   @Test()
   public testMouseDownNoMove(): void {
     const model = new ArrayTableModel();
@@ -175,6 +180,7 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(6, 0)).toEqual(false);
   }
 
+  /** Tests what happens when mouse is pressed and moved downards. */
   @Test()
   public testMouseDownAndMoveDown(): void {
     const model = new ArrayTableModel();
@@ -200,6 +206,7 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(6, 0)).toEqual(false);
   }
 
+  /** Tests what happens when mouse is pressed and moved up.  */
   @Test()
   public testMouseDownAndMoveUp(): void {
     const model = new ArrayTableModel();
@@ -224,6 +231,7 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(6, 0)).toEqual(false);
   }
 
+  /** Tests shift being pressed and the mouse being pressed and moved down. */
   @Test()
   public testShiftAndMouseMoveDown(): void {
     const model = new ArrayTableModel();
@@ -256,6 +264,7 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(8, 0)).toEqual(false);
   }
 
+  /** Tests shift being pressed and the mouse being pressed and moved up. */
   @Test()
   public testShiftAndMouseMoveUp(): void {
     const model = new ArrayTableModel();
@@ -288,6 +297,7 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(8, 0)).toEqual(false);
   }
 
+  /** Tests shift being held down and arrows being pressed. */
   @Test()
   public testShiftAndArrows(): void {
     const model = new ArrayTableModel();
@@ -320,6 +330,9 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(8, 0)).toEqual(false);
   }
 
+  /** Tests shift being held down and arrows being pressed,
+   *  followed by a mouse event.
+   */
   @Test()
   public testShiftAndArrowsAndMouse(): void {
     const model = new ArrayTableModel();
@@ -355,6 +368,8 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(8, 0)).toEqual(true);
   }
 
+  /**?????????????
+   */
   @Test()
   public testShiftThenJustMouse(): void {
     const model = new ArrayTableModel();
@@ -388,6 +403,7 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(8, 0)).toEqual(false);
   }
 
+  /** Tests what happens when ctrl is held down and arrows are being pressed. */
   @Test()
     public testCtrlAndArrows(): void {
     const model = new ArrayTableModel();
@@ -424,6 +440,8 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(8, 0)).toEqual(false);
   }
 
+  /** Tests what happens when ctrl is being pressed and mouse is pressed 
+   *  and moved */
   @Test()
   public testCtrlAndMouse(): void {
     const model = new ArrayTableModel();
@@ -455,6 +473,7 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(8, 0)).toEqual(false);
   }
 
+  /** Tests mouse and arrow events while ctrl is being held down. */
   @Test()
   public testCtrlAndMouseAndDownArrow(): void {
     const model = new ArrayTableModel();
@@ -490,6 +509,7 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(8, 0)).toEqual(false);
   }
 
+  /** Tests holding down ctrl to both add and remove rows. */
   @Test()
   public testCtrlToAddAndRemove(): void {
     const model = new ArrayTableModel();
@@ -524,6 +544,9 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(8, 0)).toEqual(false);
   }
 
+  /** Tests adding rows while shift is held down and removing rows when ctrl is
+   *  held down.
+   */
   @Test()
   public testShiftThenCtrlWithMouse(): void {
     const model = new ArrayTableModel();
@@ -562,6 +585,9 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(8, 0)).toEqual(false);
   }
 
+  /** Tests adding rows with shift followed by ctrl being held and buttons
+   *  being pressed.
+   */
   @Test()
   public testShiftThenCtrlWithArrows(): void {
     const model = new ArrayTableModel();
@@ -603,6 +629,7 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(7, 0)).toEqual(true);
   }
 
+  /** Tests using adding rows using shift twice in a row. */
   @Test()
   public testShiftThenShift(): void {
     const model = new ArrayTableModel();
@@ -641,6 +668,7 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(7, 0)).toEqual(false);
   }
 
+  /** Tests adding rows to the empty model. */
   @Test()
   public testEmptyToNotEmpty(): void {
     const model = new ArrayTableModel();
@@ -663,6 +691,7 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(7, 0)).toEqual(false);
   }
 
+  /** Tests adding rows to the empty model then selecting rows. */
   @Test()
   public testEmptyToNotEmptyAndMouse(): void {
     const model = new ArrayTableModel();
@@ -688,6 +717,7 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(7, 0)).toEqual(false);
   }
 
+  /** Tests moving rows. */
   @Test()
   public testingMovingRows(): void {
     const model = new ArrayTableModel();
