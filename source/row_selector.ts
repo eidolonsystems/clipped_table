@@ -3,11 +3,11 @@ import { TableModel } from './table_model';
 import { AddRowOperation, MoveRowOperation, Operation }
   from './operations';
 
-/** Provides the functionality needed to resize a table's columns. */
-export class RowSelector {
+/** Provides the functionality needed to select Rows. */
+export class RowSelectionTableModel { //extendstable model
 
-  /** Constructs a ColumnResizer.
-   * @param table - The interface to the table being resized.
+  /** Constructs a RowSelector.
+   * @param table - The table whose rows are being selected.
    */
   constructor(table: TableModel) {
     this.isShiftDown = false;
@@ -18,11 +18,7 @@ export class RowSelector {
     this.isAdding = true;
     this.selectedRows = new ArrayTableModel();
     for(let i = 0; i < table.rowCount; ++i) {
-      if(i === 0) {
-        this.selectedRows.addRow([true]);
-      } else {
-        this.selectedRows.addRow([false]);
-      }
+      this.selectedRows.addRow([i === 0]);
     }
     this.currentRow = 0;
     this.hilightedRow = 0;
