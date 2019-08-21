@@ -290,7 +290,7 @@ export class RowSelectionTableModel  extends TableModel {
 
   ///??????
   private handleOperations(newOperations: Operation[]): void {
-    this.selectedRows.beginTransaction();
+    this.beginTransaction();
     for(const operation of newOperations) {
       if(operation instanceof AddRowOperation) {
         if(this.selectedRows.rowCount === 0) {
@@ -301,11 +301,16 @@ export class RowSelectionTableModel  extends TableModel {
         } else {
           this.selectedRows.addRow([false], operation.index);
         }
+        const row = new ArrayTableModel();
+        row.addRow([false]);
+        this.operations.push(new AddRowOperation(operation.index, row));
       } else if(operation instanceof MoveRowOperation) {
         this.selectedRows.moveRow(operation.source, operation.destination);
+        this.operations.push(
+          new MoveRowOperation(operation.source, operation.destination));
       }
     }
-    this.selectedRows.endTransaction();
+    this.endTransaction();
   }
 
   private clearRows() {
