@@ -1,5 +1,6 @@
 import { Expect, Test } from 'alsatian';
-import { ArrayTableModel, RowSelector, TableModel } from '../source';
+import { ArrayTableModel, RowSelectionTableModel,
+  TableModel } from '../source';
 
 class MouseEvent {
   constructor(n: number) {
@@ -25,8 +26,8 @@ class KeyboardEvent {
   private _keyCode: number;
 }
 
-/** Tests the RowSelector. */
-export class RowSelectorTester {
+/** Tests the RowSelectionTableModel. */
+export class RowSelectionTableModelTester {
 
   @Test()
   public testMouseMove(): void {
@@ -37,17 +38,17 @@ export class RowSelectorTester {
     model.addRow([3]);
     model.addRow([4]);
     model.addRow([5]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     selector.onMouseEnter(0);
     selector.onMouseEnter(1);
     selector.onMouseEnter(2);
     selector.onMouseEnter(5);
-    Expect(selector.isSelected(0)).toEqual(true);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(false);
-    Expect(selector.isSelected(3)).toEqual(false);
-    Expect(selector.isSelected(4)).toEqual(false);
-    Expect(selector.isSelected(5)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(true);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(false);
+    Expect(selector.get(3, 0)).toEqual(false);
+    Expect(selector.get(4, 0)).toEqual(false);
+    Expect(selector.get(5, 0)).toEqual(false);
   }
 
   @Test()
@@ -59,7 +60,7 @@ export class RowSelectorTester {
     model.addRow([3]);
     model.addRow([4]);
     model.addRow([5]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const downArrow: any = new KeyboardEvent(40);
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
@@ -71,12 +72,12 @@ export class RowSelectorTester {
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
     selector.onKeyUp(downArrow);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(false);
-    Expect(selector.isSelected(3)).toEqual(false);
-    Expect(selector.isSelected(4)).toEqual(false);
-    Expect(selector.isSelected(5)).toEqual(true);
+    Expect(selector.get(0, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(false);
+    Expect(selector.get(3, 0)).toEqual(false);
+    Expect(selector.get(4, 0)).toEqual(false);
+    Expect(selector.get(5, 0)).toEqual(true);
   }
 
   @Test()
@@ -88,18 +89,18 @@ export class RowSelectorTester {
     model.addRow([3]);
     model.addRow([4]);
     model.addRow([5]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const upArrow: any = new KeyboardEvent(38);
     selector.onKeyDown(upArrow);
     selector.onKeyDown(upArrow);
     selector.onKeyDown(upArrow);
     selector.onKeyUp(upArrow);
-    Expect(selector.isSelected(0)).toEqual(true);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(false);
-    Expect(selector.isSelected(3)).toEqual(false);
-    Expect(selector.isSelected(4)).toEqual(false);
-    Expect(selector.isSelected(5)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(true);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(false);
+    Expect(selector.get(3, 0)).toEqual(false);
+    Expect(selector.get(4, 0)).toEqual(false);
+    Expect(selector.get(5, 0)).toEqual(false);
   }
 
   @Test()
@@ -112,7 +113,7 @@ export class RowSelectorTester {
     model.addRow([4]);
     model.addRow([5]);
     model.addRow([6]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const upArrow: any = new KeyboardEvent(38);
     const downArrow: any = new KeyboardEvent(40);
     selector.onKeyDown(downArrow);
@@ -121,34 +122,34 @@ export class RowSelectorTester {
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
     selector.onKeyUp(downArrow);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(false);
-    Expect(selector.isSelected(3)).toEqual(false);
-    Expect(selector.isSelected(4)).toEqual(false);
-    Expect(selector.isSelected(5)).toEqual(true);
-    Expect(selector.isSelected(6)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(false);
+    Expect(selector.get(3, 0)).toEqual(false);
+    Expect(selector.get(4, 0)).toEqual(false);
+    Expect(selector.get(5, 0)).toEqual(true);
+    Expect(selector.get(6, 0)).toEqual(false);
     selector.onKeyDown(upArrow);
     selector.onKeyDown(upArrow);
     selector.onKeyUp(upArrow);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(false);
-    Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(false);
-    Expect(selector.isSelected(5)).toEqual(false);
-    Expect(selector.isSelected(6)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(false);
+    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(false);
+    Expect(selector.get(5, 0)).toEqual(false);
+    Expect(selector.get(6, 0)).toEqual(false);
     selector.onKeyDown(upArrow);
     selector.onKeyDown(upArrow);
     selector.onKeyDown(upArrow);
     selector.onKeyUp(upArrow);
-    Expect(selector.isSelected(0)).toEqual(true);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(false);
-    Expect(selector.isSelected(3)).toEqual(false);
-    Expect(selector.isSelected(4)).toEqual(false);
-    Expect(selector.isSelected(5)).toEqual(false);
-    Expect(selector.isSelected(6)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(true);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(false);
+    Expect(selector.get(3, 0)).toEqual(false);
+    Expect(selector.get(4, 0)).toEqual(false);
+    Expect(selector.get(5, 0)).toEqual(false);
+    Expect(selector.get(6, 0)).toEqual(false);
   }
 
   @Test()
@@ -161,17 +162,17 @@ export class RowSelectorTester {
     model.addRow([4]);
     model.addRow([5]);
     model.addRow([6]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
     selector.onMouseDown(leftClick, 2);
     selector.onMouseUp(leftClick);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(true);
-    Expect(selector.isSelected(3)).toEqual(false);
-    Expect(selector.isSelected(4)).toEqual(false);
-    Expect(selector.isSelected(5)).toEqual(false);
-    Expect(selector.isSelected(6)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(true);
+    Expect(selector.get(3, 0)).toEqual(false);
+    Expect(selector.get(4, 0)).toEqual(false);
+    Expect(selector.get(5, 0)).toEqual(false);
+    Expect(selector.get(6, 0)).toEqual(false);
   }
 
   @Test()
@@ -184,19 +185,19 @@ export class RowSelectorTester {
     model.addRow([4]);
     model.addRow([5]);
     model.addRow([6]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
     selector.onMouseDown(leftClick, 2);
     selector.onMouseEnter(3);
     selector.onMouseEnter(5);
     selector.onMouseUp(leftClick);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(true);
-    Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(true);
-    Expect(selector.isSelected(5)).toEqual(true);
-    Expect(selector.isSelected(6)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(true);
+    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(true);
+    Expect(selector.get(5, 0)).toEqual(true);
+    Expect(selector.get(6, 0)).toEqual(false);
   }
 
   @Test()
@@ -209,18 +210,18 @@ export class RowSelectorTester {
     model.addRow([4]);
     model.addRow([5]);
     model.addRow([6]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
     selector.onMouseDown(leftClick, 5);
     selector.onMouseEnter(1);
     selector.onMouseUp(leftClick);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(true);
-    Expect(selector.isSelected(2)).toEqual(true);
-    Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(true);
-    Expect(selector.isSelected(5)).toEqual(true);
-    Expect(selector.isSelected(6)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(true);
+    Expect(selector.get(2, 0)).toEqual(true);
+    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(true);
+    Expect(selector.get(5, 0)).toEqual(true);
+    Expect(selector.get(6, 0)).toEqual(false);
   }
 
   @Test()
@@ -235,7 +236,7 @@ export class RowSelectorTester {
     model.addRow([6]);
     model.addRow([7]);
     model.addRow([8]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
     const shiftButton: any = new KeyboardEvent(16);
     selector.onKeyDown(shiftButton);
@@ -244,15 +245,15 @@ export class RowSelectorTester {
     selector.onKeyUp(shiftButton);
     selector.onMouseEnter(5);
     selector.onMouseUp(leftClick);
-    Expect(selector.isSelected(0)).toEqual(true);
-    Expect(selector.isSelected(1)).toEqual(true);
-    Expect(selector.isSelected(2)).toEqual(true);
-    Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(true);
-    Expect(selector.isSelected(5)).toEqual(true);
-    Expect(selector.isSelected(6)).toEqual(false);
-    Expect(selector.isSelected(7)).toEqual(false);
-    Expect(selector.isSelected(8)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(true);
+    Expect(selector.get(1, 0)).toEqual(true);
+    Expect(selector.get(2, 0)).toEqual(true);
+    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(true);
+    Expect(selector.get(5, 0)).toEqual(true);
+    Expect(selector.get(6, 0)).toEqual(false);
+    Expect(selector.get(7, 0)).toEqual(false);
+    Expect(selector.get(8, 0)).toEqual(false);
   }
 
   @Test()
@@ -267,7 +268,7 @@ export class RowSelectorTester {
     model.addRow([6]);
     model.addRow([7]);
     model.addRow([8]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
     const shiftButton: any = new KeyboardEvent(16);
     selector.onKeyDown(shiftButton);
@@ -276,15 +277,15 @@ export class RowSelectorTester {
     selector.onMouseEnter(3);
     selector.onMouseUp(leftClick);
     selector.onKeyUp(shiftButton);
-    Expect(selector.isSelected(0)).toEqual(true);
-    Expect(selector.isSelected(1)).toEqual(true);
-    Expect(selector.isSelected(2)).toEqual(true);
-    Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(false);
-    Expect(selector.isSelected(5)).toEqual(false);
-    Expect(selector.isSelected(6)).toEqual(false);
-    Expect(selector.isSelected(7)).toEqual(false);
-    Expect(selector.isSelected(8)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(true);
+    Expect(selector.get(1, 0)).toEqual(true);
+    Expect(selector.get(2, 0)).toEqual(true);
+    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(false);
+    Expect(selector.get(5, 0)).toEqual(false);
+    Expect(selector.get(6, 0)).toEqual(false);
+    Expect(selector.get(7, 0)).toEqual(false);
+    Expect(selector.get(8, 0)).toEqual(false);
   }
 
   @Test()
@@ -299,7 +300,7 @@ export class RowSelectorTester {
     model.addRow([6]);
     model.addRow([7]);
     model.addRow([8]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const shiftButton: any = new KeyboardEvent(16);
     const downArrow: any = new KeyboardEvent(40);
     selector.onKeyDown(downArrow);
@@ -308,15 +309,15 @@ export class RowSelectorTester {
     selector.onKeyDown(downArrow);
     selector.onKeyUp(downArrow);
     selector.onKeyUp(shiftButton);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(true);
-    Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(false);
-    Expect(selector.isSelected(5)).toEqual(false);
-    Expect(selector.isSelected(6)).toEqual(false);
-    Expect(selector.isSelected(7)).toEqual(false);
-    Expect(selector.isSelected(8)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(true);
+    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(false);
+    Expect(selector.get(5, 0)).toEqual(false);
+    Expect(selector.get(6, 0)).toEqual(false);
+    Expect(selector.get(7, 0)).toEqual(false);
+    Expect(selector.get(8, 0)).toEqual(false);
   }
 
   @Test()
@@ -331,7 +332,7 @@ export class RowSelectorTester {
     model.addRow([6]);
     model.addRow([7]);
     model.addRow([8]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const shiftButton: any = new KeyboardEvent(16);
     const leftClick: any = new MouseEvent(0);
     const downArrow: any = new KeyboardEvent(40);
@@ -343,15 +344,15 @@ export class RowSelectorTester {
     selector.onMouseDown(leftClick, 8);
     selector.onMouseUp(leftClick);
     selector.onKeyUp(shiftButton);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(true);
-    Expect(selector.isSelected(2)).toEqual(true);
-    Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(true);
-    Expect(selector.isSelected(5)).toEqual(true);
-    Expect(selector.isSelected(6)).toEqual(true);
-    Expect(selector.isSelected(7)).toEqual(true);
-    Expect(selector.isSelected(8)).toEqual(true);
+    Expect(selector.get(0, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(true);
+    Expect(selector.get(2, 0)).toEqual(true);
+    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(true);
+    Expect(selector.get(5, 0)).toEqual(true);
+    Expect(selector.get(6, 0)).toEqual(true);
+    Expect(selector.get(7, 0)).toEqual(true);
+    Expect(selector.get(8, 0)).toEqual(true);
   }
 
   @Test()
@@ -366,7 +367,7 @@ export class RowSelectorTester {
     model.addRow([6]);
     model.addRow([7]);
     model.addRow([8]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
     const shiftButton: any = new KeyboardEvent(16);
     const downArrow: any = new KeyboardEvent(40);
@@ -376,15 +377,15 @@ export class RowSelectorTester {
     selector.onKeyUp(shiftButton);
     selector.onMouseDown(leftClick, 3);
     selector.onMouseUp(leftClick);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(false);
-    Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(false);
-    Expect(selector.isSelected(5)).toEqual(false);
-    Expect(selector.isSelected(6)).toEqual(false);
-    Expect(selector.isSelected(7)).toEqual(false);
-    Expect(selector.isSelected(8)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(false);
+    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(false);
+    Expect(selector.get(5, 0)).toEqual(false);
+    Expect(selector.get(6, 0)).toEqual(false);
+    Expect(selector.get(7, 0)).toEqual(false);
+    Expect(selector.get(8, 0)).toEqual(false);
   }
 
   @Test()
@@ -399,7 +400,7 @@ export class RowSelectorTester {
     model.addRow([6]);
     model.addRow([7]);
     model.addRow([8]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const upArrow: any = new KeyboardEvent(38);
     const downArrow: any = new KeyboardEvent(40);
     const ctrlButton: any = new KeyboardEvent(17);
@@ -412,15 +413,15 @@ export class RowSelectorTester {
     selector.onKeyDown(upArrow);
     selector.onKeyUp(upArrow);
     selector.onKeyUp(ctrlButton);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(false);
-    Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(false);
-    Expect(selector.isSelected(5)).toEqual(false);
-    Expect(selector.isSelected(6)).toEqual(false);
-    Expect(selector.isSelected(7)).toEqual(false);
-    Expect(selector.isSelected(8)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(false);
+    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(false);
+    Expect(selector.get(5, 0)).toEqual(false);
+    Expect(selector.get(6, 0)).toEqual(false);
+    Expect(selector.get(7, 0)).toEqual(false);
+    Expect(selector.get(8, 0)).toEqual(false);
   }
 
   @Test()
@@ -435,7 +436,7 @@ export class RowSelectorTester {
     model.addRow([6]);
     model.addRow([7]);
     model.addRow([8]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
     const ctrlButton: any = new KeyboardEvent(17);
     selector.onKeyDown(ctrlButton);
@@ -443,15 +444,15 @@ export class RowSelectorTester {
     selector.onMouseEnter(6);
     selector.onMouseUp(leftClick);
     selector.onKeyUp(ctrlButton);
-    Expect(selector.isSelected(0)).toEqual(true);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(true);
-    Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(true);
-    Expect(selector.isSelected(5)).toEqual(true);
-    Expect(selector.isSelected(6)).toEqual(true);
-    Expect(selector.isSelected(7)).toEqual(false);
-    Expect(selector.isSelected(8)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(true);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(true);
+    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(true);
+    Expect(selector.get(5, 0)).toEqual(true);
+    Expect(selector.get(6, 0)).toEqual(true);
+    Expect(selector.get(7, 0)).toEqual(false);
+    Expect(selector.get(8, 0)).toEqual(false);
   }
 
   @Test()
@@ -466,7 +467,7 @@ export class RowSelectorTester {
     model.addRow([6]);
     model.addRow([7]);
     model.addRow([8]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
     const ctrlButton: any = new KeyboardEvent(17);
     const downArrow: any = new KeyboardEvent(40);
@@ -478,15 +479,15 @@ export class RowSelectorTester {
     selector.onKeyDown(downArrow);
     selector.onKeyUp(downArrow);
     selector.onKeyUp(ctrlButton);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(true);
-    Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(true);
-    Expect(selector.isSelected(5)).toEqual(false);
-    Expect(selector.isSelected(6)).toEqual(false);
-    Expect(selector.isSelected(7)).toEqual(false);
-    Expect(selector.isSelected(8)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(true);
+    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(true);
+    Expect(selector.get(5, 0)).toEqual(false);
+    Expect(selector.get(6, 0)).toEqual(false);
+    Expect(selector.get(7, 0)).toEqual(false);
+    Expect(selector.get(8, 0)).toEqual(false);
   }
 
   @Test()
@@ -501,7 +502,7 @@ export class RowSelectorTester {
     model.addRow([6]);
     model.addRow([7]);
     model.addRow([8]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
     const ctrlButton: any = new KeyboardEvent(17);
     selector.onKeyDown(ctrlButton);
@@ -512,15 +513,15 @@ export class RowSelectorTester {
     selector.onMouseEnter(4);
     selector.onMouseUp(leftClick);
     selector.onKeyUp(ctrlButton);
-    Expect(selector.isSelected(0)).toEqual(true);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(true);
-    Expect(selector.isSelected(3)).toEqual(false);
-    Expect(selector.isSelected(4)).toEqual(false);
-    Expect(selector.isSelected(5)).toEqual(true);
-    Expect(selector.isSelected(6)).toEqual(true);
-    Expect(selector.isSelected(7)).toEqual(false);
-    Expect(selector.isSelected(8)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(true);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(true);
+    Expect(selector.get(3, 0)).toEqual(false);
+    Expect(selector.get(4, 0)).toEqual(false);
+    Expect(selector.get(5, 0)).toEqual(true);
+    Expect(selector.get(6, 0)).toEqual(true);
+    Expect(selector.get(7, 0)).toEqual(false);
+    Expect(selector.get(8, 0)).toEqual(false);
   }
 
   @Test()
@@ -535,7 +536,7 @@ export class RowSelectorTester {
     model.addRow([6]);
     model.addRow([7]);
     model.addRow([8]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
     const ctrlButton: any = new KeyboardEvent(17);
     const shiftButton: any = new KeyboardEvent(16);
@@ -550,15 +551,15 @@ export class RowSelectorTester {
     selector.onMouseDown(leftClick, 6);
     selector.onMouseUp(leftClick);
     selector.onKeyUp(ctrlButton);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(true);
-    Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(false);
-    Expect(selector.isSelected(5)).toEqual(true);
-    Expect(selector.isSelected(6)).toEqual(false);
-    Expect(selector.isSelected(7)).toEqual(true);
-    Expect(selector.isSelected(8)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(true);
+    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(false);
+    Expect(selector.get(5, 0)).toEqual(true);
+    Expect(selector.get(6, 0)).toEqual(false);
+    Expect(selector.get(7, 0)).toEqual(true);
+    Expect(selector.get(8, 0)).toEqual(false);
   }
 
   @Test()
@@ -572,7 +573,7 @@ export class RowSelectorTester {
     model.addRow([5]);
     model.addRow([6]);
     model.addRow([7]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
     const ctrlButton: any = new KeyboardEvent(17);
     const downArrow: any = new KeyboardEvent(40);
@@ -592,14 +593,14 @@ export class RowSelectorTester {
     selector.onKeyDown(downArrow);
     selector.onKeyUp(downArrow);
     selector.onKeyUp(ctrlButton);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(false);
-    Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(true);
-    Expect(selector.isSelected(5)).toEqual(true);
-    Expect(selector.isSelected(6)).toEqual(true);
-    Expect(selector.isSelected(7)).toEqual(true);
+    Expect(selector.get(0, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(false);
+    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(true);
+    Expect(selector.get(5, 0)).toEqual(true);
+    Expect(selector.get(6, 0)).toEqual(true);
+    Expect(selector.get(7, 0)).toEqual(true);
   }
 
   @Test()
@@ -613,7 +614,7 @@ export class RowSelectorTester {
     model.addRow([5]);
     model.addRow([6]);
     model.addRow([7]);
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
     const downArrow: any = new KeyboardEvent(40);
     const shiftButton: any = new KeyboardEvent(16);
@@ -630,20 +631,20 @@ export class RowSelectorTester {
     selector.onKeyDown(downArrow);
     selector.onKeyUp(downArrow);
     selector.onKeyUp(shiftButton);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(false);
-    Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(true);
-    Expect(selector.isSelected(5)).toEqual(true);
-    Expect(selector.isSelected(6)).toEqual(false);
-    Expect(selector.isSelected(7)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(false);
+    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(true);
+    Expect(selector.get(5, 0)).toEqual(true);
+    Expect(selector.get(6, 0)).toEqual(false);
+    Expect(selector.get(7, 0)).toEqual(false);
   }
 
   @Test()
   public testEmptyToNotEmpty(): void {
     const model = new ArrayTableModel();
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     model.addRow([0]);
     model.addRow([1]);
     model.addRow([2]);
@@ -652,20 +653,20 @@ export class RowSelectorTester {
     model.addRow([5]);
     model.addRow([6]);
     model.addRow([7]);
-    Expect(selector.isSelected(0)).toEqual(true);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(false);
-    Expect(selector.isSelected(3)).toEqual(false);
-    Expect(selector.isSelected(4)).toEqual(false);
-    Expect(selector.isSelected(5)).toEqual(false);
-    Expect(selector.isSelected(6)).toEqual(false);
-    Expect(selector.isSelected(7)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(true);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(false);
+    Expect(selector.get(3, 0)).toEqual(false);
+    Expect(selector.get(4, 0)).toEqual(false);
+    Expect(selector.get(5, 0)).toEqual(false);
+    Expect(selector.get(6, 0)).toEqual(false);
+    Expect(selector.get(7, 0)).toEqual(false);
   }
 
   @Test()
   public testEmptyToNotEmptyAndMouse(): void {
     const model = new ArrayTableModel();
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     model.addRow([0]);
     model.addRow([1]);
     model.addRow([2]);
@@ -677,20 +678,20 @@ export class RowSelectorTester {
     const leftClick: any = new MouseEvent(0);
     selector.onMouseDown(leftClick, 6);
     selector.onMouseUp(leftClick);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(false);
-    Expect(selector.isSelected(3)).toEqual(false);
-    Expect(selector.isSelected(4)).toEqual(false);
-    Expect(selector.isSelected(5)).toEqual(false);
-    Expect(selector.isSelected(6)).toEqual(true);
-    Expect(selector.isSelected(7)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(false);
+    Expect(selector.get(3, 0)).toEqual(false);
+    Expect(selector.get(4, 0)).toEqual(false);
+    Expect(selector.get(5, 0)).toEqual(false);
+    Expect(selector.get(6, 0)).toEqual(true);
+    Expect(selector.get(7, 0)).toEqual(false);
   }
 
   @Test()
   public testingMovingRows(): void {
     const model = new ArrayTableModel();
-    const selector = new RowSelector(model);
+    const selector = new RowSelectionTableModel(model);
     model.addRow([0]);
     model.addRow([1]);
     model.addRow([2]);
@@ -703,13 +704,13 @@ export class RowSelectorTester {
     selector.onMouseDown(leftClick, 6);
     selector.onMouseUp(leftClick);
     model.moveRow(6, 3);
-    Expect(selector.isSelected(0)).toEqual(false);
-    Expect(selector.isSelected(1)).toEqual(false);
-    Expect(selector.isSelected(2)).toEqual(false);
-    Expect(selector.isSelected(3)).toEqual(true);
-    Expect(selector.isSelected(4)).toEqual(false);
-    Expect(selector.isSelected(5)).toEqual(false);
-    Expect(selector.isSelected(6)).toEqual(false);
-    Expect(selector.isSelected(7)).toEqual(false);
+    Expect(selector.get(0, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(false);
+    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(false);
+    Expect(selector.get(5, 0)).toEqual(false);
+    Expect(selector.get(6, 0)).toEqual(false);
+    Expect(selector.get(7, 0)).toEqual(false);
   }
 }

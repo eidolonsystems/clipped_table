@@ -3,7 +3,7 @@ export * from './column_resizer';
 export * from './comparator';
 export * from './filtered_table_model';
 export * from './operations';
-export * from './row_selector';
+export * from './row_selection_table_model';
 export * from './sorted_table_model';
 export * from './table_model';
 export * from './translated_table_model';
