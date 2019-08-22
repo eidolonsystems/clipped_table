@@ -292,9 +292,7 @@ export class RowSelectionTableModel extends TableModel {
   private clearRows() {
     this.selectedRows.beginTransaction();
     for(let i = 0; i < this.selectedRows.rowCount; ++i) {
-      if(this.selectedRows.get(i, 0)) {
-        this.selectedRows.set(i, 0, false);
-      }
+      this.selectedRows.set(i, 0, false);
     }
     this.selectedRows.endTransaction();
   }
