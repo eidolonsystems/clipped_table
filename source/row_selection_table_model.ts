@@ -5,7 +5,7 @@ import { AddRowOperation, MoveRowOperation, Operation }
   from './operations';
 
 /** Provides the functionality needed to select Rows. */
-export class RowSelectionTableModel  extends TableModel {
+export class RowSelectionTableModel extends TableModel {
 
   /** Constructs a RowSelectionTableModel.
    * @param table - The table whose rows are being selected.
@@ -25,7 +25,6 @@ export class RowSelectionTableModel  extends TableModel {
     this.isUpDown = false;
     this.isDownDown  = false;
     this.isAdding = true;
-    this.dispatcher = new Kola.Dispatcher<Operation[]>();
     table.connect(this.handleOperations.bind(this));
     this.s0();
   }
@@ -40,11 +39,11 @@ export class RowSelectionTableModel  extends TableModel {
 
   public connect(slot: (operations: Operation[]) => void):
       Kola.Listener<Operation[]> {
-    return this.dispatcher.listen(slot);
+    return this.selectedRows.connect(slot);
   }
 
   public get(row: number, column: number): boolean {
-    return this.selectedRows.get(row, 0);
+    return this.selectedRows.get(row, column);
   }
 
   /** Handles the cursor entering a new row.
@@ -181,25 +180,6 @@ export class RowSelectionTableModel  extends TableModel {
     }
   }
 
-  /** Marks the beginning of a transaction. In cases where a transaction is
-   *  already being processed, then the sub-transaction gets consolidated into
-   *  the parent transaction.
-   */
-  private beginTransaction(): void {
-    if(this.transactionCount === 0) {
-      this.operations = [];
-    }
-    ++this.transactionCount;
-  }
-
-  /** Ends a transaction. */
-  private endTransaction(): void {
-    --this.transactionCount;
-    if(this.transactionCount === 0) {
-      this.dispatcher.dispatch(this.operations);
-    }
-  }
-
   private c0() {
     return this.isShiftDown &&
       (this.isMouseDown || this.isDownDown || this.isUpDown);
@@ -246,7 +226,7 @@ export class RowSelectionTableModel  extends TableModel {
     return this.s2();
   }
 
-  private s2(): any {
+  private s2() {
     this.state = 2;
     this.toggleRows();
     if(this.c4()) {
@@ -288,9 +268,8 @@ export class RowSelectionTableModel  extends TableModel {
     this.selectedRows.set(this.highlightedRow, 0, true);
   }
 
-  ///??????
   private handleOperations(newOperations: Operation[]): void {
-    this.beginTransaction();
+    this.selectedRows.beginTransaction();
     for(const operation of newOperations) {
       if(operation instanceof AddRowOperation) {
         if(this.selectedRows.rowCount === 0) {
@@ -303,14 +282,11 @@ export class RowSelectionTableModel  extends TableModel {
         }
         const row = new ArrayTableModel();
         row.addRow([false]);
-        this.operations.push(new AddRowOperation(operation.index, row));
       } else if(operation instanceof MoveRowOperation) {
         this.selectedRows.moveRow(operation.source, operation.destination);
-        this.operations.push(
-          new MoveRowOperation(operation.source, operation.destination));
       }
     }
-    this.endTransaction();
+    this.selectedRows.endTransaction();
   }
 
   private clearRows() {
@@ -359,7 +335,4 @@ export class RowSelectionTableModel  extends TableModel {
   private isUpDown: boolean;
   private isDownDown: boolean;
   private isAdding: boolean;
-  private transactionCount: number;
-  private operations: Operation[];
-  private dispatcher: Kola.Dispatcher<Operation[]>;
 }
