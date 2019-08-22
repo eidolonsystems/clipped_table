@@ -230,7 +230,8 @@ export class RowSelectionTableModel extends TableModel {
     this.state = 2;
     this.toggleRows();
     if(this.c4()) {
-      return this.s0();
+      this.s0();
+      return;
     }
   }
 
