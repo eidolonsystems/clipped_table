@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ColumnResizer, Rectangle, TableInterface } from './column_resizer';
 import { AddRowOperation, MoveRowOperation, Operation,
   RemoveRowOperation, UpdateValueOperation } from './operations';
+import {RowSelectionTableModel} from './row_selection_table_model';
 import { ColumnOrder, SortedTableModel } from './sorted_table_model';
 import { TableModel } from './table_model';
 
@@ -24,6 +25,9 @@ interface Properties {
 
   /** The height in pixels. */
   height: number;
+
+  /** */
+  onSelected?: () => void;
 }
 
 interface State {
@@ -53,7 +57,9 @@ export class TableView extends React.Component<Properties, State> implements
       this.headerRefs[i] = null;
     }
     this.table = new SortedTableModel(this.props.model);
+    this.rowSelectior = new RowSelectionTableModel(this.table);
     this.table.connect(this.tableUpdated.bind(this));
+    this.rowSelectior.connect(this.tableUpdated.bind(this));
     this.onScrollHandler = this.onScrollHandler.bind(this);
   }
 
@@ -66,6 +72,12 @@ export class TableView extends React.Component<Properties, State> implements
     document.addEventListener('pointermove',
       this.columnResizer.onMouseMove.bind(this.columnResizer));
     this.wrapperRef.addEventListener('scroll', this.onScrollHandler);
+    document.addEventListener('keydown',
+      this.rowSelectior.onKeyDown.bind(this.rowSelectior));
+    document.addEventListener('keyup',
+      this.rowSelectior.onKeyUp.bind(this.rowSelectior));
+    document.addEventListener('mouseup',
+      this.rowSelectior.onMouseUp.bind(this.rowSelectior));
     this.forceUpdate();
   }
 
@@ -87,6 +99,8 @@ export class TableView extends React.Component<Properties, State> implements
     document.removeEventListener('pointerdown', this.columnResizer.onMouseDown);
     document.removeEventListener('pointerup', this.columnResizer.onMouseUp);
     document.removeEventListener('pointermove', this.columnResizer.onMouseMove);
+    document.removeEventListener('keydown', this.rowSelectior.onKeyDown);
+    document.removeEventListener('keyup', this.rowSelectior.onKeyUp);
     this.wrapperRef.removeEventListener('scroll', this.onScrollHandler);
   }
 
@@ -124,18 +138,31 @@ export class TableView extends React.Component<Properties, State> implements
             {this.table.get(i, j)}
           </td>);
       }
+      const selectedStyle = (() => {
+        if(this.rowSelectior.get(i, 0)) {
+          return {color: '#e80573'} as React.CSSProperties;
+        } else {
+          return this.props.style.tr as React.CSSProperties;
+        }
+      })();
       if(i === 0) {
         tableRows.push(
-          <tr style={this.props.style.tr}
+          <tr style={selectedStyle}
               ref={(first) => this.firstRowRef = first}
               className={this.props.className}
+              onMouseDown={(e: React.MouseEvent<HTMLTableRowElement>) =>
+                this.rowSelectior.onMouseDown(e, i)}
+              onMouseEnter={() => this.rowSelectior.onMouseEnter(i)}
               key={i}>
             {row}
           </tr>);
       } else {
         tableRows.push(
-          <tr style={this.props.style.tr}
+          <tr style={selectedStyle}
               className={this.props.className}
+              onMouseDown={(event: React.MouseEvent<HTMLTableRowElement>) =>
+                this.rowSelectior.onMouseDown(event, i)}
+              onMouseEnter={() => this.rowSelectior.onMouseEnter(i)}
               key={i}>
             {row}
           </tr>);
@@ -257,10 +284,12 @@ export class TableView extends React.Component<Properties, State> implements
   }
 
   private onScrollHandler() {
-    const percent = this.wrapperRef.scrollTop / this.wrapperRef.scrollHeight;
-    this.setState({topRow: Math.floor(percent * this.props.model.rowCount)});
+    ///????
+    //const percent = this.wrapperRef.scrollTop / this.wrapperRef.scrollHeight;
+    //this.setState({topRow: Math.floor(percent * this.props.model.rowCount)});
   }
 
+  private rowSelectior: RowSelectionTableModel;
   private columnResizer: ColumnResizer;
   private firstRowRef: HTMLTableRowElement;
   private headerRefs: HTMLHeadElement[];

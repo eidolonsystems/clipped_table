@@ -4,7 +4,7 @@ import { ArrayTableModel } from './array_table_model';
 import { TableView } from './table_view';
 
 const model = new ArrayTableModel();
-for(let row = 0; row < 10000; ++row) {
+for(let row = 0; row < 3000; ++row) {
   const r = [];
   for(let column = 0; column < 4; ++column) {
     if(column === 0) {
@@ -23,19 +23,20 @@ const header = ['one', 'two', 'three', 'four'];
 const someStyle = {
   table: {
     fontFamily: 'Arial, Helvetica, sans-serif',
+    userSelect: 'none',
     fontSize: '20px',
     borderCollapse: 'collapse',
     border: '5px solid #000000'
   },
   th: {
     border: '2px solid #000000',
-    color: '#4b23a0'
+    color: '#4b23a0',
+    backgroundColor: '#9671a8'
   },
   td: {
     border: '2px solid #000000',
     paddingLeft: '30px',
-    paddingRight: '30px',
-    color: '#4b23a0'
+    paddingRight: '30px'
   }
 };
 
@@ -43,7 +44,7 @@ function changeValues() {
   const diceRoll = Math.floor(Math.random() * 4);
   const testRow = Math.floor(Math.random() * model.rowCount);
   if(model.rowCount > 500 && diceRoll === 0) {
-    model.removeRow(testRow);
+    //model.removeRow(testRow);
   } else if(diceRoll === 1) {
     const num = Math.floor(Math.random() * 90) + 100;
     model.addRow([model.rowCount, num, num, num], testRow);
