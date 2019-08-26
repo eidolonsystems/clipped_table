@@ -1,6 +1,6 @@
 import * as Kola from 'kola-signals';
 import { Comparator } from './comparator';
-import { AddRowOperation, Operation, RemoveRowOperation, UpdateValueOperation }
+import { AddRowOperation, Operation, RemoveRowOperation, UpdateValueOperation, MoveRowOperation }
   from './operations';
 import { TableModel } from './table_model';
 import { TranslatedTableModel } from './translated_table_model';
@@ -142,6 +142,8 @@ export class SortedTableModel extends TableModel {
           new RemoveRowOperation(operation.index, operation.row));
       } else if(operation instanceof UpdateValueOperation) {
         this.rowUpdated(operation);
+      } else if(operation instanceof MoveRowOperation) {
+        this.operations.push(operation);
       }
     }
     this.endTransaction();

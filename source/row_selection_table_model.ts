@@ -26,6 +26,7 @@ export class RowSelectionTableModel extends TableModel {
     this.isDownDown  = false;
     this.isAdding = true;
     table.connect(this.handleOperations.bind(this));
+    table.connect((newOperations: Operation[]) => 'I haz signal.');
     this.s0();
     console.log('state', this.state);
   }
@@ -293,6 +294,7 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private handleOperations(newOperations: Operation[]): void {
+    console.log('HOWDY!');
     this.selectedRows.beginTransaction();
     for(const operation of newOperations) {
       if(operation instanceof AddRowOperation) {
@@ -307,6 +309,7 @@ export class RowSelectionTableModel extends TableModel {
         const row = new ArrayTableModel();
         row.addRow([false]);
       } else if(operation instanceof MoveRowOperation) {
+        console.log('MOOOVE');
         this.selectedRows.moveRow(operation.source, operation.destination);
       }
     }

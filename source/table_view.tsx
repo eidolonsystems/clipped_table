@@ -285,8 +285,8 @@ export class TableView extends React.Component<Properties, State> implements
 
   private onScrollHandler() {
     ///????
-    //const percent = this.wrapperRef.scrollTop / this.wrapperRef.scrollHeight;
-    //this.setState({topRow: Math.floor(percent * this.props.model.rowCount)});
+    const percent = this.wrapperRef.scrollTop / this.wrapperRef.scrollHeight;
+    this.setState({topRow: Math.floor(percent * this.props.model.rowCount)});
   }
 
   private rowSelectior: RowSelectionTableModel;
