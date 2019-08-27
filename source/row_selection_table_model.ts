@@ -35,9 +35,9 @@ export class RowSelectionTableModel extends TableModel {
     this.isDownDown  = false;
     this.isAdding = true;
     table.connect(this.handleOperations.bind(this));
-    table.connect((newOperations: Operation[]) => 'I haz signal.');
+    this.isACtrlKeyDown.bind(this);
+    this.isAShiftKeyDown.bind(this);
     this.s0();
-    console.log('state', this.state);
   }
 
   public get rowCount(): number {
@@ -94,8 +94,6 @@ export class RowSelectionTableModel extends TableModel {
    * @param event - The event describing the button release.
    */
   public onMouseUp(event: MouseEvent): void {
-    console.log('MOUSE UP!!!');
-    console.log('state:', this.state.toString());
     if(event.button === 0) {
       this.isMouseDown = false;
       if(this.state === 2) {
@@ -112,10 +110,10 @@ export class RowSelectionTableModel extends TableModel {
    * @param event - The event describing the keyboard press.
    */
   public onKeyDown(event: KeyboardEvent): void {
-    event.preventDefault();
     const code = event.code;
     switch(code) {
       case 'ArrowUp':
+        event.preventDefault();
         this.isUpDown = true;
         if(this.currentRow > 0) {
           --this.currentRow;
@@ -131,6 +129,7 @@ export class RowSelectionTableModel extends TableModel {
         }
       case 'ArrowDown':
         this.isDownDown = true;
+        console.log('is down');
         if(this.currentRow < this.selectedRows.rowCount - 1) {
           ++this.currentRow;
         }
@@ -173,7 +172,6 @@ export class RowSelectionTableModel extends TableModel {
       }
     }
     if(this.isACtrlKeyDown()) {
-      console.log('PRESSED A CTRL!!!');
       if(this.state === 0) {
         return this.s0();
       } else if(this.state === 7) {
@@ -237,6 +235,8 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private c1() {
+    //console.log('is any ctrl down?', this.isACtrlKeyDown());
+    //console.log(this.isACtrlKeyDown() && this.isMouseDown);
     return this.isACtrlKeyDown() && this.isMouseDown;
   }
 
@@ -264,7 +264,6 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s0() {
-    console.log('state 0');
     this.state = 0;
     if(!this.isMouseDown && !this.isDownDown && !this.isUpDown) {
       this.currentRow = this.highlightedRow;
@@ -280,8 +279,12 @@ export class RowSelectionTableModel extends TableModel {
     }
   }
 
+  private s9() {
+    ///
+    this.s0();
+  }
+
   private s1() {
-    console.log('state 1');
     this.state = 1;
     this.clearRows();
     this.previousRow = this.highlightedRow;
@@ -290,7 +293,6 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s2() {
-    console.log('state 2');
     this.state = 2;
     this.toggleRows();
     if(this.c4()) {
@@ -300,7 +302,6 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s3() {
-    console.log('state 3');
     this.state = 3;
     this.highlightedRow = this.currentRow;
     this.previousRow = this.currentRow;
@@ -309,13 +310,11 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s4() {
-    console.log('state 4');
     this.state = 4;
     this.toggleRows();
   }
 
   private s5() {
-    console.log('state 5');
     this.state = 5;
     this.clearRows();
     this.isAdding = true;
@@ -325,13 +324,11 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s6() {
-    console.log('state 6');
     this.state = 6;
     this.toggleRows();
   }
 
   private s7() {
-    console.log('state 7');
     this.state = 7;
     this.clearRows();
     this.highlightedRow = this.currentRow;
@@ -339,7 +336,6 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private handleOperations(newOperations: Operation[]): void {
-    console.log('HOWDY!');
     this.selectedRows.beginTransaction();
     for(const operation of newOperations) {
       if(operation instanceof AddRowOperation) {
@@ -354,7 +350,6 @@ export class RowSelectionTableModel extends TableModel {
         const row = new ArrayTableModel();
         row.addRow([false]);
       } else if(operation instanceof MoveRowOperation) {
-        console.log('MOOOVE');
         this.selectedRows.moveRow(operation.source, operation.destination);
       }
     }
@@ -394,7 +389,7 @@ export class RowSelectionTableModel extends TableModel {
     this.previousRow = this.currentRow;
   }
 
-  private state: number;
+  public state: number;
   private selectedRows: ArrayTableModel;
   private highlightedRow: number;
   private previousRow: number;

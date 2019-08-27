@@ -19,7 +19,7 @@ class KeyboardEvent {
     this._code = code;
   }
 
-  public get keyCode() {
+  public get code() {
     return this._code;
   }
 
@@ -73,13 +73,31 @@ export class RowSelectionTableModelTester {
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
+    console.log(selector.get(0, 0));
+    console.log(selector.get(1, 0));
+    console.log(selector.get(2, 0));
+    console.log(selector.get(3, 0));
+    console.log(selector.get(4, 0));
+    console.log(selector.get(5, 0));
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
+    console.log(selector.get(0, 0));
+    console.log(selector.get(1, 0));
+    console.log(selector.get(2, 0));
+    console.log(selector.get(3, 0));
+    console.log(selector.get(4, 0));
+    console.log(selector.get(5, 0));
     selector.onKeyUp(downArrow);
+    console.log(selector.get(0, 0));
+    console.log(selector.get(1, 0));
+    console.log(selector.get(2, 0));
+    console.log(selector.get(3, 0));
+    console.log(selector.get(4, 0));
+    console.log(selector.get(5, 0));
     Expect(selector.get(0, 0)).toEqual(false);
     Expect(selector.get(1, 0)).toEqual(false);
     Expect(selector.get(2, 0)).toEqual(false);

@@ -44,7 +44,7 @@ function changeValues() {
   const diceRoll = Math.floor(Math.random() * 4);
   const testRow = Math.floor(Math.random() * model.rowCount);
   if(model.rowCount > 500 && diceRoll === 0) {
-    //model.removeRow(testRow);
+    model.removeRow(testRow);
   } else if(diceRoll === 1) {
     const num = Math.floor(Math.random() * 90) + 100;
     model.addRow([model.rowCount, num, num, num], testRow);
