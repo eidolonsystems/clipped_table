@@ -3,6 +3,7 @@ import { ArrayTableModel } from './array_table_model';
 import { TableModel } from './table_model';
 import { AddRowOperation, MoveRowOperation, Operation }
   from './operations';
+import { timingSafeEqual } from 'crypto';
 
 /** Provides the functionality needed to select Rows. */
 export class RowSelectionTableModel extends TableModel {
@@ -19,8 +20,16 @@ export class RowSelectionTableModel extends TableModel {
     this.highlightedRow = 0;
     this.previousRow = 0;
     this.currentRow = 0;
-    this.isShiftDown = false;
-    this.isCtrlDown  = false;
+    this.isShiftDownL = false;
+    this.isShiftDownR = false;
+
+    this.isCtrlDownL = false;
+    this.isCtrlDownR = false;
+    this.isCmdDownL = false;
+    this.isCmdDownR = false;
+    this.isMetaDownL = false;
+    this.isMetaDownR = false;
+
     this.isMouseDown = false;
     this.isUpDown = false;
     this.isDownDown  = false;
@@ -103,38 +112,56 @@ export class RowSelectionTableModel extends TableModel {
    * @param event - The event describing the keyboard press.
    */
   public onKeyDown(event: KeyboardEvent): void {
-    const keyCode = event.keyCode;
     event.preventDefault();
-    if(keyCode === 38) {
-      this.isUpDown = true;
-      if(this.currentRow > 0) {
-        --this.currentRow;
-      }
-      if(this.state === 0) {
-        return this.s0();
-      } else if(this.state === 2) {
-        return this.s2();
-      } else if(this.state === 4) {
-        return this.s4();
-      } else if(this.state === 7) {
-        return this.s7();
-      }
-    } else if(keyCode === 40) {
-      this.isDownDown = true;
-      if(this.currentRow < this.selectedRows.rowCount - 1) {
-        ++this.currentRow;
-      }
-      if(this.state === 0) {
-        return this.s0();
-      } else if(this.state === 2) {
-        return this.s2();
-      } else if(this.state === 4) {
-        return this.s4();
-      } else if(this.state === 7) {
-        return this.s7();
-      }
-    } else if(keyCode === 16) {
-      this.isShiftDown = true;
+    const code = event.code;
+    switch(code) {
+      case 'ArrowUp':
+        this.isUpDown = true;
+        if(this.currentRow > 0) {
+          --this.currentRow;
+        }
+        if(this.state === 0) {
+          return this.s0();
+        } else if(this.state === 2) {
+          return this.s2();
+        } else if(this.state === 4) {
+          return this.s4();
+        } else if(this.state === 7) {
+          return this.s7();
+        }
+      case 'ArrowDown':
+        this.isDownDown = true;
+        if(this.currentRow < this.selectedRows.rowCount - 1) {
+          ++this.currentRow;
+        }
+        if(this.state === 0) {
+          return this.s0();
+        } else if(this.state === 2) {
+          return this.s2();
+        } else if(this.state === 4) {
+          return this.s4();
+        } else if(this.state === 7) {
+          return this.s7();
+        }
+      case 'ShiftLeft':
+        this.isShiftDownL = false;
+      case 'ShiftRight':
+        this.isShiftDownR = false;
+      case 'ControlRight':
+        this.isCtrlDownR = false;
+      case 'ControlLeft':
+        this.isCtrlDownL = false;
+      case 'OSLeft':
+        this.isCmdDownL = false;
+      case 'OSRight':
+        this.isCmdDownR = false;
+      case 'MetaLeft':
+        this.isMetaDownL = false;
+      case 'MetaRight':
+        this.isMetaDownR = false;
+    }
+
+    if(this.isAShiftKeyDown()) {
       if(this.state === 0) {
         return this.s0();
       } else if(this.state === 4) {
@@ -144,17 +171,9 @@ export class RowSelectionTableModel extends TableModel {
       } else if(this.state === 7) {
         return this.s0();
       }
-    } else if(keyCode === 17) {
-      this.isCtrlDown = true;
-    } else if (keyCode === 224) {
-      this.isCmdDownFF = true;
-    } else if(keyCode === 91) {
-      this.isCmdDownWKL = true;
-    } else if(keyCode === 92) {
-      this.isCmdDownWKR = true;
     }
-
     if(this.isACtrlKeyDown()) {
+      console.log('PRESSED A CTRL!!!');
       if(this.state === 0) {
         return this.s0();
       } else if(this.state === 7) {
@@ -167,37 +186,45 @@ export class RowSelectionTableModel extends TableModel {
    * @param event - The event describing the keyboard press.
    */
   public onKeyUp(event: KeyboardEvent): void {
-    const keyCode = event.keyCode;
-    if(keyCode === 38) {
-      this.isUpDown = false;
-      if(this.state === 4) {
-        return this.s0();
-      } else if(this.state === 7) {
-        return this.s0();
-      }
-    } else if(keyCode === 40) {
-      this.isDownDown = false;
-      if(this.state === 4) {
-        return this.s0();
-      } else if(this.state === 7) {
-        return this.s0();
-      }
-    } else if(keyCode === 16) {
-      this.isShiftDown = false;
+    const code = event.code;
+    switch(code) {
+      case 'ArrowUp':
+        this.isUpDown = false;
+        if(this.state === 4) {
+          return this.s0();
+        } else if(this.state === 7) {
+          return this.s0();
+        }
+      case 'ArrowDown':
+        this.isDownDown = false;
+        if(this.state === 4) {
+          return this.s0();
+        } else if(this.state === 7) {
+          return this.s0();
+        }
+      case 'ShiftLeft':
+        this.isShiftDownL = false;
+      case 'ShiftRight':
+        this.isShiftDownR = false;
+      case 'ControlRight':
+        this.isCtrlDownR = false;
+      case 'ControlLeft':
+        this.isCtrlDownL = false;
+      case 'OSLeft':
+        this.isCmdDownL = false;
+      case 'OSRight':
+        this.isCmdDownR = false;
+      case 'MetaLeft':
+        this.isMetaDownL = false;
+      case 'MetaRight':
+        this.isMetaDownR = false;
+    }
+    if(!this.isAShiftKeyDown()) {
       if(this.state === 2) {
         return this.s2();
       }
-    } else if(keyCode === 17) {
-      this.isCtrlDown = false;
-    } else if (keyCode === 224) {
-      this.isCmdDownFF = false;
-    } else if(keyCode === 91) {
-      this.isCmdDownWKL = false;
-    } else if(keyCode === 92) {
-      this.isCmdDownWKR = false;
     }
-
-    if(this.isACtrlKeyDown()) {
+    if(!this.isACtrlKeyDown()) {
       if(this.state === 4) {
         return this.s0();
       }
@@ -205,7 +232,7 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private c0() {
-    return this.isShiftDown &&
+    return this.isAShiftKeyDown() &&
       (this.isMouseDown || this.isDownDown || this.isUpDown);
   }
 
@@ -214,21 +241,25 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private c2() {
-    return !this.isShiftDown && !this.isACtrlKeyDown() && this.isMouseDown;
+    return !this.isAShiftKeyDown() && !this.isACtrlKeyDown() && this.isMouseDown;
   }
 
   private c3() {
-    return !this.isShiftDown && !this.isACtrlKeyDown() &&
+    return !this.isAShiftKeyDown() && !this.isACtrlKeyDown() &&
       (this.isDownDown || this.isUpDown);
   }
 
   private c4() {
-    return !this.isMouseDown && !this.isShiftDown;
+    return !this.isMouseDown && !this.isAShiftKeyDown();
   }
 
   private isACtrlKeyDown() {
-    return this.isCtrlDown || this.isCmdDownFF ||
-      this.isCmdDownWKL || this.isCmdDownWKR;
+    return (this.isCtrlDownL || this.isCtrlDownR || this.isCmdDownL ||
+      this.isCmdDownR || this.isMetaDownL || this.isMetaDownR);
+  }
+
+  private isAShiftKeyDown() {
+    return this.isShiftDownL || this.isShiftDownR;
   }
 
   private s0() {
@@ -367,11 +398,14 @@ export class RowSelectionTableModel extends TableModel {
   private highlightedRow: number;
   private previousRow: number;
   private currentRow: number;
-  private isShiftDown: boolean;
-  private isCtrlDown: boolean;
-  private isCmdDownFF: boolean;
-  private isCmdDownWKR: boolean;
-  private isCmdDownWKL: boolean;
+  private isShiftDownL: boolean;
+  private isShiftDownR: boolean;
+  private isCtrlDownL: boolean;
+  private isCtrlDownR: boolean;
+  private isCmdDownL: boolean;
+  private isCmdDownR: boolean;
+  private isMetaDownL: boolean;
+  private isMetaDownR: boolean;
   private isMouseDown: boolean;
   private isUpDown: boolean;
   private isDownDown: boolean;
