@@ -144,21 +144,21 @@ export class RowSelectionTableModel extends TableModel {
           return this.s7();
         }
       case 'ShiftLeft':
-        this.isShiftDownL = false;
+        this.isShiftDownL = true;
       case 'ShiftRight':
-        this.isShiftDownR = false;
+        this.isShiftDownR = true;
       case 'ControlRight':
-        this.isCtrlDownR = false;
+        this.isCtrlDownR = true;
       case 'ControlLeft':
-        this.isCtrlDownL = false;
+        this.isCtrlDownL = true;
       case 'OSLeft':
-        this.isCmdDownL = false;
+        this.isCmdDownL = true;
       case 'OSRight':
-        this.isCmdDownR = false;
+        this.isCmdDownR = true;
       case 'MetaLeft':
-        this.isMetaDownL = false;
+        this.isMetaDownL = true;
       case 'MetaRight':
-        this.isMetaDownR = false;
+        this.isMetaDownR = true;
     }
 
     if(this.isAShiftKeyDown()) {
@@ -241,7 +241,7 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private c2() {
-    return !this.isAShiftKeyDown() && !this.isACtrlKeyDown() 
+    return !this.isAShiftKeyDown() && !this.isACtrlKeyDown()
       && this.isMouseDown;
   }
 
