@@ -87,7 +87,6 @@ export class RowSelectionTableModel extends TableModel {
   public onMouseUp(event: MouseEvent): void {
     console.log('MOUSE UP!!!');
     console.log('state:', this.state.toString());
-    event.preventDefault();
     if(event.button === 0) {
       this.isMouseDown = false;
       if(this.state === 2) {
@@ -147,6 +146,15 @@ export class RowSelectionTableModel extends TableModel {
       }
     } else if(keyCode === 17) {
       this.isCtrlDown = true;
+    } else if (keyCode === 224) {
+      this.isCmdDownFF = true;
+    } else if(keyCode === 91) {
+      this.isCmdDownWKL = true;
+    } else if(keyCode === 92) {
+      this.isCmdDownWKR = true;
+    }
+
+    if(this.isACtrlKeyDown()) {
       if(this.state === 0) {
         return this.s0();
       } else if(this.state === 7) {
@@ -181,7 +189,15 @@ export class RowSelectionTableModel extends TableModel {
       }
     } else if(keyCode === 17) {
       this.isCtrlDown = false;
-      console.log('ctrl up');
+    } else if (keyCode === 224) {
+      this.isCmdDownFF = false;
+    } else if(keyCode === 91) {
+      this.isCmdDownWKL = false;
+    } else if(keyCode === 92) {
+      this.isCmdDownWKR = false;
+    }
+
+    if(this.isACtrlKeyDown()) {
       if(this.state === 4) {
         return this.s0();
       }
@@ -194,20 +210,25 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private c1() {
-    return this.isCtrlDown && this.isMouseDown;
+    return this.isACtrlKeyDown() && this.isMouseDown;
   }
 
   private c2() {
-    return !this.isShiftDown && !this.isCtrlDown && this.isMouseDown;
+    return !this.isShiftDown && !this.isACtrlKeyDown() && this.isMouseDown;
   }
 
   private c3() {
-    return !this.isShiftDown && !this.isCtrlDown &&
+    return !this.isShiftDown && !this.isACtrlKeyDown() &&
       (this.isDownDown || this.isUpDown);
   }
 
   private c4() {
     return !this.isMouseDown && !this.isShiftDown;
+  }
+
+  private isACtrlKeyDown() {
+    return this.isCtrlDown || this.isCmdDownFF ||
+      this.isCmdDownWKL || this.isCmdDownWKR;
   }
 
   private s0() {
@@ -348,6 +369,9 @@ export class RowSelectionTableModel extends TableModel {
   private currentRow: number;
   private isShiftDown: boolean;
   private isCtrlDown: boolean;
+  private isCmdDownFF: boolean;
+  private isCmdDownWKR: boolean;
+  private isCmdDownWKL: boolean;
   private isMouseDown: boolean;
   private isUpDown: boolean;
   private isDownDown: boolean;

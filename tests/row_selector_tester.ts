@@ -23,7 +23,13 @@ class KeyboardEvent {
     return this._keyCode;
   }
 
+  public preventDefault() {
+    return;
+  }
+
   private _keyCode: number;
+
+
 }
 
 /** Tests the RowSelectionTableModel. */
