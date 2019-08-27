@@ -73,11 +73,6 @@ export class RowSelectionTableModel extends TableModel {
     if(event.button === 0) {
       this.isMouseDown = true;
       this.currentRow = row;
-      if(event.ctrlKey) {
-        this.isCtrlDown = true;
-      } else {
-        this.isCtrlDown = false;
-      }
       if(this.state === 0) {
         return this.s0();
       } else if(this.state === 2) {
@@ -92,13 +87,9 @@ export class RowSelectionTableModel extends TableModel {
   public onMouseUp(event: MouseEvent): void {
     console.log('MOUSE UP!!!');
     console.log('state:', this.state.toString());
+    event.preventDefault();
     if(event.button === 0) {
       this.isMouseDown = false;
-      if(event.ctrlKey) {
-        this.isCtrlDown = true;
-      } else {
-        this.isCtrlDown = false;
-      }
       if(this.state === 2) {
         return this.s2();
       } else if(this.state === 4) {
@@ -114,6 +105,7 @@ export class RowSelectionTableModel extends TableModel {
    */
   public onKeyDown(event: KeyboardEvent): void {
     const keyCode = event.keyCode;
+    event.preventDefault();
     if(keyCode === 38) {
       this.isUpDown = true;
       if(this.currentRow > 0) {
