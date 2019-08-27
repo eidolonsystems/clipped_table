@@ -15,19 +15,19 @@ class MouseEvent {
 }
 
 class KeyboardEvent {
-  constructor(keyCode: number) {
-    this._keyCode = keyCode;
+  constructor(code: string) {
+    this._code = code;
   }
 
   public get keyCode() {
-    return this._keyCode;
+    return this._code;
   }
 
   public preventDefault() {
     return;
   }
 
-  private _keyCode: number;
+  private _code: string;
 
 
 }
@@ -69,7 +69,7 @@ export class RowSelectionTableModelTester {
     model.addRow([4]);
     model.addRow([5]);
     const selector = new RowSelectionTableModel(model);
-    const downArrow: any = new KeyboardEvent(40);
+    const downArrow: any = new KeyboardEvent('ArrowDown');
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
@@ -99,7 +99,7 @@ export class RowSelectionTableModelTester {
     model.addRow([4]);
     model.addRow([5]);
     const selector = new RowSelectionTableModel(model);
-    const upArrow: any = new KeyboardEvent(38);
+    const upArrow: any = new KeyboardEvent('ArrowUp');
     selector.onKeyDown(upArrow);
     selector.onKeyDown(upArrow);
     selector.onKeyDown(upArrow);
@@ -124,8 +124,8 @@ export class RowSelectionTableModelTester {
     model.addRow([5]);
     model.addRow([6]);
     const selector = new RowSelectionTableModel(model);
-    const upArrow: any = new KeyboardEvent(38);
-    const downArrow: any = new KeyboardEvent(40);
+    const upArrow: any = new KeyboardEvent('ArrowUp');
+    const downArrow: any = new KeyboardEvent('ArrowDown');
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
@@ -252,7 +252,7 @@ export class RowSelectionTableModelTester {
     model.addRow([8]);
     const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
-    const shiftButton: any = new KeyboardEvent(16);
+    const shiftButton: any = new KeyboardEvent('ShiftLeft');
     selector.onKeyDown(shiftButton);
     selector.onMouseDown(leftClick, 0);
     selector.onMouseEnter(3);
@@ -285,7 +285,7 @@ export class RowSelectionTableModelTester {
     model.addRow([8]);
     const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
-    const shiftButton: any = new KeyboardEvent(16);
+    const shiftButton: any = new KeyboardEvent('ShiftLeft');
     selector.onKeyDown(shiftButton);
     selector.onMouseDown(leftClick, 6);
     selector.onMouseEnter(5);
@@ -317,8 +317,8 @@ export class RowSelectionTableModelTester {
     model.addRow([7]);
     model.addRow([8]);
     const selector = new RowSelectionTableModel(model);
-    const shiftButton: any = new KeyboardEvent(16);
-    const downArrow: any = new KeyboardEvent(40);
+    const shiftButton: any = new KeyboardEvent('ShiftLeft');
+    const downArrow: any = new KeyboardEvent('ArrowDown');
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
     selector.onKeyDown(shiftButton);
@@ -352,9 +352,9 @@ export class RowSelectionTableModelTester {
     model.addRow([7]);
     model.addRow([8]);
     const selector = new RowSelectionTableModel(model);
-    const shiftButton: any = new KeyboardEvent(16);
+    const shiftButton: any = new KeyboardEvent('ShiftLeft');
     const leftClick: any = new MouseEvent(0);
-    const downArrow: any = new KeyboardEvent(40);
+    const downArrow: any = new KeyboardEvent('ArrowDown');
     selector.onKeyDown(downArrow);
     selector.onKeyDown(shiftButton);
     selector.onKeyDown(downArrow);
@@ -390,8 +390,8 @@ export class RowSelectionTableModelTester {
     model.addRow([8]);
     const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
-    const shiftButton: any = new KeyboardEvent(16);
-    const downArrow: any = new KeyboardEvent(40);
+    const shiftButton: any = new KeyboardEvent('ShiftLeft');
+    const downArrow: any = new KeyboardEvent('ArrowDown');
     selector.onKeyDown(downArrow);
     selector.onKeyDown(shiftButton);
     selector.onKeyUp(downArrow);
@@ -423,9 +423,9 @@ export class RowSelectionTableModelTester {
     model.addRow([7]);
     model.addRow([8]);
     const selector = new RowSelectionTableModel(model);
-    const upArrow: any = new KeyboardEvent(38);
-    const downArrow: any = new KeyboardEvent(40);
-    const ctrlButton: any = new KeyboardEvent(17);
+    const upArrow: any = new KeyboardEvent('ArrowUp');
+    const downArrow: any = new KeyboardEvent('ArrowDown');
+    const ctrlButton: any = new KeyboardEvent('ControlLeft');
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
@@ -462,7 +462,7 @@ export class RowSelectionTableModelTester {
     model.addRow([8]);
     const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
-    const ctrlButton: any = new KeyboardEvent(17);
+    const ctrlButton: any = new KeyboardEvent('ControlLeft');
     selector.onKeyDown(ctrlButton);
     selector.onMouseDown(leftClick, 2);
     selector.onMouseEnter(6);
@@ -494,8 +494,8 @@ export class RowSelectionTableModelTester {
     model.addRow([8]);
     const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
-    const ctrlButton: any = new KeyboardEvent(17);
-    const downArrow: any = new KeyboardEvent(40);
+    const ctrlButton: any = new KeyboardEvent('ControlLeft');
+    const downArrow: any = new KeyboardEvent('ArrowDown');
     selector.onMouseDown(leftClick, 2);
     selector.onKeyDown(ctrlButton);
     selector.onMouseEnter(4);
@@ -530,7 +530,7 @@ export class RowSelectionTableModelTester {
     model.addRow([8]);
     const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
-    const ctrlButton: any = new KeyboardEvent(17);
+    const ctrlButton: any = new KeyboardEvent('ControlLeft');
     selector.onKeyDown(ctrlButton);
     selector.onMouseDown(leftClick, 2);
     selector.onMouseEnter(6);
@@ -567,8 +567,8 @@ export class RowSelectionTableModelTester {
     model.addRow([8]);
     const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
-    const ctrlButton: any = new KeyboardEvent(17);
-    const shiftButton: any = new KeyboardEvent(16);
+    const ctrlButton: any = new KeyboardEvent('ControlLeft');
+    const shiftButton: any = new KeyboardEvent('ShiftLeft');
     selector.onMouseDown(leftClick, 7);
     selector.onKeyDown(shiftButton);
     selector.onMouseEnter(2);
@@ -607,10 +607,10 @@ export class RowSelectionTableModelTester {
     model.addRow([7]);
     const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
-    const ctrlButton: any = new KeyboardEvent(17);
-    const downArrow: any = new KeyboardEvent(40);
-    const shiftButton: any = new KeyboardEvent(16);
-    const upArrow: any = new KeyboardEvent(38);
+    const ctrlButton: any = new KeyboardEvent('ControlLeft');
+    const downArrow: any = new KeyboardEvent('ArrowDown');
+    const shiftButton: any = new KeyboardEvent('ShiftLeft');
+    const upArrow: any = new KeyboardEvent('ArrowUp');
     selector.onMouseDown(leftClick, 7);
     selector.onMouseUp(leftClick);
     selector.onKeyDown(shiftButton);
@@ -649,9 +649,9 @@ export class RowSelectionTableModelTester {
     model.addRow([7]);
     const selector = new RowSelectionTableModel(model);
     const leftClick: any = new MouseEvent(0);
-    const downArrow: any = new KeyboardEvent(40);
-    const shiftButton: any = new KeyboardEvent(16);
-    const upArrow: any = new KeyboardEvent(38);
+    const downArrow: any = new KeyboardEvent('ArrowDown');
+    const shiftButton: any = new KeyboardEvent('ShiftLeft');
+    const upArrow: any = new KeyboardEvent('ArrowUp');
     selector.onMouseDown(leftClick, 3);
     selector.onMouseUp(leftClick);
     selector.onKeyDown(shiftButton);

@@ -241,7 +241,8 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private c2() {
-    return !this.isAShiftKeyDown() && !this.isACtrlKeyDown() && this.isMouseDown;
+    return !this.isAShiftKeyDown() && !this.isACtrlKeyDown() 
+      && this.isMouseDown;
   }
 
   private c3() {
