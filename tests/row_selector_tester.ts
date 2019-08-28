@@ -28,8 +28,6 @@ class KeyboardEvent {
   }
 
   private _code: string;
-
-
 }
 
 /** Tests the RowSelectionTableModel. */
@@ -50,7 +48,7 @@ export class RowSelectionTableModelTester {
     selector.onMouseEnter(1);
     selector.onMouseEnter(2);
     selector.onMouseEnter(5);
-    Expect(selector.get(0, 0)).toEqual(true);
+    Expect(selector.get(0, 0)).toEqual(false);
     Expect(selector.get(1, 0)).toEqual(false);
     Expect(selector.get(2, 0)).toEqual(false);
     Expect(selector.get(3, 0)).toEqual(false);
@@ -70,6 +68,7 @@ export class RowSelectionTableModelTester {
     model.addRow([5]);
     const selector = new RowSelectionTableModel(model);
     const downArrow: any = new KeyboardEvent('ArrowDown');
+    selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
@@ -136,16 +135,16 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(1, 0)).toEqual(false);
     Expect(selector.get(2, 0)).toEqual(false);
     Expect(selector.get(3, 0)).toEqual(false);
-    Expect(selector.get(4, 0)).toEqual(false);
-    Expect(selector.get(5, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(true);
+    Expect(selector.get(5, 0)).toEqual(false);
     Expect(selector.get(6, 0)).toEqual(false);
     selector.onKeyDown(upArrow);
     selector.onKeyDown(upArrow);
     selector.onKeyUp(upArrow);
     Expect(selector.get(0, 0)).toEqual(false);
     Expect(selector.get(1, 0)).toEqual(false);
-    Expect(selector.get(2, 0)).toEqual(false);
-    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(2, 0)).toEqual(true);
+    Expect(selector.get(3, 0)).toEqual(false);
     Expect(selector.get(4, 0)).toEqual(false);
     Expect(selector.get(5, 0)).toEqual(false);
     Expect(selector.get(6, 0)).toEqual(false);
