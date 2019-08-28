@@ -15,7 +15,7 @@ export class RowSelectionTableModel extends TableModel {
     super();
     this.selectedRows = new ArrayTableModel();
     for(let i = 0; i < table.rowCount; ++i) {
-      this.selectedRows.addRow([i === 0]);
+      this.selectedRows.addRow([false]);
     }
     this.highlightedRow = -1;
     this.previousRow = 0;
