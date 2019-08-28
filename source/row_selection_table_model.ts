@@ -17,7 +17,7 @@ export class RowSelectionTableModel extends TableModel {
     for(let i = 0; i < table.rowCount; ++i) {
       this.selectedRows.addRow([i === 0]);
     }
-    this.highlightedRow = 0;
+    this.highlightedRow = -1;
     this.previousRow = 0;
     this.currentRow = 0;
     this.isShiftDownL = false;
@@ -64,11 +64,11 @@ export class RowSelectionTableModel extends TableModel {
     if(this.isMouseDown) {
       this.currentRow = row;
       if(this.state === 2) {
-        return this.s2();
+        return this.s3();
       } else if(this.state === 4) {
-        return this.s4();
+        return this.s5();
       } else if(this.state === 6) {
-        return this.s6();
+        return this.s7();
       }
     }
   }
@@ -85,7 +85,7 @@ export class RowSelectionTableModel extends TableModel {
       if(this.state === 0) {
         return this.s0();
       } else if(this.state === 2) {
-        return this.s2();
+        return this.s3();
       }
     }
   }
@@ -97,7 +97,7 @@ export class RowSelectionTableModel extends TableModel {
     if(event.button === 0) {
       this.isMouseDown = false;
       if(this.state === 2) {
-        return this.s2();
+        return this.s3();
       } else if(this.state === 4) {
         return this.s0();
       } else if(this.state === 6) {
@@ -121,11 +121,11 @@ export class RowSelectionTableModel extends TableModel {
         if(this.state === 0) {
           return this.s0();
         } else if(this.state === 2) {
-          return this.s2();
+          return this.s3();
         } else if(this.state === 4) {
-          return this.s4();
+          return this.s5();
         } else if(this.state === 7) {
-          return this.s7();
+          return this.s8();
         }
       case 'ArrowDown':
         this.isDownDown = true;
@@ -136,11 +136,11 @@ export class RowSelectionTableModel extends TableModel {
         if(this.state === 0) {
           return this.s0();
         } else if(this.state === 2) {
-          return this.s2();
+          return this.s3();
         } else if(this.state === 4) {
-          return this.s4();
+          return this.s5();
         } else if(this.state === 7) {
-          return this.s7();
+          return this.s8();
         }
       case 'ShiftLeft':
         this.isShiftDownL = true;
@@ -160,7 +160,7 @@ export class RowSelectionTableModel extends TableModel {
         this.isMetaDownR = true;
     }
 
-    if(this.isAShiftKeyDown()) {
+    if(code === 'ShiftLeft' || code === 'ShiftRight') {
       if(this.state === 0) {
         return this.s0();
       } else if(this.state === 4) {
@@ -219,7 +219,7 @@ export class RowSelectionTableModel extends TableModel {
     }
     if(code === 'ShiftLeft' || code === 'ShiftRight') {
       if(this.state === 2) {
-        return this.s2();
+        return this.s3();
       }
     }
     if(!this.isACtrlKeyDown()) {
@@ -230,25 +230,30 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private c0() {
+    return this.highlightedRow === -1 &&
+      (this.isUpDown || this.isDownDown);
+  }
+
+  private c1() {
     return this.isAShiftKeyDown() &&
       (this.isMouseDown || this.isDownDown || this.isUpDown);
   }
 
-  private c1() {
+  private c2() {
     return this.isACtrlKeyDown() && this.isMouseDown;
   }
 
-  private c2() {
+  private c3() {
     return !this.isAShiftKeyDown() && !this.isACtrlKeyDown()
       && this.isMouseDown;
   }
 
-  private c3() {
+  private c4() {
     return !this.isAShiftKeyDown() && !this.isACtrlKeyDown() &&
       (this.isDownDown || this.isUpDown);
   }
 
-  private c4() {
+  private c5() {
     return !this.isMouseDown && !this.isAShiftKeyDown();
   }
 
@@ -269,65 +274,73 @@ export class RowSelectionTableModel extends TableModel {
     if(this.c0()) {
       return this.s1();
     } else if(this.c1()) {
-      return this.s3();
+      return this.s2();
     } else if(this.c2()) {
-      return this.s5();
+      return this.s4();
     } else if(this.c3()) {
-      return this.s7();
+      return this.s6();
+    } else if(this.c4()) {
+      return this.s8();
     }
   }
 
-  private s9() {
-    ///
-    this.s0();
-  }
-
   private s1() {
-    this.state = 1;
-    this.clearRows();
-    this.previousRow = this.highlightedRow;
-    this.isAdding = true;
-    return this.s2();
+    this.state === 1;
+    if(this.selectedRows.rowCount > 0) {
+      this.highlightedRow = 0;
+      this.currentRow = 0;
+      this.previousRow = 0;
+    }
+    this.s0();
+    return;
   }
 
   private s2() {
     this.state = 2;
+    this.clearRows();
+    this.previousRow = this.highlightedRow;
+    this.isAdding = true;
+    return this.s3();
+  }
+
+  private s3() {
+    this.state = 3;
     this.toggleRows();
-    if(this.c4()) {
+    if(this.c5()) {
       this.s0();
       return;
     }
   }
 
-  private s3() {
-    this.state = 3;
+  private s4() {
+    this.state = 4;
     this.highlightedRow = this.currentRow;
     this.previousRow = this.currentRow;
     this.isAdding = !this.selectedRows.get(this.currentRow, 0);
-    return this.s4();
-  }
-
-  private s4() {
-    this.state = 4;
-    this.toggleRows();
+    return this.s5();
   }
 
   private s5() {
     this.state = 5;
-    this.clearRows();
-    this.isAdding = true;
-    this.highlightedRow = this.currentRow;
-    this.previousRow = this.currentRow;
-    return this.s6();
+    this.toggleRows();
   }
 
   private s6() {
     this.state = 6;
-    this.toggleRows();
+    this.clearRows();
+    this.isAdding = true;
+    this.highlightedRow = this.currentRow;
+    this.previousRow = this.currentRow;
+    return this.s7();
   }
 
   private s7() {
     this.state = 7;
+    this.toggleRows();
+  }
+
+  private s8() {
+    this.state = 8;
     this.clearRows();
     this.highlightedRow = this.currentRow;
     this.selectedRows.set(this.highlightedRow, 0, true);
