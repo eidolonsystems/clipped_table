@@ -217,7 +217,7 @@ export class RowSelectionTableModel extends TableModel {
       case 'MetaRight':
         this.isMetaDownR = false;
     }
-    if(!this.isAShiftKeyDown()) {
+    if(code === 'ShiftLeft' || code === 'ShiftRight') {
       if(this.state === 2) {
         return this.s2();
       }
