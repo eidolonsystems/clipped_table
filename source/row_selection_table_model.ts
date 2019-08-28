@@ -1,7 +1,7 @@
 import * as Kola from 'kola-signals';
 import { ArrayTableModel } from './array_table_model';
 import { TableModel } from './table_model';
-import { AddRowOperation, MoveRowOperation, Operation }
+import { AddRowOperation, MoveRowOperation, Operation, RemoveRowOperation }
   from './operations';
 import { timingSafeEqual } from 'crypto';
 
@@ -22,14 +22,12 @@ export class RowSelectionTableModel extends TableModel {
     this.currentRow = 0;
     this.isShiftDownL = false;
     this.isShiftDownR = false;
-
     this.isCtrlDownL = false;
     this.isCtrlDownR = false;
     this.isCmdDownL = false;
     this.isCmdDownR = false;
     this.isMetaDownL = false;
     this.isMetaDownR = false;
-
     this.isMouseDown = false;
     this.isUpDown = false;
     this.isDownDown  = false;
@@ -63,11 +61,11 @@ export class RowSelectionTableModel extends TableModel {
   public onMouseEnter(row: number): void {
     if(this.isMouseDown) {
       this.currentRow = row;
-      if(this.state === 2) {
+      if(this.state === 3) {
         return this.s3();
-      } else if(this.state === 4) {
+      } else if(this.state === 5) {
         return this.s5();
-      } else if(this.state === 6) {
+      } else if(this.state === 7) {
         return this.s7();
       }
     }
@@ -84,7 +82,7 @@ export class RowSelectionTableModel extends TableModel {
       this.currentRow = row;
       if(this.state === 0) {
         return this.s0();
-      } else if(this.state === 2) {
+      } else if(this.state === 3) {
         return this.s3();
       }
     }
@@ -96,11 +94,11 @@ export class RowSelectionTableModel extends TableModel {
   public onMouseUp(event: MouseEvent): void {
     if(event.button === 0) {
       this.isMouseDown = false;
-      if(this.state === 2) {
+      if(this.state === 3) {
         return this.s3();
-      } else if(this.state === 4) {
+      } else if(this.state === 5) {
         return this.s0();
-      } else if(this.state === 6) {
+      } else if(this.state === 7) {
         return this.s0();
       }
     }
@@ -120,11 +118,11 @@ export class RowSelectionTableModel extends TableModel {
         }
         if(this.state === 0) {
           return this.s0();
-        } else if(this.state === 2) {
+        } else if(this.state === 3) {
           return this.s3();
-        } else if(this.state === 4) {
+        } else if(this.state === 5) {
           return this.s5();
-        } else if(this.state === 7) {
+        } else if(this.state === 8) {
           return this.s8();
         }
       case 'ArrowDown':
@@ -135,11 +133,11 @@ export class RowSelectionTableModel extends TableModel {
         }
         if(this.state === 0) {
           return this.s0();
-        } else if(this.state === 2) {
+        } else if(this.state === 3) {
           return this.s3();
-        } else if(this.state === 4) {
+        } else if(this.state === 5) {
           return this.s5();
-        } else if(this.state === 7) {
+        } else if(this.state === 8) {
           return this.s8();
         }
       case 'ShiftLeft':
@@ -163,11 +161,11 @@ export class RowSelectionTableModel extends TableModel {
     if(code === 'ShiftLeft' || code === 'ShiftRight') {
       if(this.state === 0) {
         return this.s0();
-      } else if(this.state === 4) {
-        return this.s0();
-      } else if(this.state === 6) {
+      } else if(this.state === 5) {
         return this.s0();
       } else if(this.state === 7) {
+        return this.s0();
+      } else if(this.state === 8) {
         return this.s0();
       }
     }
@@ -188,16 +186,16 @@ export class RowSelectionTableModel extends TableModel {
     switch(code) {
       case 'ArrowUp':
         this.isUpDown = false;
-        if(this.state === 4) {
+        if(this.state === 5) {
           return this.s0();
-        } else if(this.state === 7) {
+        } else if(this.state === 8) {
           return this.s0();
         }
       case 'ArrowDown':
         this.isDownDown = false;
-        if(this.state === 4) {
+        if(this.state === 5) {
           return this.s0();
-        } else if(this.state === 7) {
+        } else if(this.state === 8) {
           return this.s0();
         }
       case 'ShiftLeft':
@@ -218,12 +216,12 @@ export class RowSelectionTableModel extends TableModel {
         this.isMetaDownR = false;
     }
     if(code === 'ShiftLeft' || code === 'ShiftRight') {
-      if(this.state === 2) {
+      if(this.state === 3) {
         return this.s3();
       }
     }
     if(!this.isACtrlKeyDown()) {
-      if(this.state === 4) {
+      if(this.state === 5) {
         return this.s0();
       }
     }
@@ -290,6 +288,7 @@ export class RowSelectionTableModel extends TableModel {
       this.highlightedRow = 0;
       this.currentRow = 0;
       this.previousRow = 0;
+      this.clearRows();
     }
     this.s0();
     return;
@@ -362,6 +361,11 @@ export class RowSelectionTableModel extends TableModel {
         row.addRow([false]);
       } else if(operation instanceof MoveRowOperation) {
         this.selectedRows.moveRow(operation.source, operation.destination);
+      } else if(operation instanceof RemoveRowOperation) {
+        if(operation.index === this.highlightedRow) {
+          this.highlightedRow = -1;
+        }
+        this.selectedRows.removeRow(operation.index);
       }
     }
     this.selectedRows.endTransaction();
