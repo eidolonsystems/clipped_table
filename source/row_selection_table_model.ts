@@ -129,7 +129,7 @@ export class RowSelectionTableModel extends TableModel {
         }
       case 'ArrowDown':
         this.isDownDown = true;
-        console.log('is down');
+        event.preventDefault();
         if(this.currentRow < this.selectedRows.rowCount - 1) {
           ++this.currentRow;
         }
@@ -235,8 +235,6 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private c1() {
-    //console.log('is any ctrl down?', this.isACtrlKeyDown());
-    //console.log(this.isACtrlKeyDown() && this.isMouseDown);
     return this.isACtrlKeyDown() && this.isMouseDown;
   }
 
