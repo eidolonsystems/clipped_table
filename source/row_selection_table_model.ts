@@ -188,14 +188,14 @@ export class RowSelectionTableModel extends TableModel {
         this.isUpDown = false;
         if(this.state === 5) {
           return this.s0();
-        } else if(this.state === 8) {
+        } else if(this.state === 9) {
           return this.s0();
         }
       case 'ArrowDown':
         this.isDownDown = false;
         if(this.state === 5) {
           return this.s0();
-        } else if(this.state === 8) {
+        } else if(this.state === 9) {
           return this.s0();
         }
       case 'ShiftLeft':
