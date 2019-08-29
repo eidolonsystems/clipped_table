@@ -270,7 +270,7 @@ export class RowSelectionTableModelTester {
   }
 
   /** Tests shift being pressed and the mouse being pressed and moved up. */
-  //@Test()
+  @Test()
   public testShiftAndMouseMoveUp(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -291,19 +291,19 @@ export class RowSelectionTableModelTester {
     selector.onMouseEnter(3);
     selector.onMouseUp(leftClick);
     selector.onKeyUp(shiftButton);
-    Expect(selector.get(0, 0)).toEqual(true);
-    Expect(selector.get(1, 0)).toEqual(true);
-    Expect(selector.get(2, 0)).toEqual(true);
+    Expect(selector.get(0, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(false);
     Expect(selector.get(3, 0)).toEqual(true);
-    Expect(selector.get(4, 0)).toEqual(false);
-    Expect(selector.get(5, 0)).toEqual(false);
-    Expect(selector.get(6, 0)).toEqual(false);
+    Expect(selector.get(4, 0)).toEqual(true);
+    Expect(selector.get(5, 0)).toEqual(true);
+    Expect(selector.get(6, 0)).toEqual(true);
     Expect(selector.get(7, 0)).toEqual(false);
     Expect(selector.get(8, 0)).toEqual(false);
   }
 
   /** Tests shift being held down and arrows being pressed. */
-  //@Test()
+  @Test()
   public testShiftAndArrows(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -325,9 +325,9 @@ export class RowSelectionTableModelTester {
     selector.onKeyUp(downArrow);
     selector.onKeyUp(shiftButton);
     Expect(selector.get(0, 0)).toEqual(false);
-    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(true);
     Expect(selector.get(2, 0)).toEqual(true);
-    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(3, 0)).toEqual(false);
     Expect(selector.get(4, 0)).toEqual(false);
     Expect(selector.get(5, 0)).toEqual(false);
     Expect(selector.get(6, 0)).toEqual(false);
@@ -338,7 +338,7 @@ export class RowSelectionTableModelTester {
   /** Tests shift being held down and arrows being pressed,
    *  followed by a mouse event.
    */
-  //@Test()
+  @Test()
   public testShiftAndArrowsAndMouse(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -354,6 +354,7 @@ export class RowSelectionTableModelTester {
     const shiftButton: any = new KeyboardEvent('ShiftLeft');
     const leftClick: any = new MouseEvent(0);
     const downArrow: any = new KeyboardEvent('ArrowDown');
+    selector.onKeyDown(downArrow);
     selector.onKeyDown(downArrow);
     selector.onKeyDown(shiftButton);
     selector.onKeyDown(downArrow);
@@ -373,9 +374,9 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(8, 0)).toEqual(true);
   }
 
-  /**?????????????
+  /** Tests a shift even followed by a mouse event where shift isn't held down.
    */
-  @Test()//mooooo
+  @Test()
   public testShiftThenJustMouse(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -431,13 +432,12 @@ export class RowSelectionTableModelTester {
     selector.onKeyUp(downArrow);
     selector.onKeyDown(ctrlButton);
     selector.onKeyDown(upArrow);
-    selector.onKeyDown(upArrow);
     selector.onKeyUp(upArrow);
     selector.onKeyUp(ctrlButton);
     Expect(selector.get(0, 0)).toEqual(false);
-    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(true);
     Expect(selector.get(2, 0)).toEqual(false);
-    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(3, 0)).toEqual(false);
     Expect(selector.get(4, 0)).toEqual(false);
     Expect(selector.get(5, 0)).toEqual(false);
     Expect(selector.get(6, 0)).toEqual(false);
@@ -447,7 +447,7 @@ export class RowSelectionTableModelTester {
 
   /** Tests what happens when ctrl is being pressed and mouse is pressed 
    *  and moved */
-  //@Test()
+  @Test()
   public testCtrlAndMouse(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -466,12 +466,14 @@ export class RowSelectionTableModelTester {
     selector.onMouseDown(leftClick, 2);
     selector.onMouseEnter(6);
     selector.onMouseUp(leftClick);
+    selector.onMouseDown(leftClick, 4);
+    selector.onMouseUp(leftClick);
     selector.onKeyUp(ctrlButton);
-    Expect(selector.get(0, 0)).toEqual(true);
+    Expect(selector.get(0, 0)).toEqual(false);
     Expect(selector.get(1, 0)).toEqual(false);
     Expect(selector.get(2, 0)).toEqual(true);
     Expect(selector.get(3, 0)).toEqual(true);
-    Expect(selector.get(4, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(false);
     Expect(selector.get(5, 0)).toEqual(true);
     Expect(selector.get(6, 0)).toEqual(true);
     Expect(selector.get(7, 0)).toEqual(false);
@@ -480,6 +482,7 @@ export class RowSelectionTableModelTester {
 
   /** Tests mouse and arrow events while ctrl is being held down. */
   //@Test()
+  //?????
   public testCtrlAndMouseAndDownArrow(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -515,7 +518,7 @@ export class RowSelectionTableModelTester {
   }
 
   /** Tests holding down ctrl to both add and remove rows. */
-  //@Test()
+  @Test()
   public testCtrlToAddAndRemove(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -538,7 +541,7 @@ export class RowSelectionTableModelTester {
     selector.onMouseEnter(4);
     selector.onMouseUp(leftClick);
     selector.onKeyUp(ctrlButton);
-    Expect(selector.get(0, 0)).toEqual(true);
+    Expect(selector.get(0, 0)).toEqual(false);
     Expect(selector.get(1, 0)).toEqual(false);
     Expect(selector.get(2, 0)).toEqual(true);
     Expect(selector.get(3, 0)).toEqual(false);
@@ -552,7 +555,7 @@ export class RowSelectionTableModelTester {
   /** Tests adding rows while shift is held down and removing rows when ctrl is
    *  held down.
    */
-  //@Test()
+  @Test()
   public testShiftThenCtrlWithMouse(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -635,7 +638,7 @@ export class RowSelectionTableModelTester {
   }
 
   /** Tests using adding rows using shift twice in a row. */
-  //@Test()
+  @Test()
   public testShiftThenShift(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
