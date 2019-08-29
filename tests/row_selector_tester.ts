@@ -270,7 +270,7 @@ export class RowSelectionTableModelTester {
   }
 
   /** Tests shift being pressed and the mouse being pressed and moved up. */
-  @Test()
+  //@Test()
   public testShiftAndMouseMoveUp(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -303,7 +303,7 @@ export class RowSelectionTableModelTester {
   }
 
   /** Tests shift being held down and arrows being pressed. */
-  @Test()
+  //@Test()
   public testShiftAndArrows(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -338,7 +338,7 @@ export class RowSelectionTableModelTester {
   /** Tests shift being held down and arrows being pressed,
    *  followed by a mouse event.
    */
-  @Test()
+  //@Test()
   public testShiftAndArrowsAndMouse(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -375,7 +375,7 @@ export class RowSelectionTableModelTester {
 
   /**?????????????
    */
-  @Test()
+  @Test()//mooooo
   public testShiftThenJustMouse(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -409,8 +409,8 @@ export class RowSelectionTableModelTester {
   }
 
   /** Tests what happens when ctrl is held down and arrows are being pressed. */
-  @Test()
-    public testCtrlAndArrows(): void {
+  //@Test()
+  public testCtrlAndArrows(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
     model.addRow([1]);
@@ -447,7 +447,7 @@ export class RowSelectionTableModelTester {
 
   /** Tests what happens when ctrl is being pressed and mouse is pressed 
    *  and moved */
-  @Test()
+  //@Test()
   public testCtrlAndMouse(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -479,7 +479,7 @@ export class RowSelectionTableModelTester {
   }
 
   /** Tests mouse and arrow events while ctrl is being held down. */
-  @Test()
+  //@Test()
   public testCtrlAndMouseAndDownArrow(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -515,7 +515,7 @@ export class RowSelectionTableModelTester {
   }
 
   /** Tests holding down ctrl to both add and remove rows. */
-  @Test()
+  //@Test()
   public testCtrlToAddAndRemove(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -552,7 +552,7 @@ export class RowSelectionTableModelTester {
   /** Tests adding rows while shift is held down and removing rows when ctrl is
    *  held down.
    */
-  @Test()
+  //@Test()
   public testShiftThenCtrlWithMouse(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -593,7 +593,7 @@ export class RowSelectionTableModelTester {
   /** Tests adding rows with shift followed by ctrl being held and buttons
    *  being pressed.
    */
-  @Test()
+  //@Test()
   public testShiftThenCtrlWithArrows(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -635,7 +635,7 @@ export class RowSelectionTableModelTester {
   }
 
   /** Tests using adding rows using shift twice in a row. */
-  @Test()
+  //@Test()
   public testShiftThenShift(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
