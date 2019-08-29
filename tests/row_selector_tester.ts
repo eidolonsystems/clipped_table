@@ -410,7 +410,7 @@ export class RowSelectionTableModelTester {
   }
 
   /** Tests what happens when ctrl is held down and arrows are being pressed. */
-  //@Test()
+  @Test()
   public testCtrlAndArrows(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -435,8 +435,8 @@ export class RowSelectionTableModelTester {
     selector.onKeyUp(upArrow);
     selector.onKeyUp(ctrlButton);
     Expect(selector.get(0, 0)).toEqual(false);
-    Expect(selector.get(1, 0)).toEqual(true);
-    Expect(selector.get(2, 0)).toEqual(false);
+    Expect(selector.get(1, 0)).toEqual(false);
+    Expect(selector.get(2, 0)).toEqual(true);
     Expect(selector.get(3, 0)).toEqual(false);
     Expect(selector.get(4, 0)).toEqual(false);
     Expect(selector.get(5, 0)).toEqual(false);
@@ -481,8 +481,7 @@ export class RowSelectionTableModelTester {
   }
 
   /** Tests mouse and arrow events while ctrl is being held down. */
-  //@Test()
-  //?????
+  @Test()
   public testCtrlAndMouseAndDownArrow(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);
@@ -596,7 +595,7 @@ export class RowSelectionTableModelTester {
   /** Tests adding rows with shift followed by ctrl being held and buttons
    *  being pressed.
    */
-  //@Test()
+  @Test()
   public testShiftThenCtrlWithArrows(): void {
     const model = new ArrayTableModel();
     model.addRow([0]);

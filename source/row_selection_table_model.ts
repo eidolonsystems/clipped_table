@@ -172,8 +172,6 @@ export class RowSelectionTableModel extends TableModel {
     if(this.isACtrlKeyDown()) {
       if(this.state === 0) {
         return this.s0();
-      } else if(this.state === 8) {
-        return this.s0();
       }
     }
   }
