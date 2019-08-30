@@ -76,7 +76,7 @@ export class TableView extends React.Component<Properties, State> implements
       this.rowSelectior.onKeyDown.bind(this.rowSelectior));
     document.addEventListener('keyup',
       this.rowSelectior.onKeyUp.bind(this.rowSelectior));
-    document.addEventListener('mouseup',
+    document.addEventListener('pointerup',
       this.rowSelectior.onMouseUp.bind(this.rowSelectior));
     this.forceUpdate();
     document.addEventListener('wheel', (event) => event.preventDefault);
