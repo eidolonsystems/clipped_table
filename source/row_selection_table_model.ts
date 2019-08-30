@@ -55,6 +55,14 @@ export class RowSelectionTableModel extends TableModel {
     return this.selectedRows.get(row, column);
   }
 
+  public getHilighted(): number {
+    return this.highlightedRow;
+  }
+
+  public getCurrent(): number {
+    return this.currentRow;
+  }
+
   /** Handles the cursor entering a new row.
    * @param row - The row the cursor entered.
    */
@@ -113,7 +121,7 @@ export class RowSelectionTableModel extends TableModel {
       case 'ArrowUp':
         event.preventDefault();
         this.isUpDown = true;
-        if(this.currentRow > 0) {
+        if(this.currentRow > 0 && !this.isACtrlKeyDown()) {
           --this.currentRow;
         }
         if(this.state === 0) {
@@ -125,10 +133,12 @@ export class RowSelectionTableModel extends TableModel {
         } else if(this.state === 9) {
           return this.s9();
         }
+        break;
       case 'ArrowDown':
         this.isDownDown = true;
         event.preventDefault();
-        if(this.currentRow < this.selectedRows.rowCount - 1) {
+        if(this.currentRow < this.selectedRows.rowCount - 1 &&
+            !this.isACtrlKeyDown()) {
           ++this.currentRow;
         }
         if(this.state === 0) {
@@ -140,22 +150,31 @@ export class RowSelectionTableModel extends TableModel {
         } else if(this.state === 9) {
           return this.s9();
         }
+        break;
       case 'ShiftLeft':
         this.isShiftDownL = true;
+        break;
       case 'ShiftRight':
         this.isShiftDownR = true;
+        break;
       case 'ControlRight':
         this.isCtrlDownR = true;
+        break;
       case 'ControlLeft':
         this.isCtrlDownL = true;
+        break;
       case 'OSLeft':
         this.isCmdDownL = true;
+        break;
       case 'OSRight':
         this.isCmdDownR = true;
+        break;
       case 'MetaLeft':
         this.isMetaDownL = true;
+        break;
       case 'MetaRight':
         this.isMetaDownR = true;
+        break;
     }
 
     if(code === 'ShiftLeft' || code === 'ShiftRight') {
@@ -169,7 +188,8 @@ export class RowSelectionTableModel extends TableModel {
         return this.s0();
       }
     }
-    if(this.isACtrlKeyDown()) {
+    if(this.isCtrlDownL || this.isCtrlDownR || this.isCmdDownL ||
+      this.isCmdDownR || this.isMetaDownL || this.isMetaDownR) {
       if(this.state === 0) {
         return this.s0();
       }
@@ -189,6 +209,7 @@ export class RowSelectionTableModel extends TableModel {
         } else if(this.state === 9) {
           return this.s0();
         }
+        break;
       case 'ArrowDown':
         this.isDownDown = false;
         if(this.state === 5) {
@@ -196,29 +217,39 @@ export class RowSelectionTableModel extends TableModel {
         } else if(this.state === 9) {
           return this.s0();
         }
+        break;
       case 'ShiftLeft':
         this.isShiftDownL = false;
+        break;
       case 'ShiftRight':
         this.isShiftDownR = false;
+        break;
       case 'ControlRight':
         this.isCtrlDownR = false;
+        break;
       case 'ControlLeft':
         this.isCtrlDownL = false;
+        break;
       case 'OSLeft':
         this.isCmdDownL = false;
+        break;
       case 'OSRight':
         this.isCmdDownR = false;
+        break;
       case 'MetaLeft':
         this.isMetaDownL = false;
+        break;
       case 'MetaRight':
         this.isMetaDownR = false;
+        break;
     }
-    if(code === 'ShiftLeft' || code === 'ShiftRight') {
+    if(code === 'ShiftLeft' || code === 'ShiftRight' ) {
       if(this.state === 4) {
         return this.s4();
       }
     }
-    if(!this.isACtrlKeyDown()) {
+    if(this.isCtrlDownL || this.isCtrlDownR || this.isCmdDownL ||
+      this.isCmdDownR || this.isMetaDownL || this.isMetaDownR) {
       if(this.state === 5) {
         return this.s0();
       }
@@ -258,15 +289,20 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private isACtrlKeyDown() {
+    console.log(this.isCtrlDownL || this.isCtrlDownR || this.isCmdDownL ||
+      this.isCmdDownR || this.isMetaDownL || this.isMetaDownR);
     return (this.isCtrlDownL || this.isCtrlDownR || this.isCmdDownL ||
       this.isCmdDownR || this.isMetaDownL || this.isMetaDownR);
   }
 
   private isAShiftKeyDown() {
-    return this.isShiftDownL || this.isShiftDownR;
+    console.log(this.isShiftDownL || this.isShiftDownR)
+    return (this.isShiftDownL || this.isShiftDownR);
   }
 
   private s0() {
+    console.log('state 0');
+    console.log('is shift down??:', this.isAShiftKeyDown());
     this.state = 0;
     if(!this.isMouseDown && !this.isDownDown && !this.isUpDown) {
       this.currentRow = this.highlightedRow;
@@ -287,6 +323,7 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s1() {
+    console.log('state 1');
     this.state = 1;
     this.highlightedRow = this.currentRow;
     this.s0();
@@ -294,6 +331,7 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s2() {
+    console.log('state 2');
     this.state = 2;
     if(this.selectedRows.rowCount > 0) {
       this.highlightedRow = 0;
@@ -306,6 +344,7 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s3() {
+    console.log('state 3');
     this.state = 3;
     this.clearRows();
     this.previousRow = this.highlightedRow;
@@ -314,6 +353,8 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s4() {
+    console.log('state 4');
+    console.log('is shift down??:', this.isAShiftKeyDown());
     this.state = 4;
     this.toggleRows();
     if(this.c6()) {
@@ -323,6 +364,7 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s5() {
+    console.log('state 5');
     this.state = 5;
     this.highlightedRow = this.currentRow;
     this.previousRow = this.currentRow;
@@ -331,11 +373,13 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s6() {
+    console.log('state 6');
     this.state = 6;
     this.toggleRows();
   }
 
   private s7() {
+    console.log('state 7');
     this.state = 7;
     this.clearRows();
     this.isAdding = true;
@@ -345,11 +389,13 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s8() {
+    console.log('state 8');
     this.state = 8;
     this.toggleRows();
   }
 
   private s9() {
+    console.log('state 9');
     this.state = 9;
     this.clearRows();
     this.highlightedRow = this.currentRow;
