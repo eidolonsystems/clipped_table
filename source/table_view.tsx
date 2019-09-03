@@ -65,7 +65,7 @@ export class TableView extends React.Component<Properties, State> implements
 
   public componentDidMount() {
     this.columnResizer = new ColumnResizer(this);
-    document.addEventListener('pointerdown',
+    document.addEventListener('pointerdown', //goofd
       this.columnResizer.onMouseDown.bind(this.columnResizer));
     document.addEventListener('pointerup',
       this.columnResizer.onMouseUp.bind(this.columnResizer));
@@ -288,6 +288,27 @@ export class TableView extends React.Component<Properties, State> implements
     ///????
     const percent = this.wrapperRef.scrollTop / this.wrapperRef.scrollHeight;
     this.setState({topRow: Math.floor(percent * this.props.model.rowCount)});
+  }
+
+  private onKeyDown(event: KeyboardEvent) {
+    const code = event.code;
+    const currentRow = this.rowSelectior.getCurrent();
+    const startRow = Math.max(0, this.state.topRow - 1);
+    const endRow = Math.min(this.props.model.rowCount,
+      Math.abs(this.props.model.rowCount - 1),
+      this.state.topRow + this.state.rowsToShow);
+    switch(code) {
+      case 'ArrowUp':
+        if(currentRow < startRow) {
+          scrollTo();
+        }
+        break;
+      case 'ArrowDown':
+        if(currentRow > endRow) {
+          scrollTo();
+        }
+        break;
+    }
   }
 
   private rowSelectior: RowSelectionTableModel;
