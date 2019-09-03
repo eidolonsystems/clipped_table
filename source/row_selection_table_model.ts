@@ -3,7 +3,6 @@ import { ArrayTableModel } from './array_table_model';
 import { TableModel } from './table_model';
 import { AddRowOperation, MoveRowOperation, Operation, RemoveRowOperation }
   from './operations';
-import { timingSafeEqual } from 'crypto';
 
 /** Provides the functionality needed to select Rows. */
 export class RowSelectionTableModel extends TableModel {
@@ -30,7 +29,7 @@ export class RowSelectionTableModel extends TableModel {
     this.isMetaDownR = false;
     this.isMouseDown = false;
     this.isUpDown = false;
-    this.isDownDown  = false;
+    this.isDownDown = false;
     this.isAdding = true;
     table.connect(this.handleOperations.bind(this));
     this.isACtrlKeyDown.bind(this);
@@ -116,10 +115,11 @@ export class RowSelectionTableModel extends TableModel {
    * @param event - The event describing the keyboard press.
    */
   public onKeyDown(event: KeyboardEvent): void {
+    //????
     const code = event.code;
     switch(code) {
       case 'ArrowUp':
-        event.preventDefault();
+        //event.preventDefault();
         this.isUpDown = true;
         if(this.currentRow > 0 && !this.isACtrlKeyDown()) {
           --this.currentRow;
@@ -136,7 +136,7 @@ export class RowSelectionTableModel extends TableModel {
         break;
       case 'ArrowDown':
         this.isDownDown = true;
-        event.preventDefault();
+        //event.preventDefault();
         if(this.currentRow < this.selectedRows.rowCount - 1 &&
             !this.isACtrlKeyDown()) {
           ++this.currentRow;
