@@ -675,6 +675,41 @@ export class RowSelectionTableModelTester {
     Expect(selector.get(7, 0)).toEqual(false);
   }
 
+  /** Tests using adding rows using shift twice in a row. */
+  @Test()
+  public testShiftDownThenShiftUp(): void {
+    const model = new ArrayTableModel();
+    model.addRow([0]);
+    model.addRow([1]);
+    model.addRow([2]);
+    model.addRow([3]);
+    model.addRow([4]);
+    model.addRow([5]);
+    model.addRow([6]);
+    model.addRow([7]);
+    const selector = new RowSelectionTableModel(model);
+    const leftClick: any = new MouseEvent(0);
+    const downArrow: any = new KeyboardEvent('ArrowDown');
+    const shiftButton: any = new KeyboardEvent('ShiftLeft');
+    const upArrow: any = new KeyboardEvent('ArrowUp');
+    selector.onMouseDown(leftClick, 3);
+    selector.onMouseUp(leftClick);
+    selector.onKeyDown(shiftButton);
+    selector.onMouseDown(leftClick, 6);
+    selector.onMouseUp(leftClick);
+    selector.onMouseDown(leftClick, 0);
+    selector.onMouseUp(leftClick);
+    selector.onKeyUp(shiftButton);
+    Expect(selector.get(0, 0)).toEqual(true);
+    Expect(selector.get(1, 0)).toEqual(true);
+    Expect(selector.get(2, 0)).toEqual(true);
+    Expect(selector.get(3, 0)).toEqual(true);
+    Expect(selector.get(4, 0)).toEqual(false);
+    Expect(selector.get(5, 0)).toEqual(false);
+    Expect(selector.get(6, 0)).toEqual(false);
+    Expect(selector.get(7, 0)).toEqual(false);
+  }
+
   /** Tests adding rows to the empty model. */
   @Test()
   public testEmptyToNotEmpty(): void {
