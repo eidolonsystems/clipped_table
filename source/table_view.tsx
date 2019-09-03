@@ -57,9 +57,9 @@ export class TableView extends React.Component<Properties, State> implements
       this.headerRefs[i] = null;
     }
     this.table = new SortedTableModel(this.props.model);
-    this.rowSelectior = new RowSelectionTableModel(this.table);
+    this.rowSelector = new RowSelectionTableModel(this.table);
     this.table.connect(this.tableUpdated.bind(this));
-    this.rowSelectior.connect(this.tableUpdated.bind(this));
+    this.rowSelector.connect(this.tableUpdated.bind(this));
     this.onScrollHandler = this.onScrollHandler.bind(this);
   }
 
@@ -72,12 +72,11 @@ export class TableView extends React.Component<Properties, State> implements
     document.addEventListener('pointermove',
       this.columnResizer.onMouseMove.bind(this.columnResizer));
     this.wrapperRef.addEventListener('scroll', this.onScrollHandler);
-    document.addEventListener('keydown',
-      this.rowSelectior.onKeyDown.bind(this.rowSelectior));
+    document.addEventListener('keydown',this.onKeyDown.bind(this));
     document.addEventListener('keyup',
-      this.rowSelectior.onKeyUp.bind(this.rowSelectior));
+      this.rowSelector.onKeyUp.bind(this.rowSelector));
     document.addEventListener('pointerup',
-      this.rowSelectior.onMouseUp.bind(this.rowSelectior));
+      this.rowSelector.onMouseUp.bind(this.rowSelector));
     this.forceUpdate();
     document.addEventListener('wheel', (event) => event.preventDefault);
   }
@@ -101,7 +100,7 @@ export class TableView extends React.Component<Properties, State> implements
     document.removeEventListener('pointerup', this.columnResizer.onMouseUp);
     document.removeEventListener('pointermove', this.columnResizer.onMouseMove);
     document.removeEventListener('keydown', this.onKeyDown);
-    document.removeEventListener('keyup', this.rowSelectior.onKeyUp);
+    document.removeEventListener('keyup', this.rowSelector.onKeyUp);
     this.wrapperRef.removeEventListener('scroll', this.onScrollHandler);
   }
 
@@ -140,7 +139,7 @@ export class TableView extends React.Component<Properties, State> implements
           </td>);
       }
       const selectedStyle = (() => {
-        if(this.rowSelectior.get(i, 0)) {
+        if(this.rowSelector.get(i, 0)) {
           return {color: '#e80573'} as React.CSSProperties;
         } else {
           return this.props.style.tr as React.CSSProperties;
@@ -152,8 +151,8 @@ export class TableView extends React.Component<Properties, State> implements
               ref={(first) => this.firstRowRef = first}
               className={this.props.className}
               onMouseDown={(e: React.MouseEvent<HTMLTableRowElement>) =>
-                this.rowSelectior.onMouseDown(e, i)}
-              onMouseEnter={() => this.rowSelectior.onMouseEnter(i)}
+                this.rowSelector.onMouseDown(e, i)}
+              onMouseEnter={() => this.rowSelector.onMouseEnter(i)}
               key={i}>
             {row}
           </tr>);
@@ -162,8 +161,8 @@ export class TableView extends React.Component<Properties, State> implements
           <tr style={selectedStyle}
               className={this.props.className}
               onMouseDown={(event: React.MouseEvent<HTMLTableRowElement>) =>
-                this.rowSelectior.onMouseDown(event, i)}
-              onMouseEnter={() => this.rowSelectior.onMouseEnter(i)}
+                this.rowSelector.onMouseDown(event, i)}
+              onMouseEnter={() => this.rowSelector.onMouseEnter(i)}
               key={i}>
             {row}
           </tr>);
@@ -292,7 +291,7 @@ export class TableView extends React.Component<Properties, State> implements
 
   private onKeyDown(event: KeyboardEvent) {
     const code = event.code;
-    const currentRow = this.rowSelectior.getCurrent();
+    const currentRow = this.rowSelector.getCurrent();
     const startRow = Math.max(0, this.state.topRow - 1);
     const endRow = Math.min(this.props.model.rowCount,
       Math.abs(this.props.model.rowCount - 1),
@@ -300,20 +299,29 @@ export class TableView extends React.Component<Properties, State> implements
     switch(code) {
       case 'ArrowUp':
         if(startRow > 0 &&
-            this.rowSelectior.getCurrent() < startRow - 2) {
+            this.rowSelector.getCurrent() >= startRow + 3 &&
+            this.rowSelector.getCurrent() <= endRow - 3) {
+          console.log('prevent default!');
           event.preventDefault();
+        } else {
+          scrollBy(0, -this.firstRowRef.scrollHeight);
         }
         break;
-      case 'ArrowDown':
-        if(endRow === this.table.rowCount &&
-            this.rowSelectior.getCurrent() > endRow - 2) {
+      case 'ArrowDown': /// :(
+        if(this.table.rowCount > endRow &&
+            this.rowSelector.getCurrent() >= startRow + 3 &&
+            this.rowSelector.getCurrent() <= endRow - 3) {
+          console.log('prevent default!');
           event.preventDefault();
+        } else {
+          scrollBy(0, this.firstRowRef.offsetHeight);
         }
     }
-    this.rowSelectior.onKeyDown(event);
+    scrollBy();
+    this.rowSelector.onKeyDown(event);
   }
 
-  private rowSelectior: RowSelectionTableModel;
+  private rowSelector: RowSelectionTableModel;
   private columnResizer: ColumnResizer;
   private firstRowRef: HTMLTableRowElement;
   private headerRefs: HTMLHeadElement[];

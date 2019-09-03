@@ -1,8 +1,11 @@
 import * as Kola from 'kola-signals';
 import { ArrayTableModel } from './array_table_model';
-import { TableModel } from './table_model';
 import { AddRowOperation, MoveRowOperation, Operation, RemoveRowOperation }
   from './operations';
+import { TableModel } from './table_model';
+
+
+
 
 /** Provides the functionality needed to select Rows. */
 export class RowSelectionTableModel extends TableModel {
@@ -115,7 +118,6 @@ export class RowSelectionTableModel extends TableModel {
    * @param event - The event describing the keyboard press.
    */
   public onKeyDown(event: KeyboardEvent): void {
-    //????
     const code = event.code;
     switch(code) {
       case 'ArrowUp':
@@ -294,13 +296,10 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private isAShiftKeyDown() {
-    //console.log(this.isShiftDownL || this.isShiftDownR)
     return (this.isShiftDownL || this.isShiftDownR);
   }
 
   private s0() {
-    console.log('state 0');
-    console.log('is shift down??:', this.isAShiftKeyDown());
     this.state = 0;
     if(!this.isMouseDown && !this.isDownDown && !this.isUpDown) {
       this.currentRow = this.highlightedRow;
@@ -321,7 +320,6 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s1() {
-    console.log('state 1');
     this.state = 1;
     this.highlightedRow = this.currentRow;
     this.s0();
@@ -329,7 +327,6 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s2() {
-    console.log('state 2');
     this.state = 2;
     if(this.selectedRows.rowCount > 0) {
       this.highlightedRow = 0;
@@ -342,7 +339,6 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s3() {
-    console.log('state 3');
     this.state = 3;
     this.clearRows();
     this.previousRow = this.highlightedRow;
@@ -351,8 +347,6 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s4() {
-    console.log('state 4');
-    //console.log('is shift down??:', this.isAShiftKeyDown());
     this.state = 4;
     this.clearRows();
     this.previousRow = this.highlightedRow;
@@ -364,7 +358,6 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s5() {
-    console.log('state 5');
     this.state = 5;
     this.highlightedRow = this.currentRow;
     this.previousRow = this.currentRow;
@@ -373,13 +366,11 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s6() {
-    console.log('state 6');
     this.state = 6;
     this.toggleRows();
   }
 
   private s7() {
-    console.log('state 7');
     this.state = 7;
     this.clearRows();
     this.isAdding = true;
@@ -389,13 +380,11 @@ export class RowSelectionTableModel extends TableModel {
   }
 
   private s8() {
-    console.log('state 8');
     this.state = 8;
     this.toggleRows();
   }
 
   private s9() {
-    console.log('state 9');
     this.state = 9;
     this.clearRows();
     this.highlightedRow = this.currentRow;

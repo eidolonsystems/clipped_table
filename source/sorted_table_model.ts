@@ -143,7 +143,10 @@ export class SortedTableModel extends TableModel {
       } else if(operation instanceof UpdateValueOperation) {
         this.rowUpdated(operation);
       } else if(operation instanceof MoveRowOperation) {
-        this.operations.push(operation);
+        if(!(this.operations[this.operations.length - 1]
+            instanceof AddRowOperation)) {
+          this.operations.push(operation);
+        }
       }
     }
     this.endTransaction();
