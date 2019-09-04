@@ -299,9 +299,8 @@ export class TableView extends React.Component<Properties, State> implements
     switch(code) {
       case 'ArrowUp':
         if(startRow > 0 &&
-            this.rowSelector.getCurrent() >= startRow + 3 &&
-            this.rowSelector.getCurrent() <= endRow - 3) {
-          console.log('prevent default!');
+            currentRow >= startRow + 3 &&
+            endRow - 1 >= currentRow) {
           event.preventDefault();
         } else {
           scrollBy(0, -this.firstRowRef.scrollHeight);
@@ -309,15 +308,13 @@ export class TableView extends React.Component<Properties, State> implements
         break;
       case 'ArrowDown': /// :(
         if(this.table.rowCount > endRow &&
-            this.rowSelector.getCurrent() >= startRow + 3 &&
-            this.rowSelector.getCurrent() <= endRow - 3) {
-          console.log('prevent default!');
+            currentRow >= startRow &&
+            currentRow <= endRow - 3) {
           event.preventDefault();
         } else {
           scrollBy(0, this.firstRowRef.offsetHeight);
         }
     }
-    scrollBy();
     this.rowSelector.onKeyDown(event);
   }
 
